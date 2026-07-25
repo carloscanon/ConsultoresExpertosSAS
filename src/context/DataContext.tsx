@@ -59,9 +59,9 @@ interface DataContextType {
   refreshData: () => Promise<void>;
   
   // Course actions
-  addCourse: (course: Course) => void;
-  editCourse: (course: Course) => void;
-  deleteCourse: (id: string) => void;
+  addCourse: (course: Course) => Promise<void>;
+  editCourse: (course: Course) => Promise<void>;
+  deleteCourse: (id: string) => Promise<void>;
   
   // Enrollment actions
   enrollStudent: (enrollment: any) => Promise<boolean>;
@@ -80,13 +80,13 @@ interface DataContextType {
 
   // Institutional Contact & SEO parameters
   contactInfo: ContactInfo;
-  updateContactInfo: (info: ContactInfo) => void;
+  updateContactInfo: (info: ContactInfo) => Promise<void>;
 
   // Resources Library Manager CRUD
   resources: ResourceItem[];
-  addResource: (item: ResourceItem) => void;
-  editResource: (item: ResourceItem) => void;
-  deleteResource: (id: string) => void;
+  addResource: (item: ResourceItem) => Promise<void>;
+  editResource: (item: ResourceItem) => Promise<void>;
+  deleteResource: (id: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -223,28 +223,33 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Course actions
   const addCourse = async (course: Course) => {
     setCourses(prev => [...prev, course]);
-    try {
-      await saveCourseInDb(course);
-    } catch (err) {
-      console.warn('Supabase background save failed:', err);
+    const res = await saveCourseInDb(course);
+    if (!res.success && res.error) {
+      // Revert
+      setCourses(prev => prev.filter(c => c.id !== course.id));
+      throw new Error(res.error.message || 'Error guardando curso en Supabase');
     }
   };
 
   const editCourse = async (course: Course) => {
+    const original = courses.find(c => c.id === course.id);
     setCourses(prev => prev.map(c => c.id === course.id ? course : c));
-    try {
-      await saveCourseInDb(course);
-    } catch (err) {
-      console.warn('Supabase background update failed:', err);
+    const res = await saveCourseInDb(course);
+    if (!res.success && res.error) {
+      // Revert
+      if (original) setCourses(prev => prev.map(c => c.id === course.id ? original : c));
+      throw new Error(res.error.message || 'Error actualizando curso en Supabase');
     }
   };
 
   const deleteCourse = async (id: string) => {
+    const original = courses.find(c => c.id === id);
     setCourses(prev => prev.filter(c => c.id !== id));
-    try {
-      await deleteCourseFromDb(id);
-    } catch (err) {
-      console.warn('Supabase background delete failed:', err);
+    const res = await deleteCourseFromDb(id);
+    if (!res.success && res.error) {
+      // Revert
+      if (original) setCourses(prev => [...prev, original]);
+      throw new Error(res.error.message || 'Error eliminando curso en Supabase');
     }
   };
 
@@ -438,38 +443,42 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Institutional Info action
   const updateContactInfo = async (info: ContactInfo) => {
     setContactInfo(info);
-    try {
-      await saveSiteConfigurationInDb(info, logoUrl, logoSize);
-    } catch (err) {
-      console.warn('Supabase site config save failed:', err);
+    const res = await saveSiteConfigurationInDb(info, logoUrl, logoSize);
+    if (!res.success && res.error) {
+      throw new Error(res.error.message || 'Error guardando config SEO en Supabase');
     }
   };
 
   // Resources CMS actions
   const addResource = async (item: ResourceItem) => {
     setResources(prev => [item, ...prev]);
-    try {
-      await saveBlogResourceInDb(item);
-    } catch (err) {
-      console.warn('Supabase background resource save failed:', err);
+    const res = await saveBlogResourceInDb(item);
+    if (!res.success && res.error) {
+      // Revert
+      setResources(prev => prev.filter(r => r.id !== item.id));
+      throw new Error(res.error.message || 'Error guardando recurso en Supabase');
     }
   };
 
   const editResource = async (item: ResourceItem) => {
+    const original = resources.find(r => r.id === item.id);
     setResources(prev => prev.map(r => r.id === item.id ? item : r));
-    try {
-      await saveBlogResourceInDb(item);
-    } catch (err) {
-      console.warn('Supabase background resource update failed:', err);
+    const res = await saveBlogResourceInDb(item);
+    if (!res.success && res.error) {
+      // Revert
+      if (original) setResources(prev => prev.map(r => r.id === item.id ? original : r));
+      throw new Error(res.error.message || 'Error actualizando recurso en Supabase');
     }
   };
 
   const deleteResource = async (id: string) => {
+    const original = resources.find(r => r.id === id);
     setResources(prev => prev.filter(r => r.id !== id));
-    try {
-      await deleteBlogResourceFromDb(id);
-    } catch (err) {
-      console.warn('Supabase background resource delete failed:', err);
+    const res = await deleteBlogResourceFromDb(id);
+    if (!res.success && res.error) {
+      // Revert
+      if (original) setResources(prev => [...prev, original]);
+      throw new Error(res.error.message || 'Error eliminando recurso en Supabase');
     }
   };
 

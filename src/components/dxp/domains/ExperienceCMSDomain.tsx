@@ -47,63 +47,84 @@ export const ExperienceCMSDomain: React.FC = () => {
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
   // Handlers
-  const handleSaveSEO = (e: React.FormEvent) => {
+  const handleSaveSEO = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateContactInfo(seoForm);
-    setSaveStatus('✓ Parámetros Institucionales y SEO de Google actualizados en vivo.');
-    saveSuperAdminAuditLog({
-      actionType: 'SEO_PARAMETERS_UPDATE',
-      confirmationCode: 'SEO-UPD-2026',
-      affectedRecords: 1
-    }).catch(console.warn);
-    setTimeout(() => setSaveStatus(null), 3000);
+    setSaveStatus('Guardando parámetros SEO en Supabase...');
+    try {
+      await updateContactInfo(seoForm);
+      setSaveStatus('✓ Parámetros Institucionales y SEO de Google actualizados en vivo en Supabase.');
+      saveSuperAdminAuditLog({
+        actionType: 'SEO_PARAMETERS_UPDATE',
+        confirmationCode: 'SEO-UPD-2026',
+        affectedRecords: 1
+      }).catch(console.warn);
+      setTimeout(() => setSaveStatus(null), 4000);
+    } catch (err: any) {
+      setSaveStatus(`❌ Error de Base de Datos: ${err.message || 'No se pudo guardar la configuración de SEO'}`);
+    }
   };
 
-  const handleCreateResource = (e: React.FormEvent) => {
+  const handleCreateResource = async (e: React.FormEvent) => {
     e.preventDefault();
     const newId = `res-${Date.now()}`;
-    addResource({
-      id: newId,
-      ...resForm
-    });
-    setSaveStatus('✓ Nuevo recurso CMS creado y publicado.');
-    saveSuperAdminAuditLog({
-      actionType: 'CMS_RESOURCE_CREATE',
-      confirmationCode: 'CMS-RES-ADD',
-      affectedRecords: 1
-    }).catch(console.warn);
-    // Reset
-    setResForm({
-      title: '',
-      type: 'video',
-      description: '',
-      durationOrSize: '',
-      redirectUrl: ''
-    });
-    setTimeout(() => setSaveStatus(null), 3000);
+    setSaveStatus('Publicando recurso en Supabase...');
+    try {
+      await addResource({
+        id: newId,
+        ...resForm
+      });
+      setSaveStatus('✓ Nuevo recurso CMS creado y guardado en la base de datos.');
+      saveSuperAdminAuditLog({
+        actionType: 'CMS_RESOURCE_CREATE',
+        confirmationCode: 'CMS-RES-ADD',
+        affectedRecords: 1
+      }).catch(console.warn);
+      
+      // Reset
+      setResForm({
+        title: '',
+        type: 'video',
+        description: '',
+        durationOrSize: '',
+        redirectUrl: ''
+      });
+      setTimeout(() => setSaveStatus(null), 4000);
+    } catch (err: any) {
+      setSaveStatus(`❌ Error de Base de Datos: ${err.message || 'Verifica permisos RLS de la tabla blog_resources'}`);
+    }
   };
 
-  const handleUpdateResource = (e: React.FormEvent) => {
+  const handleUpdateResource = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedResId) return;
-    editResource({
-      id: selectedResId,
-      ...resForm
-    });
-    setSaveStatus('✓ Cambios en el recurso CMS guardados.');
-    setIsEditingRes(false);
-    setSelectedResId(null);
-    setTimeout(() => setSaveStatus(null), 3000);
-  };
-
-  const handleDeleteResource = (id: string) => {
-    deleteResource(id);
-    setSaveStatus('✓ Recurso CMS eliminado.');
-    if (selectedResId === id) {
+    setSaveStatus('Actualizando recurso en Supabase...');
+    try {
+      await editResource({
+        id: selectedResId,
+        ...resForm
+      });
+      setSaveStatus('✓ Cambios en el recurso CMS guardados en la base de datos.');
       setIsEditingRes(false);
       setSelectedResId(null);
+      setTimeout(() => setSaveStatus(null), 4000);
+    } catch (err: any) {
+      setSaveStatus(`❌ Error al actualizar: ${err.message || 'Verifica la conexión'}`);
     }
-    setTimeout(() => setSaveStatus(null), 3000);
+  };
+
+  const handleDeleteResource = async (id: string) => {
+    setSaveStatus('Eliminando recurso de Supabase...');
+    try {
+      await deleteResource(id);
+      setSaveStatus('✓ Recurso CMS eliminado de la base de datos.');
+      if (selectedResId === id) {
+        setIsEditingRes(false);
+        setSelectedResId(null);
+      }
+      setTimeout(() => setSaveStatus(null), 4000);
+    } catch (err: any) {
+      setSaveStatus(`❌ Error al eliminar: ${err.message || 'Verifica la conexión'}`);
+    }
   };
 
   const startEditResource = (item: ResourceItem) => {
@@ -142,8 +163,16 @@ export const ExperienceCMSDomain: React.FC = () => {
 
       {/* Save Notification Alert */}
       {saveStatus && (
-        <div className="p-3.5 rounded-xl bg-emerald-500/20 border border-emerald-500 text-emerald-300 text-xs font-bold flex items-center space-x-2 animate-in fade-in duration-200">
-          <CheckCircle2 className="w-4.5 h-4.5 text-emerald-400" />
+        <div 
+          className={`p-3.5 rounded-xl border text-xs font-bold flex items-center space-x-2 animate-in fade-in duration-200 ${
+            saveStatus.startsWith('❌') 
+              ? 'bg-red-500/10 border-red-500/30 text-red-400' 
+              : saveStatus.startsWith('✓') 
+              ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
+              : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300'
+          }`}
+        >
+          <CheckCircle2 className={`w-4 h-4 shrink-0 ${saveStatus.startsWith('❌') ? 'text-red-400' : 'text-emerald-400'}`} />
           <span>{saveStatus}</span>
         </div>
       )}
