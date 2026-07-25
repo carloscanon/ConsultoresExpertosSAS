@@ -270,12 +270,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setEnrollments(prev => [newEnr, ...prev]);
 
-    try {
-      await saveCourseEnrollment(data);
-      refreshData();
-    } catch (err) {
-      console.warn('Background Supabase save failed:', err);
+    const res = await saveCourseEnrollment(data);
+    if (!res.success && res.error) {
+      setEnrollments(prev => prev.filter(e => e.id !== tempId));
+      throw new Error(res.error.message || 'Error guardando matrícula en Supabase');
     }
+    await refreshData();
     return true;
   };
 
@@ -284,33 +284,33 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     const target = enrollments.find(e => e.id === id);
     if (target && !id.startsWith('temp-')) {
-      try {
-        await deleteCourseEnrollment(id);
-        await saveCourseEnrollment({
-          courseId: target.course_id || 'manual',
-          courseTitle: target.course_title,
-          fullName: target.full_name,
-          email: target.email,
-          company: target.company,
-          cohortDate: target.cohort_date,
-          paymentStatus: status
-        });
-        refreshData();
-      } catch (err) {
-        console.warn('Background update failed:', err);
-      }
+      const resDel = await deleteCourseEnrollment(id);
+      if (!resDel.success && resDel.error) throw new Error(resDel.error.message);
+
+      const resAdd = await saveCourseEnrollment({
+        courseId: target.course_id || 'manual',
+        courseTitle: target.course_title,
+        fullName: target.full_name,
+        email: target.email,
+        company: target.company,
+        cohortDate: target.cohort_date,
+        paymentStatus: status
+      });
+      if (!resAdd.success && resAdd.error) throw new Error(resAdd.error.message);
+      await refreshData();
     }
   };
 
   const removeEnrollment = async (id: string) => {
+    const original = enrollments.find(e => e.id === id);
     setEnrollments(prev => prev.filter(e => e.id !== id));
     if (!id.startsWith('temp-')) {
-      try {
-        await deleteCourseEnrollment(id);
-        refreshData();
-      } catch (err) {
-        console.warn('Background delete failed:', err);
+      const res = await deleteCourseEnrollment(id);
+      if (!res.success && res.error) {
+        if (original) setEnrollments(prev => [...prev, original]);
+        throw new Error(res.error.message || 'Error eliminando matrícula de Supabase');
       }
+      await refreshData();
     }
   };
 
@@ -330,12 +330,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setDeals(prev => [newDeal, ...prev]);
 
-    try {
-      await saveCRMDeal(data);
-      refreshData();
-    } catch (err) {
-      console.warn('Background save deal failed:', err);
+    const res = await saveCRMDeal(data);
+    if (!res.success && res.error) {
+      setDeals(prev => prev.filter(d => d.id !== tempId));
+      throw new Error(res.error.message || 'Error guardando negociación en Supabase');
     }
+    await refreshData();
   };
 
   const moveDealStage = async (id: string, currentStage: string) => {
@@ -346,16 +346,18 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setDeals(prev => prev.map(d => d.id === id ? { ...d, stage: nextStage } : d));
 
     if (!id.startsWith('temp-')) {
-      try {
-        await updateCRMDealStage(id, nextStage);
-        refreshData();
-      } catch (err) {
-        console.warn('Background update stage failed:', err);
+      const res = await updateCRMDealStage(id, nextStage);
+      if (!res.success && res.error) {
+        // Revert
+        setDeals(prev => prev.map(d => d.id === id ? { ...d, stage: currentStage } : d));
+        throw new Error(res.error.message || 'Error actualizando etapa del negocio');
       }
+      await refreshData();
     }
   };
 
   const updateDealDetails = async (data: any) => {
+    const original = deals.find(d => d.id === data.id);
     setDeals(prev => prev.map(d => d.id === data.id ? {
       ...d,
       title: data.title,
@@ -368,33 +370,36 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } : d));
 
     if (!data.id.startsWith('temp-')) {
-      try {
-        await deleteCRMDeal(data.id);
-        await saveCRMDeal({
-          dealTitle: data.title,
-          companyName: data.company,
-          contactName: data.contact,
-          contactEmail: data.email || 'info@consultoresexpertos.com',
-          dealStage: data.stage,
-          dealValue: Number(data.value),
-          probabilityPct: data.score
-        });
-        refreshData();
-      } catch (err) {
-        console.warn('Background update deal failed:', err);
+      const resDel = await deleteCRMDeal(data.id);
+      if (!resDel.success && resDel.error) throw new Error(resDel.error.message);
+
+      const resAdd = await saveCRMDeal({
+        dealTitle: data.title,
+        companyName: data.company,
+        contactName: data.contact,
+        contactEmail: data.email || 'info@consultoresexpertos.com',
+        dealStage: data.stage,
+        dealValue: Number(data.value),
+        probabilityPct: data.score
+      });
+      if (!resAdd.success && resAdd.error) {
+        if (original) setDeals(prev => prev.map(d => d.id === data.id ? original : d));
+        throw new Error(resAdd.error.message || 'Error actualizando datos de negociación');
       }
+      await refreshData();
     }
   };
 
   const removeDeal = async (id: string) => {
+    const original = deals.find(d => d.id === id);
     setDeals(prev => prev.filter(d => d.id !== id));
     if (!id.startsWith('temp-')) {
-      try {
-        await deleteCRMDeal(id);
-        refreshData();
-      } catch (err) {
-        console.warn('Background delete deal failed:', err);
+      const res = await deleteCRMDeal(id);
+      if (!res.success && res.error) {
+        if (original) setDeals(prev => [...prev, original]);
+        throw new Error(res.error.message || 'Error eliminando negociación de Supabase');
       }
+      await refreshData();
     }
   };
 
@@ -419,24 +424,25 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     setLeads(prev => [newLead, ...prev]);
 
-    try {
-      await saveDemoRequest(data);
-      refreshData();
-    } catch (err) {
-      console.warn('Background save lead failed:', err);
+    const res = await saveDemoRequest(data);
+    if (!res.success && res.error) {
+      setLeads(prev => prev.filter(l => l.id !== tempId));
+      throw new Error(res.error.message || 'Error enviando lead a Supabase');
     }
+    await refreshData();
     return true;
   };
 
   const removeLead = async (id: string) => {
+    const original = leads.find(l => l.id === id);
     setLeads(prev => prev.filter(l => l.id !== id));
     if (!id.startsWith('temp-')) {
-      try {
-        await deleteDemoRequest(id);
-        refreshData();
-      } catch (err) {
-        console.warn('Background delete lead failed:', err);
+      const res = await deleteDemoRequest(id);
+      if (!res.success && res.error) {
+        if (original) setLeads(prev => [...prev, original]);
+        throw new Error(res.error.message || 'Error eliminando lead de Supabase');
       }
+      await refreshData();
     }
   };
 
