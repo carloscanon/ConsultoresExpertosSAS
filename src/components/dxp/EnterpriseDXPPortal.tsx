@@ -26,7 +26,8 @@ import {
   Mail,
   KeyRound,
   AlertCircle,
-  Settings
+  Settings,
+  ExternalLink
 } from 'lucide-react';
 
 interface EnterpriseDXPPortalProps {
@@ -189,6 +190,16 @@ export const EnterpriseDXPPortal: React.FC<EnterpriseDXPPortalProps> = ({ isOpen
             <div className="flex items-center space-x-2">
               <span className="font-heading font-extrabold text-sm text-white">Consultores Expertos SAS</span>
               <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">ENTERPRISE DXP</span>
+              
+              {/* WordPress-style Visit Site link */}
+              <button 
+                onClick={() => window.open(window.location.origin, '_blank')}
+                className="hidden sm:flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-all text-[10px] font-bold"
+                title="Visitar sitio en una nueva pestaña"
+              >
+                <ExternalLink className="w-3 h-3 text-cyan-400" />
+                <span>Visitar sitio</span>
+              </button>
             </div>
             <p className="text-[10px] font-mono text-slate-400">NIT 900452089-9 • GovData Nexus™ • MasterClassNow.online</p>
           </div>
