@@ -7,6 +7,7 @@ import { GovDataNexusDomain } from './domains/GovDataNexusDomain';
 import { MarketingHubDomain } from './domains/MarketingHubDomain';
 import { EnterpriseAdminDomain } from './domains/EnterpriseAdminDomain';
 import { ThemeSelectorDomain } from './domains/ThemeSelectorDomain';
+import { OrgSettingsDomain } from './domains/OrgSettingsDomain';
 import { 
   X, 
   LayoutDashboard, 
@@ -24,7 +25,8 @@ import {
   Lock,
   Mail,
   KeyRound,
-  AlertCircle
+  AlertCircle,
+  Settings
 } from 'lucide-react';
 
 interface EnterpriseDXPPortalProps {
@@ -34,7 +36,7 @@ interface EnterpriseDXPPortalProps {
 
 export const EnterpriseDXPPortal: React.FC<EnterpriseDXPPortalProps> = ({ isOpen, onClose }) => {
   const [activeDomain, setActiveDomain] = useState<
-    'command_center' | 'experience_cms' | 'sales_crm' | 'learning_hub' | 'govdata_nexus' | 'marketing_hub' | 'enterprise_admin' | 'theme_selector'
+    'command_center' | 'experience_cms' | 'sales_crm' | 'learning_hub' | 'govdata_nexus' | 'marketing_hub' | 'enterprise_admin' | 'theme_selector' | 'org_settings'
   >('command_center');
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,7 +78,8 @@ export const EnterpriseDXPPortal: React.FC<EnterpriseDXPPortalProps> = ({ isOpen
     { id: 'govdata_nexus', name: '5. GovData Nexus™', icon: Database, category: 'SaaS Product Center' },
     { id: 'marketing_hub', name: '6. Marketing Hub', icon: Target, category: 'Landings & Growth' },
     { id: 'enterprise_admin', name: '7. Administration', icon: ShieldCheck, category: 'RBAC, IA & Security' },
-    { id: 'theme_selector', name: '8. Temas & Apariencia', icon: Palette, category: '6 Temas Enterprise' }
+    { id: 'theme_selector', name: '8. Temas & Apariencia', icon: Palette, category: 'Identidad Visual' },
+    { id: 'org_settings', name: '9. Datos Empresa & SEO', icon: Settings, category: 'Configuración Global' }
   ];
 
   // Secure Auth Guard Panel (Apple/Stripe Premium Design style)
@@ -230,7 +233,7 @@ export const EnterpriseDXPPortal: React.FC<EnterpriseDXPPortalProps> = ({ isOpen
           
           <div className="space-y-1">
             <div className="px-3 py-2 text-[10px] font-mono font-bold uppercase text-slate-500 tracking-wider">
-              DOMINIOS OPERATIVOS DXP
+              DOMINIO OPERATIVOS DXP
             </div>
 
             {domainsList.map((domain) => {
@@ -290,6 +293,7 @@ export const EnterpriseDXPPortal: React.FC<EnterpriseDXPPortalProps> = ({ isOpen
           {activeDomain === 'marketing_hub' && <MarketingHubDomain />}
           {activeDomain === 'enterprise_admin' && <EnterpriseAdminDomain />}
           {activeDomain === 'theme_selector' && <ThemeSelectorDomain />}
+          {activeDomain === 'org_settings' && <OrgSettingsDomain />}
 
         </main>
 

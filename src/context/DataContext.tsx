@@ -24,6 +24,8 @@ import {
 import type { Course } from '../types';
 
 export interface ContactInfo {
+  companyName: string;
+  companyNit: string;
   email: string;
   phone: string;
   whatsapp: string;
@@ -120,6 +122,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const saved = localStorage.getItem('dxp_contact_info');
     if (saved) return JSON.parse(saved);
     return {
+      companyName: 'Consultores Expertos SAS',
+      companyNit: '900452089-9',
       email: 'info@consultoresexpertos.com',
       phone: '+57 300 123 4567',
       whatsapp: '573001234567',

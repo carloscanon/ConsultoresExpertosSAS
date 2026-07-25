@@ -73,7 +73,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDemo }) => {
               <a href="#" className="p-2 rounded-lg bg-slate-100 hover:text-red-600 hover:bg-slate-200 transition-colors">
                 <Share2 className="w-4 h-4" />
               </a>
-              <span className="text-xs font-mono font-bold text-slate-400 font-sans">NIT: 900452089-9</span>
+              <span className="text-xs font-mono font-bold text-slate-400">NIT: {contactInfo.companyNit}</span>
             </div>
           </div>
 
@@ -154,7 +154,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDemo }) => {
             </span>
           </div>
 
-          <p>© {new Date().getFullYear()} GovData Nexus. Todos los derechos reservados. Nit 900452089-9.</p>
+          <p>© {new Date().getFullYear()} {contactInfo.companyName}. Todos los derechos reservados. NIT {contactInfo.companyNit}.</p>
         </div>
 
       </div>

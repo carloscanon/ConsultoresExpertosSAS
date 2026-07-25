@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { ConsultoresLogo } from './ConsultoresLogo';
+import { useData } from '../context/DataContext';
 import type { Language } from '../types';
 import { 
   Search, 
@@ -33,6 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { language, setLanguage } = useLanguage();
   const { isLight, toggleTheme, logoUrl, logoSize } = useTheme();
+  const { contactInfo } = useData();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
@@ -89,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({
               <div className="flex flex-col text-left">
                 <ConsultoresLogo showNit={false} />
                 <span className="text-[8px] font-mono font-bold tracking-widest text-slate-500 uppercase -mt-1 block">
-                  Powered by Consultores Expertos SAS
+                  Powered by {contactInfo.companyName}
                 </span>
               </div>
             )}

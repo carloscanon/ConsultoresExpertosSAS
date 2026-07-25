@@ -290,6 +290,8 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     // Asynchronously update in database
     const savedContact = localStorage.getItem('dxp_contact_info');
     const contact = savedContact ? JSON.parse(savedContact) : {
+      companyName: 'Consultores Expertos SAS',
+      companyNit: '900452089-9',
       email: 'info@consultoresexpertos.com',
       phone: '+57 300 123 4567',
       whatsapp: '573001234567',
@@ -307,6 +309,8 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     // Asynchronously update in database
     const savedContact = localStorage.getItem('dxp_contact_info');
     const contact = savedContact ? JSON.parse(savedContact) : {
+      companyName: 'Consultores Expertos SAS',
+      companyNit: '900452089-9',
       email: 'info@consultoresexpertos.com',
       phone: '+57 300 123 4567',
       whatsapp: '573001234567',
