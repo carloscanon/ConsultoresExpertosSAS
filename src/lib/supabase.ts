@@ -45,8 +45,6 @@ export async function saveDemoRequest(data: {
         interests: data.interests || [],
         message: data.message || '',
         status: 'Nuevo Lead',
-        lead_score: 85,
-        estimated_value: 25000.00,
         created_at: new Date().toISOString()
       }]));
     
@@ -99,8 +97,6 @@ export async function saveCourseEnrollment(data: {
         company: data.company || '',
         cohort_date: data.cohortDate || '',
         payment_status: data.paymentStatus || 'Preinscrito',
-        amount_paid: data.amountPaid || 0,
-        progress_pct: 0,
         created_at: new Date().toISOString()
       }]));
 
