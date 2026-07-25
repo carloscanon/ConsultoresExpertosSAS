@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { coursesData as initialCourses } from '../data/coursesData';
+import { useTheme } from './ThemeContext';
 import { 
   getCRMDeals, 
   getDemoRequests, 
@@ -10,7 +11,15 @@ import {
   deleteCRMDeal, 
   deleteCourseEnrollment, 
   deleteDemoRequest,
-  updateCRMDealStage
+  updateCRMDealStage,
+  getCoursesCatalogFromDb,
+  saveCourseInDb,
+  deleteCourseFromDb,
+  getBlogResourcesFromDb,
+  saveBlogResourceInDb,
+  deleteBlogResourceFromDb,
+  getSiteConfigurationFromDb,
+  saveSiteConfigurationInDb
 } from '../lib/supabase';
 import type { Course } from '../types';
 
@@ -83,6 +92,8 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { logoUrl, logoSize, setLogoUrl, setLogoSize } = useTheme();
+
   const [courses, setCourses] = useState<Course[]>(() => {
     const saved = localStorage.getItem('dxp_courses');
     if (saved) return JSON.parse(saved);
@@ -127,7 +138,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const [loading, setLoading] = useState(true);
 
-  // Sync to local storage
+  // Sync to local storage for offline resiliency
   useEffect(() => {
     localStorage.setItem('dxp_courses', JSON.stringify(courses));
   }, [courses]);
@@ -165,6 +176,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const fetchedDeals = await getCRMDeals();
       const fetchedLeads = await getDemoRequests();
       const fetchedEnrollments = await getCourseEnrollments();
+      const fetchedCourses = await getCoursesCatalogFromDb();
+      const fetchedResources = await getBlogResourcesFromDb();
+      const fetchedConfig = await getSiteConfigurationFromDb();
 
       if (fetchedDeals.length > 0) {
         setDeals(fetchedDeals.map((d: any) => ({
@@ -181,6 +195,20 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       if (fetchedLeads.length > 0) setLeads(fetchedLeads);
       if (fetchedEnrollments.length > 0) setEnrollments(fetchedEnrollments);
+      
+      if (fetchedCourses.length > 0) {
+        setCourses(fetchedCourses);
+      }
+
+      if (fetchedResources.length > 0) {
+        setResources(fetchedResources);
+      }
+
+      if (fetchedConfig) {
+        setContactInfo(fetchedConfig.contact);
+        if (fetchedConfig.logoUrl) setLogoUrl(fetchedConfig.logoUrl);
+        if (fetchedConfig.logoSize) setLogoSize(fetchedConfig.logoSize);
+      }
     } catch (e) {
       console.warn('Supabase refresh failed, falling back to local storage:', e);
     } finally {
@@ -193,16 +221,31 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, []);
 
   // Course actions
-  const addCourse = (course: Course) => {
+  const addCourse = async (course: Course) => {
     setCourses(prev => [...prev, course]);
+    try {
+      await saveCourseInDb(course);
+    } catch (err) {
+      console.warn('Supabase background save failed:', err);
+    }
   };
 
-  const editCourse = (course: Course) => {
+  const editCourse = async (course: Course) => {
     setCourses(prev => prev.map(c => c.id === course.id ? course : c));
+    try {
+      await saveCourseInDb(course);
+    } catch (err) {
+      console.warn('Supabase background update failed:', err);
+    }
   };
 
-  const deleteCourse = (id: string) => {
+  const deleteCourse = async (id: string) => {
     setCourses(prev => prev.filter(c => c.id !== id));
+    try {
+      await deleteCourseFromDb(id);
+    } catch (err) {
+      console.warn('Supabase background delete failed:', err);
+    }
   };
 
   // Enrollment actions
@@ -393,21 +436,41 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   // Institutional Info action
-  const updateContactInfo = (info: ContactInfo) => {
+  const updateContactInfo = async (info: ContactInfo) => {
     setContactInfo(info);
+    try {
+      await saveSiteConfigurationInDb(info, logoUrl, logoSize);
+    } catch (err) {
+      console.warn('Supabase site config save failed:', err);
+    }
   };
 
   // Resources CMS actions
-  const addResource = (item: ResourceItem) => {
+  const addResource = async (item: ResourceItem) => {
     setResources(prev => [item, ...prev]);
+    try {
+      await saveBlogResourceInDb(item);
+    } catch (err) {
+      console.warn('Supabase background resource save failed:', err);
+    }
   };
 
-  const editResource = (item: ResourceItem) => {
+  const editResource = async (item: ResourceItem) => {
     setResources(prev => prev.map(r => r.id === item.id ? item : r));
+    try {
+      await saveBlogResourceInDb(item);
+    } catch (err) {
+      console.warn('Supabase background resource update failed:', err);
+    }
   };
 
-  const deleteResource = (id: string) => {
+  const deleteResource = async (id: string) => {
     setResources(prev => prev.filter(r => r.id !== id));
+    try {
+      await deleteBlogResourceFromDb(id);
+    } catch (err) {
+      console.warn('Supabase background resource delete failed:', err);
+    }
   };
 
   return (

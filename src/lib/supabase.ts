@@ -1,4 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Course } from '../types';
+import type { ResourceItem, ContactInfo } from '../context/DataContext';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mrhmfrwzdrmulfqpmgq.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yaG1mcnd6ZHJtdWxmcWdwbWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MzMwNzgsImV4cCI6MjEwMDUwOTA3OH0.11czHevZA0NXb40xfp3PN-8DhIvohTznhaa5D-llPPc';
@@ -441,5 +443,239 @@ export async function getCDOChallengeResponses() {
   } catch (err) {
     console.warn('Supabase error fetching cdo_challenge_responses:', err);
     return [];
+  }
+}
+
+
+/* ==============================================================================
+ * DYNAMIC DATABASE CRUD OPERATIONS FOR LMS COURSES & MEDIA RESOURCES
+ * ============================================================================== */
+
+/**
+ * Obtener catálogo de cursos de la Base de Datos
+ */
+export async function getCoursesCatalogFromDb(): Promise<Course[]> {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('courses_catalog')
+      .select('*')
+      .eq('is_active', true));
+
+    if (error) {
+      console.warn('Supabase fetch notice (courses_catalog):', error.message);
+      return [];
+    }
+
+    if (!data || data.length === 0) return [];
+
+    return data.map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      level: item.level,
+      duration: item.duration,
+      format: item.format,
+      category: item.category,
+      badge: item.badge || '',
+      description: item.description,
+      instructor: {
+        name: item.instructor_name,
+        role: item.instructor_role,
+        experience: item.instructor_experience || ''
+      },
+      modulesCount: item.modules_count || 1,
+      certification: item.certification,
+      upcomingDate: item.upcoming_date
+    }));
+  } catch (err) {
+    console.warn('Supabase error getting courses catalog:', err);
+    return [];
+  }
+}
+
+/**
+ * Guardar / Upsert curso en la Base de Datos
+ */
+export async function saveCourseInDb(course: Course) {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('courses_catalog')
+      .upsert({
+        id: course.id,
+        title: course.title,
+        level: course.level,
+        duration: course.duration,
+        format: course.format,
+        category: course.category,
+        badge: course.badge || '',
+        description: course.description,
+        instructor_name: course.instructor.name,
+        instructor_role: course.instructor.role,
+        instructor_experience: course.instructor.experience || '',
+        modules_count: course.modulesCount,
+        certification: course.certification,
+        upcoming_date: course.upcomingDate,
+        is_active: true,
+        created_at: new Date().toISOString()
+      }));
+
+    if (error) console.warn('Supabase save error (courses_catalog):', error.message);
+    return { success: !error, data, error };
+  } catch (err) {
+    console.warn('Supabase exception saving course:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * Desactivar / Eliminar curso de la Base de Datos
+ */
+export async function deleteCourseFromDb(id: string) {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('courses_catalog')
+      .delete()
+      .eq('id', id));
+
+    if (error) console.warn('Supabase delete error (courses_catalog):', error.message);
+    return { success: !error, data, error };
+  } catch (err) {
+    console.warn('Supabase exception deleting course:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * Obtener todos los Recursos del CMS (podcasts, videos, artículos) de la Base de Datos
+ */
+export async function getBlogResourcesFromDb(): Promise<ResourceItem[]> {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .select('*')
+      .eq('is_published', true));
+
+    if (error) {
+      console.warn('Supabase fetch notice (blog_resources):', error.message);
+      return [];
+    }
+
+    if (!data || data.length === 0) return [];
+
+    // Filter out the configuration config row
+    const filtered = data.filter((item: any) => item.id !== 'site_seo_settings');
+
+    return filtered.map((item: any) => ({
+      id: item.id,
+      title: item.title,
+      type: item.category as any, // category column maps to resource type
+      description: item.ai_summary || '',
+      durationOrSize: item.read_time || '',
+      redirectUrl: item.summary || '' // summary column stores the redirection url
+    }));
+  } catch (err) {
+    console.warn('Supabase error getting blog resources:', err);
+    return [];
+  }
+}
+
+/**
+ * Guardar / Upsert recurso CMS en la Base de Datos
+ */
+export async function saveBlogResourceInDb(res: ResourceItem) {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .upsert({
+        id: res.id,
+        title: res.title,
+        category: res.type,
+        read_time: res.durationOrSize,
+        summary: res.redirectUrl || '', // Store redirect link in summary
+        ai_summary: res.description, // Store description in ai_summary
+        author: 'Super Admin',
+        author_role: 'Consultor Senior',
+        date: new Date().toLocaleDateString('es-ES'),
+        is_published: true,
+        created_at: new Date().toISOString()
+      }));
+
+    if (error) console.warn('Supabase save error (blog_resources):', error.message);
+    return { success: !error, data, error };
+  } catch (err) {
+    console.warn('Supabase exception saving blog resource:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * Eliminar recurso CMS de la Base de Datos
+ */
+export async function deleteBlogResourceFromDb(id: string) {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .delete()
+      .eq('id', id));
+
+    if (error) console.warn('Supabase delete error (blog_resources):', error.message);
+    return { success: !error, data, error };
+  } catch (err) {
+    console.warn('Supabase exception deleting blog resource:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * Guardar Parámetros de Contacto, SEO y Logo de Marca en la Base de Datos (en fila especial)
+ */
+export async function saveSiteConfigurationInDb(contact: ContactInfo, logoUrl: string, logoSize: number) {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .upsert({
+        id: 'site_seo_settings',
+        title: 'Configuración DXP Centralizada',
+        category: 'site_config',
+        read_time: String(logoSize), // Store logoSize as read_time string
+        summary: JSON.stringify(contact), // Store contact info object as JSON in summary
+        ai_summary: logoUrl || '', // Store logoUrl string in ai_summary
+        author: 'Super Admin',
+        author_role: 'System settings',
+        date: new Date().toLocaleDateString('es-ES'),
+        is_published: true,
+        created_at: new Date().toISOString()
+      }));
+
+    if (error) console.warn('Supabase save error (site_config):', error.message);
+    return { success: !error, data, error };
+  } catch (err) {
+    console.warn('Supabase exception saving site configurations:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * Obtener Parámetros de Contacto, SEO y Logo de Marca de la Base de Datos
+ */
+export async function getSiteConfigurationFromDb() {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .select('*')
+      .eq('id', 'site_seo_settings')
+      .single());
+
+    if (error || !data) {
+      return null;
+    }
+
+    const contact = JSON.parse(data.summary) as ContactInfo;
+    const logoUrl = data.ai_summary || '';
+    const logoSize = Number(data.read_time) || 180;
+
+    return { contact, logoUrl, logoSize };
+  } catch (err) {
+    console.warn('Supabase exception reading site configurations:', err);
+    return null;
   }
 }

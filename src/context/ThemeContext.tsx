@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { saveSiteConfigurationInDb } from '../lib/supabase';
 
 // 9 Available Themes for Consultores Expertos SAS Enterprise DXP
 export type ThemeId = 
@@ -285,11 +286,35 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const setLogoUrl = (url: string) => {
     setLogoUrlState(url);
     localStorage.setItem('dxp_logo_url', url);
+    
+    // Asynchronously update in database
+    const savedContact = localStorage.getItem('dxp_contact_info');
+    const contact = savedContact ? JSON.parse(savedContact) : {
+      email: 'info@consultoresexpertos.com',
+      phone: '+57 300 123 4567',
+      whatsapp: '573001234567',
+      address: 'Bogotá, Colombia',
+      metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo reunidos en un único ecosistema.',
+      metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG'
+    };
+    saveSiteConfigurationInDb(contact, url, logoSize).catch(console.warn);
   };
 
   const setLogoSize = (size: number) => {
     setLogoSizeState(size);
     localStorage.setItem('dxp_logo_size', String(size));
+    
+    // Asynchronously update in database
+    const savedContact = localStorage.getItem('dxp_contact_info');
+    const contact = savedContact ? JSON.parse(savedContact) : {
+      email: 'info@consultoresexpertos.com',
+      phone: '+57 300 123 4567',
+      whatsapp: '573001234567',
+      address: 'Bogotá, Colombia',
+      metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo reunidos en un único ecosistema.',
+      metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG'
+    };
+    saveSiteConfigurationInDb(contact, logoUrl, size).catch(console.warn);
   };
 
   return (
