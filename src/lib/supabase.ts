@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { Course } from '../types';
 import type { ResourceItem, ContactInfo } from '../context/DataContext';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mrhmfrwzdrmulfqpmgq.supabase.co';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mrhmfrwzdrmulfqgpmgj.supabase.co';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yaG1mcnd6ZHJtdWxmcWdwbWdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MzMwNzgsImV4cCI6MjEwMDUwOTA3OH0.11czHevZA0NXb40xfp3PN-8DhIvohTznhaa5D-llPPc';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
