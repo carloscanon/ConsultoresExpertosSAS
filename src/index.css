@@ -1,0 +1,302 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&family=Sora:wght@300;400;600;700;800&family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F8FAFC;
+    --bg-card: rgba(255, 255, 255, 0.92);
+    --text-primary: #0F172A;
+    --text-muted: #475569;
+    --border-color: rgba(15, 23, 42, 0.12);
+    --accent-cyan: #0284C7;
+    --accent-blue: #2563EB;
+    --accent-indigo: #4F46E5;
+    --accent-emerald: #059669;
+    --glow-primary: rgba(2, 132, 199, 0.12);
+    --radius-factor: 16px;
+    --theme-font: 'Inter', sans-serif;
+  }
+}
+
+/* ==========================================
+   THEME-SPECIFIC DESIGN TOKEN TRANSLATIONS 
+   ========================================== */
+
+/* 1. Dark Obsidian (Cyberpunk Sharp Theme) */
+.theme-dark-obsidian {
+  --bg-primary: #02040a;
+  --bg-secondary: #070b13;
+  --bg-card: rgba(8, 14, 26, 0.85);
+  --text-primary: #f0f3f8;
+  --text-muted: #8a99ad;
+  --border-color: rgba(6, 182, 212, 0.15);
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --glow-primary: rgba(6, 182, 212, 0.3);
+  --radius-factor: 4px;
+  --theme-font: 'Sora', sans-serif;
+}
+
+/* 2. Midnight Indigo (Sleek Rounded Minimalist) */
+.theme-midnight-indigo {
+  --bg-primary: #080b11;
+  --bg-secondary: #0f131a;
+  --bg-card: rgba(20, 20, 35, 0.9);
+  --text-primary: #f8fafc;
+  --text-muted: #a5b4fc;
+  --border-color: rgba(99, 102, 241, 0.22);
+  --accent-cyan: #6366f1;
+  --accent-blue: #4f46e5;
+  --glow-primary: rgba(99, 102, 241, 0.25);
+  --radius-factor: 16px;
+  --theme-font: 'Inter', sans-serif;
+}
+
+/* 3. Emerald Slate (Technical Boxy Databricks style) */
+.theme-emerald-slate {
+  --bg-primary: #050807;
+  --bg-secondary: #0b110e;
+  --bg-card: rgba(13, 22, 18, 0.95);
+  --text-primary: #e6f7ec;
+  --text-muted: #82cfa2;
+  --border-color: rgba(16, 185, 129, 0.25);
+  --accent-cyan: #10b981;
+  --accent-blue: #059669;
+  --glow-primary: rgba(16, 185, 129, 0.25);
+  --radius-factor: 0px; /* Square/Raw Tech */
+  --theme-font: 'Manrope', sans-serif;
+}
+
+/* 4. GovData Nexus Brand (Official Cyan Cyber Telemetry) */
+.theme-govdata-cyan {
+  --bg-primary: #010813;
+  --bg-secondary: #041224;
+  --bg-card: rgba(6, 21, 40, 0.88);
+  --text-primary: #e0f2fe;
+  --text-muted: #64b5f6;
+  --border-color: rgba(34, 211, 238, 0.3);
+  --accent-cyan: #22d3ee;
+  --accent-blue: #0284c7;
+  --glow-primary: rgba(34, 211, 238, 0.4);
+  --radius-factor: 8px;
+  --theme-font: 'Space Grotesk', sans-serif;
+}
+
+/* 5. Executive Charcoal (Luxury Apple Matte Design) */
+.theme-executive-grey {
+  --bg-primary: #121212;
+  --bg-secondary: #1a1a1a;
+  --bg-card: #242424;
+  --text-primary: #f5f5f7;
+  --text-muted: #a1a1a6;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --accent-cyan: #d2d2d7;
+  --accent-blue: #86868b;
+  --glow-primary: rgba(255, 255, 255, 0.1);
+  --radius-factor: 12px;
+  --theme-font: 'Outfit', sans-serif;
+}
+
+/* 6. Light Corporate (Clean Premium Light Mode) */
+.theme-light-corporate {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-card: rgba(241, 245, 249, 0.95);
+  --text-primary: #0f172a;
+  --text-muted: #475569;
+  --border-color: rgba(15, 23, 42, 0.08);
+  --accent-cyan: #2563eb;
+  --accent-blue: #1d4ed8;
+  --glow-primary: rgba(37, 99, 235, 0.12);
+  --radius-factor: 22px; /* Smooth rounded Web3 */
+  --theme-font: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* 7. Clean Ice Blue (Light Tech Theme) */
+.theme-light-clean-blue {
+  --bg-primary: #f0f4f8;
+  --bg-secondary: #e2e8f0;
+  --bg-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-muted: #475569;
+  --border-color: rgba(37, 99, 235, 0.1);
+  --accent-cyan: #2563eb;
+  --accent-blue: #3b82f6;
+  --glow-primary: rgba(37, 99, 235, 0.08);
+  --radius-factor: 16px;
+  --theme-font: 'Inter', sans-serif;
+}
+
+/* 8. Emerald Mint (Light Eco Theme) */
+.theme-light-emerald-mint {
+  --bg-primary: #f4fbf7;
+  --bg-secondary: #e6f4ea;
+  --bg-card: #ffffff;
+  --text-primary: #062f22;
+  --text-muted: #1e6b52;
+  --border-color: rgba(5, 150, 105, 0.12);
+  --accent-cyan: #059669;
+  --accent-blue: #10b981;
+  --glow-primary: rgba(5, 150, 105, 0.08);
+  --radius-factor: 12px;
+  --theme-font: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* 9. Warm Minimal Sand (Warm Sand Theme) */
+.theme-light-minimal-sand {
+  --bg-primary: #faf9f6;
+  --bg-secondary: #f5f2eb;
+  --bg-card: #ffffff;
+  --text-primary: #2c2518;
+  --text-muted: #60523c;
+  --border-color: rgba(140, 120, 83, 0.12);
+  --accent-cyan: #8c7853;
+  --accent-blue: #a3906b;
+  --glow-primary: rgba(140, 120, 83, 0.08);
+  --radius-factor: 8px;
+  --theme-font: 'Outfit', sans-serif;
+}
+
+/* ==========================================
+   GLOBAL BRANDING AND TYPOGRAPHY STYLE SYNC
+   (Applies fonts and borders but leaves native contrast)
+   ========================================== */
+
+body {
+  font-family: var(--theme-font) !important;
+  overflow-x: hidden;
+  transition: font-family 0.4s ease;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--theme-font) !important;
+  transition: font-family 0.4s ease;
+}
+
+/* Home Page Panels & Cards (Keeps original color classes but inherits theme roundness/glows) */
+.glass-panel,
+.dxp-card {
+  border-radius: var(--radius-factor) !important;
+  box-shadow: 0 8px 30px var(--glow-primary) !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-hover-tilt:hover {
+  transform: translateY(-6px) scale(1.01) !important;
+  box-shadow: 0 20px 40px var(--glow-primary) !important;
+}
+
+/* Button & primary background colors styling */
+.bg-gradient-to-r.from-cyan-600, 
+.bg-cyan-600,
+.bg-gradient-to-r.from-purple-600,
+.bg-purple-600 {
+  background-color: var(--accent-cyan) !important;
+  background-image: none !important;
+  color: #FFFFFF !important;
+  border-radius: calc(var(--radius-factor) * 0.75) !important;
+  transition: all 0.3s ease !important;
+}
+
+.bg-gradient-to-r.from-cyan-600:hover,
+.bg-cyan-600:hover,
+.bg-purple-600:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 15px var(--accent-cyan);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 9999px;
+}
+
+/* ==========================================
+   DXP PORTAL DASHBOARD COMPLETE THEME COAT
+   (Scoped ONLY to the admin dashboard wrapper)
+   ========================================== */
+
+.dxp-portal-container {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--theme-font) !important;
+}
+
+.dxp-portal-container header {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dxp-portal-container aside {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--border-color) !important;
+}
+
+.dxp-portal-container main {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+.dxp-portal-container h1,
+.dxp-portal-container h2,
+.dxp-portal-container h3,
+.dxp-portal-container h4,
+.dxp-portal-container .font-heading {
+  color: var(--text-primary) !important;
+}
+
+.dxp-portal-container p,
+.dxp-portal-container span,
+.dxp-portal-container label,
+.dxp-portal-container td,
+.dxp-portal-container th {
+  color: var(--text-primary);
+}
+
+.dxp-portal-container .text-slate-300,
+.dxp-portal-container .text-slate-400,
+.dxp-portal-container .text-slate-500,
+.dxp-portal-container .text-gray-400 {
+  color: var(--text-muted) !important;
+}
+
+.dxp-portal-container .text-cyan-400,
+.dxp-portal-container .text-purple-400,
+.dxp-portal-container .text-indigo-400,
+.dxp-portal-container .text-emerald-400 {
+  color: var(--accent-cyan) !important;
+}
+
+.dxp-portal-container .border-slate-800,
+.dxp-portal-container .border-slate-750,
+.dxp-portal-container .border-slate-700,
+.dxp-portal-container .border-slate-200 {
+  border-color: var(--border-color) !important;
+}
+
+.dxp-portal-container .bg-slate-900,
+.dxp-portal-container .bg-slate-950,
+.dxp-portal-container .bg-slate-800 {
+  background-color: var(--bg-secondary) !important;
+}
+
+.dxp-portal-container input,
+.dxp-portal-container select,
+.dxp-portal-container textarea {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  border-radius: calc(var(--radius-factor) * 0.6) !important;
+}
+
+/* Extra Visual polish for Light themes inside DXP */
+.theme-light-corporate .glass-panel,
+.theme-light-clean-blue .glass-panel,
+.theme-light-emerald-mint .glass-panel,
+.theme-light-minimal-sand .glass-panel {
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.04) !important;
+}
