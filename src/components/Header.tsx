@@ -52,11 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled 
-        ? 'bg-slate-950/90 backdrop-blur-xl py-2.5 border-b border-slate-800 shadow-xl' 
-        : currentTab === 'resources' 
-          ? 'bg-gradient-to-b from-black/80 to-transparent py-3.5 border-b border-transparent' 
-          : 'bg-slate-950 py-3.5 border-b border-slate-800/60'
+      scrolled ? 'bg-slate-950/90 backdrop-blur-xl py-2.5 border-b border-slate-800 shadow-xl' : 'bg-slate-950 py-3.5 border-b border-slate-800/60'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-2">

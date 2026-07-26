@@ -80,9 +80,9 @@ export const ResourcesPortal: React.FC = () => {
   return (
     <div className="bg-[#141414] text-white min-h-screen text-left pb-24 font-sans selection:bg-red-600 selection:text-white">
       
-      {/* Netflix Hero Banner — extends behind nav with negative margin for edge-to-edge look */}
+      {/* Netflix Hero Banner — sits naturally below nav, full image visible */}
       {featuredResource && (
-        <div className="relative h-[56.25vw] max-h-[520px] min-h-[340px] w-full overflow-hidden bg-black select-none -mt-16">
+        <div className="relative w-full overflow-hidden bg-black select-none" style={{ height: 'clamp(380px, 50vw, 560px)' }}>
           {/* Cover image or gradient — prioritize custom imageUrl for HD quality */}
           <div className="absolute inset-0">
             {(featuredResource as any).imageUrl ? (
@@ -100,28 +100,28 @@ export const ResourcesPortal: React.FC = () => {
             ) : (
               <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(featuredResource.type)} opacity-75`} />
             )}
-            {/* Gradient overlays to replicate Netflix banner fade */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#141414] via-transparent to-transparent z-10" />
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#141414] to-transparent z-10" />
+            {/* Gradient overlays — darken left and bottom for text legibility */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#141414]/90 via-[#141414]/40 to-transparent z-10" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#141414] to-transparent z-10" />
           </div>
 
-          {/* Featured Content Details */}
-          <div className="absolute left-6 sm:left-12 bottom-12 sm:bottom-20 z-20 max-w-xl space-y-4">
+          {/* Featured Content Details — positioned at bottom-left with safe spacing */}
+          <div className="absolute left-6 sm:left-12 bottom-10 sm:bottom-14 z-20 max-w-lg space-y-3">
             <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded bg-red-600 text-[10px] font-extrabold uppercase tracking-wider shadow">
               <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
               <span>Destacado</span>
             </span>
-            <h1 className="text-xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight drop-shadow-md">
+            <h1 className="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight leading-tight drop-shadow-lg">
               {featuredResource.title}
             </h1>
-            <p className="text-[11px] sm:text-xs text-slate-350 leading-relaxed drop-shadow line-clamp-3">
+            <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed drop-shadow line-clamp-2">
               {featuredResource.description}
             </p>
 
-            <div className="flex items-center space-x-3 pt-2">
+            <div className="flex items-center space-x-3 pt-1">
               <button 
                 onClick={() => handleAccessResource(featuredResource)}
-                className="px-6 py-2.5 rounded-md bg-white text-black font-extrabold text-xs sm:text-sm flex items-center space-x-2 hover:bg-slate-200 transition-all active:scale-95 shadow-md"
+                className="px-5 py-2 rounded-md bg-white text-black font-extrabold text-xs sm:text-sm flex items-center space-x-2 hover:bg-slate-200 transition-all active:scale-95 shadow-md"
               >
                 {featuredResource.type === 'video' && getYoutubeEmbedUrl(featuredResource.redirectUrl) ? (
                   <>
@@ -131,7 +131,7 @@ export const ResourcesPortal: React.FC = () => {
                 ) : (
                   <>
                     <Download className="w-4 h-4" />
-                    <span>Descargar / Acceder</span>
+                    <span>Acceder</span>
                   </>
                 )}
               </button>
@@ -140,10 +140,10 @@ export const ResourcesPortal: React.FC = () => {
                   href={featuredResource.redirectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-5 py-2.5 rounded-md bg-slate-500/30 text-white border border-slate-500/25 font-bold text-xs sm:text-sm flex items-center space-x-1.5 hover:bg-slate-500/50 transition-all"
+                  className="px-4 py-2 rounded-md bg-slate-500/30 text-white border border-slate-500/25 font-bold text-xs sm:text-sm flex items-center space-x-1.5 hover:bg-slate-500/50 transition-all"
                 >
                   <Info className="w-4 h-4" />
-                  <span>Enlace Externo</span>
+                  <span>Ver Más</span>
                 </a>
               )}
             </div>
