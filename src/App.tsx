@@ -84,9 +84,18 @@ const AppContent: React.FC = () => {
             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }
         }, 1200); // Allow rendering and translations to settle
+      } else {
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'instant' as any });
+        }, 300);
       }
     }
   }, [contactInfo.initialScrollSection]);
+
+  // Scroll to top on tab change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as any });
+  }, [currentTab]);
 
   const handleOpenDemoWithTopic = (topic?: string) => {
     setDemoInitialFocus(topic);
