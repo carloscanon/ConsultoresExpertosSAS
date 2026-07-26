@@ -162,5 +162,59 @@ export const coursesData: Course[] = [
     modulesCount: 5,
     certification: 'Certified Data Privacy Officer (CDPO-Legal)',
     upcomingDate: '30 de Noviembre, 2026'
+  },
+  {
+    id: 'tuesday-rls-postgres',
+    title: 'Masterclass: Diseño de Políticas RLS Eficientes en PostgreSQL/Supabase',
+    level: 'Intermedio',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 04 Ago',
+    description: 'Clase técnica práctica sobre cómo asegurar bases de datos a nivel de fila y evitar fugas de información en entornos de producción SaaS.',
+    instructor: {
+      name: 'Ing. Carlos Cañón',
+      role: 'Principal Consultant',
+      experience: '25+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 04 de Agosto, 2026'
+  },
+  {
+    id: 'tuesday-snowflake-dimensional',
+    title: 'Masterclass: Modelado Dimensional y Copo de Nieve en Databricks SQL',
+    level: 'Avanzado',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 11 Ago',
+    description: 'Taller práctico sobre optimización del rendimiento en almacenes de datos tipo Lakehouse y mejores prácticas de diseño de esquemas estrella.',
+    instructor: {
+      name: 'Dra. María Paula Gómez',
+      role: 'Chief Technology Officer (CTO)',
+      experience: '18+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 11 de Agosto, 2026'
+  },
+  {
+    id: 'tuesday-metadata-lineage',
+    title: 'Masterclass: Gobierno de Metadatos Activo en Grafos 3D',
+    level: 'Especialista',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 18 Ago',
+    description: 'Cómo implementar linaje de datos de extremo a extremo automatizado y reglas de impacto en modelos de negocio complejos.',
+    instructor: {
+      name: 'Dr. Jorge Eliécer Silva',
+      role: 'Senior Data Governance Director',
+      experience: '20+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 18 de Agosto, 2026'
   }
 ];

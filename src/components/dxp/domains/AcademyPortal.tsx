@@ -5,7 +5,8 @@ import {
   ArrowRight,
   CheckCircle,
   ExternalLink,
-  X
+  X,
+  Calendar
 } from 'lucide-react';
 
 export const AcademyPortal: React.FC = () => {
@@ -15,9 +16,13 @@ export const AcademyPortal: React.FC = () => {
   const [enrollSuccess, setEnrollSuccess] = useState(false);
   const [activeCategory, setActiveCategory] = useState<'todos' | 'dama' | 'ia' | 'arquitectura'>('todos');
 
+  // Separate Tuesday Masterclasses from standard professional programs
+  const tuesdayMasterclasses = courses.filter(c => c.category === 'Martes de Masterclass');
+  const regularCourses = courses.filter(c => c.category !== 'Martes de Masterclass');
+
   const filteredCourses = activeCategory === 'todos' 
-    ? courses 
-    : courses.filter(c => {
+    ? regularCourses 
+    : regularCourses.filter(c => {
         const cat = c.category.toLowerCase();
         if (activeCategory === 'dama') return cat.includes('dama') || cat.includes('gobernanza');
         if (activeCategory === 'ia') return cat.includes('ia') || cat.includes('artificial') || cat.includes('inteligencia');
@@ -66,15 +71,95 @@ export const AcademyPortal: React.FC = () => {
           
           <div className="pt-2 flex justify-center space-x-3">
             <a
-              href="https://masterclass.online"
+              href="https://masterclassnow.online"
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2 rounded-xl text-xs font-bold text-purple-300 bg-purple-500/10 border border-purple-500/25 hover:bg-purple-500/20 transition-all flex items-center space-x-1.5"
             >
-              <span>Ir a MasterClass.online</span>
+              <span>Ir a MasterClassNow.online</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
+        </div>
+
+        {/* TUESDAY MASTERCLASSES LINE SECTION */}
+        {tuesdayMasterclasses.length > 0 && (
+          <div className="mb-20 bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-purple-900/30">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
+              <div>
+                <span className="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-widest block mb-1">
+                  📅 PROGRAMACIÓN SEMANAL EXCLUSIVA
+                </span>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-white font-heading flex items-center space-x-2">
+                  <Calendar className="w-6 h-6 text-purple-400" />
+                  <span>Martes de Masterclass (Sesiones Únicas)</span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  Una clase en vivo única cada martes hasta fin de año. Sesiones técnicas y estratégicas independientes.
+                </p>
+              </div>
+              <span className="px-3 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-300">
+                Próximas 3 Clases Agendadas
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {tuesdayMasterclasses.map((course) => (
+                <div
+                  key={course.id}
+                  className="bg-slate-950/80 rounded-2xl p-5 border border-slate-800 hover:border-purple-500/40 transition-all flex flex-col justify-between group shadow-lg"
+                >
+                  <div>
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-purple-500/15 text-purple-400 border border-purple-500/20">
+                        {course.badge || 'Martes'}
+                      </span>
+                      <span className="text-[9px] font-mono font-bold text-emerald-450">
+                        {course.duration}
+                      </span>
+                    </div>
+
+                    <h4 className="text-sm font-bold text-white mb-2 group-hover:text-purple-300 transition-colors font-heading leading-snug">
+                      {course.title}
+                    </h4>
+
+                    <p className="text-[11px] text-slate-400 leading-relaxed mb-4 line-clamp-3">
+                      {course.description}
+                    </p>
+
+                    <div className="space-y-1 text-[10px] text-slate-400 bg-slate-900/40 p-2.5 rounded-xl border border-slate-805 font-mono mb-4">
+                      <div className="flex justify-between">
+                        <span>Instructor:</span>
+                        <span className="font-bold text-white">{course.instructor?.name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Fecha:</span>
+                        <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setSelectedCourse(course)}
+                    className="w-full py-2 rounded-xl text-[11px] font-bold text-white bg-purple-600 hover:bg-purple-500 transition-all flex items-center justify-center space-x-1"
+                  >
+                    <span>Inscribirme Gratis</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Regular Catalog Section Header */}
+        <div className="border-t border-slate-800 pt-10 mb-8">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-white font-heading mb-2">
+            Programas y Certificaciones Ejecutivas
+          </h3>
+          <p className="text-xs text-slate-400">
+            Diplomados, Bootcamps y Cursos con certificación CDMP® y acompañamiento experto.
+          </p>
         </div>
 
         {/* Feature categories pills */}
