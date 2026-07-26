@@ -27,13 +27,13 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
     ? resourcesData
     : resourcesData.filter(p => p.category === selectedCategory);
 
-  // Helper to extract YouTube video ID and get thumbnail (uses hqdefault as reliable high-res fallback, since maxresdefault returns 404 for non-1080p videos)
+  // Helper to extract YouTube video ID and get thumbnail
   const getYoutubeThumbnail = (url?: string) => {
     if (!url) return '';
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
     const match = url.match(regExp);
-    if (match && match[2].length === 11) {
-      return `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg`;
+    if (match && match[1]) {
+      return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
     }
     return '';
   };
