@@ -267,6 +267,22 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       if (fetchedCourses.length > 0) {
         setCourses(fetchedCourses);
+        // Sync check: automatically insert any missing courses (e.g. Tuesday Masterclasses)
+        const missing = initialCourses.filter(c => !fetchedCourses.some(fc => fc.id === c.id));
+        if (missing.length > 0) {
+          for (const course of missing) {
+            await saveCourseInDb(course).catch(console.warn);
+          }
+          const updated = await getCoursesCatalogFromDb();
+          if (updated.length > 0) setCourses(updated);
+        }
+      } else {
+        // Database is empty, seed all initial courses
+        for (const course of initialCourses) {
+          await saveCourseInDb(course).catch(console.warn);
+        }
+        const updated = await getCoursesCatalogFromDb();
+        if (updated.length > 0) setCourses(updated);
       }
 
       if (fetchedResources.length > 0) {
