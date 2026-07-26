@@ -297,7 +297,8 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       whatsapp: '573001234567',
       address: 'Bogotá, Colombia',
       metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo reunidos en un único ecosistema.',
-      metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG'
+      metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG',
+      initialScrollSection: 'hero'
     };
     saveSiteConfigurationInDb(contact, url, logoSize).catch(console.warn);
   };
@@ -316,7 +317,8 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       whatsapp: '573001234567',
       address: 'Bogotá, Colombia',
       metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo reunidos en un único ecosistema.',
-      metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG'
+      metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG',
+      initialScrollSection: 'hero'
     };
     saveSiteConfigurationInDb(contact, logoUrl, size).catch(console.warn);
   };

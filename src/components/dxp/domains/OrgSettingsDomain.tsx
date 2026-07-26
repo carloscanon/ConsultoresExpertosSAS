@@ -206,6 +206,28 @@ export const OrgSettingsDomain: React.FC = () => {
               />
             </div>
 
+            <div className="space-y-1.5">
+              <label className="block text-slate-350 font-bold font-sans">Sección de Enfoque Inicial (Scroll al cargar)</label>
+              <select
+                value={form.initialScrollSection || 'hero'}
+                onChange={(e) => setForm({ ...form, initialScrollSection: e.target.value })}
+                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-semibold"
+              >
+                <option value="hero">Inicio Superior (Hero)</option>
+                <option value="ai_features">Asistente IA & Copiloto</option>
+                <option value="academy_banner">CDMP Banner Rápido</option>
+                <option value="govdata_nexus">GovData Nexus Showcase</option>
+                <option value="services">Servicios DAMA/MIPG</option>
+                <option value="academy_info">Estructura Académica</option>
+                <option value="specialized_ai">Suite de IA Especializada</option>
+                <option value="cases">Casos de Éxito (Casos Exitosos)</option>
+                <option value="blog_resources">Biblioteca de Recursos & Blog</option>
+              </select>
+              <p className="text-[10px] text-slate-500">
+                Determina a qué sección del Home saltará la pantalla automáticamente cuando el usuario ingrese a la web.
+              </p>
+            </div>
+
             <div className="p-4 rounded-2xl bg-slate-950 border border-slate-850 space-y-2 leading-relaxed">
               <p className="font-bold text-white flex items-center space-x-1">
                 <Globe className="w-3.5 h-3.5 text-cyan-400" />

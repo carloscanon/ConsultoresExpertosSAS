@@ -37,7 +37,7 @@ const AppContent: React.FC = () => {
   const [dxpPortalOpen, setDxpPortalOpen] = useState(false);
   const [demoInitialFocus, setDemoInitialFocus] = useState<string | undefined>(undefined);
 
-  const { sectionOrder } = useData();
+  const { sectionOrder, contactInfo } = useData();
 
   // Secure /nimda hidden admin panel access route effect
   useEffect(() => {
@@ -58,6 +58,21 @@ const AppContent: React.FC = () => {
       window.removeEventListener('hashchange', checkNimda);
     };
   }, []);
+
+  // Auto-scroll to default focus section configured by admin on load
+  useEffect(() => {
+    if (!window.location.hash) {
+      const targetSec = contactInfo.initialScrollSection || 'hero';
+      if (targetSec && targetSec !== 'hero') {
+        setTimeout(() => {
+          const el = document.getElementById(targetSec);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 1200); // Allow rendering and translations to settle
+      }
+    }
+  }, [contactInfo.initialScrollSection]);
 
   const handleOpenDemoWithTopic = (topic?: string) => {
     setDemoInitialFocus(topic);
