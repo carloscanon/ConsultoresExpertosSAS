@@ -49,7 +49,7 @@ export const AcademySection: React.FC = () => {
   // Filter lists for home page
   const regularCourses = courses.filter(c => c.category !== 'Martes de Masterclass');
   
-  // Sort chronologically and take only the next 3 upcoming Tuesday Masterclasses
+  // Sort chronologically and take only the next N upcoming Tuesday Masterclasses
   const next3Masterclasses = courses
     .filter(c => c.category === 'Martes de Masterclass')
     .map(c => ({
@@ -62,7 +62,7 @@ export const AcademySection: React.FC = () => {
       return c.parsedDate.getTime() >= today.getTime();
     })
     .sort((a, b) => a.parsedDate.getTime() - b.parsedDate.getTime())
-    .slice(0, 3);
+    .slice(0, Number(contactInfo.masterclassPageSize || 3));
 
   return (
     <section id="academy" className="py-24 relative bg-slate-950 text-white border-y border-slate-800 transition-colors overflow-hidden">
@@ -240,7 +240,7 @@ export const AcademySection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {regularCourses.map((course) => {
+          {regularCourses.slice(0, Number(contactInfo.coursePageSize || 6)).map((course) => {
             const priceInfo = calculateMasterclassPrice(course, contactInfo);
             return (
               <div
