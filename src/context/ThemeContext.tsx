@@ -301,7 +301,9 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       initialScrollSection: 'hero',
       earlyBirdDays: 8,
       earlyBirdRegularPrice: 150000,
-      earlyBirdDiscount: 99000
+      earlyBirdDiscount: 99000,
+      masterclassPageSize: 3,
+      coursePageSize: 6
     };
     saveSiteConfigurationInDb(contact, url, logoSize).catch(console.warn);
   };
@@ -324,7 +326,9 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       initialScrollSection: 'hero',
       earlyBirdDays: 8,
       earlyBirdRegularPrice: 150000,
-      earlyBirdDiscount: 99000
+      earlyBirdDiscount: 99000,
+      masterclassPageSize: 3,
+      coursePageSize: 6
     };
     saveSiteConfigurationInDb(contact, logoUrl, size).catch(console.warn);
   };

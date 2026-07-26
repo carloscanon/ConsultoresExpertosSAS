@@ -8,7 +8,9 @@ import {
   X,
   Calendar,
   Video,
-  BookOpen
+  BookOpen,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 export const AcademyPortal: React.FC = () => {
@@ -17,6 +19,10 @@ export const AcademyPortal: React.FC = () => {
   const [enrollForm, setEnrollForm] = useState({ name: '', email: '', company: '' });
   const [enrollSuccess, setEnrollSuccess] = useState(false);
   const [activeCategory, setActiveCategory] = useState<'todos' | 'dama' | 'ia' | 'arquitectura'>('todos');
+
+  // Pagination states
+  const [tuesdayPage, setTuesdayPage] = useState(0);
+  const [coursesPage, setCoursesPage] = useState(0);
 
   // Separate Tuesday Masterclasses from standard professional programs
   const tuesdayMasterclasses = courses.filter(c => c.category === 'Martes de Masterclass');
@@ -31,6 +37,11 @@ export const AcademyPortal: React.FC = () => {
         if (activeCategory === 'arquitectura') return cat.includes('arquitectura') || cat.includes('datos');
         return true;
       });
+
+  const handleCategoryChange = (cat: 'todos' | 'dama' | 'ia' | 'arquitectura') => {
+    setActiveCategory(cat);
+    setCoursesPage(0);
+  };
 
   const handleEnrollSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +64,16 @@ export const AcademyPortal: React.FC = () => {
       setEnrollForm({ name: '', email: '', company: '' });
     }, 2500);
   };
+
+  // Pagination config
+  const masterclassSize = Number(contactInfo.masterclassPageSize || 3);
+  const courseSize = Number(contactInfo.coursePageSize || 6);
+
+  const totalTuesdayPages = Math.ceil(tuesdayMasterclasses.length / masterclassSize);
+  const totalCoursePages = Math.ceil(filteredCourses.length / courseSize);
+
+  const paginatedMasterclasses = tuesdayMasterclasses.slice(tuesdayPage * masterclassSize, (tuesdayPage + 1) * masterclassSize);
+  const paginatedCourses = filteredCourses.slice(coursesPage * courseSize, (coursesPage + 1) * courseSize);
 
   return (
     <div className="py-24 bg-slate-950 text-white min-h-screen text-left">
@@ -100,13 +121,13 @@ export const AcademyPortal: React.FC = () => {
                   Una clase en vivo única cada martes hasta fin de año. Sesiones técnicas y estratégicas independientes.
                 </p>
               </div>
-              <span className="px-3 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-300">
-                Línea Completa Programada
+              <span className="px-3 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-300 font-mono">
+                Página {tuesdayPage + 1} de {totalTuesdayPages} ({tuesdayMasterclasses.length} Clases)
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {tuesdayMasterclasses.map((course) => {
+              {paginatedMasterclasses.map((course) => {
                 const priceInfo = calculateMasterclassPrice(course, contactInfo);
                 return (
                   <div
@@ -155,7 +176,7 @@ export const AcademyPortal: React.FC = () => {
                               <span className="text-[9px] text-slate-500 line-through">
                                 ${Number(priceInfo.priceValue || 0).toLocaleString()}
                               </span>
-                              <span className="text-emerald-400 font-extrabold">
+                              <span className="text-emerald-450 font-extrabold">
                                 ${Number(priceInfo.discountPriceValue || 0).toLocaleString()}
                               </span>
                             </div>
@@ -210,17 +231,50 @@ export const AcademyPortal: React.FC = () => {
                 );
               })}
             </div>
+
+            {/* Tuesday Pagination Buttons */}
+            {totalTuesdayPages > 1 && (
+              <div className="flex items-center justify-center space-x-2 mt-8 pt-4 border-t border-slate-800/60 text-xs font-bold">
+                <button
+                  disabled={tuesdayPage === 0}
+                  onClick={() => setTuesdayPage(prev => prev - 1)}
+                  className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none transition-all flex items-center space-x-1"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Anterior</span>
+                </button>
+                <span className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-900 text-slate-400 font-mono">
+                  {tuesdayPage + 1} / {totalTuesdayPages}
+                </span>
+                <button
+                  disabled={tuesdayPage >= totalTuesdayPages - 1}
+                  onClick={() => setTuesdayPage(prev => prev + 1)}
+                  className="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none transition-all flex items-center space-x-1"
+                >
+                  <span>Siguiente</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
           </div>
         )}
 
         {/* Regular Catalog Section Header */}
-        <div className="border-t border-slate-800 pt-10 mb-8">
-          <h3 className="text-xl sm:text-2xl font-extrabold text-white font-heading mb-2">
-            Programas y Certificaciones Ejecutivas
-          </h3>
-          <p className="text-xs text-slate-400">
-            Diplomados, Bootcamps y Cursos con certificación CDMP® y acompañamiento experto.
-          </p>
+        <div className="border-t border-slate-800 pt-10 mb-8 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 className="text-xl sm:text-2xl font-extrabold text-white font-heading mb-2">
+              Programas y Certificaciones Ejecutivas
+            </h3>
+            <p className="text-xs text-slate-400">
+              Diplomados, Bootcamps y Cursos con certificación CDMP® y acompañamiento experto.
+            </p>
+          </div>
+          {totalCoursePages > 1 && (
+            <span className="px-3 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-300 font-mono">
+              Página {coursesPage + 1} de {totalCoursePages} ({filteredCourses.length} Programas)
+            </span>
+          )}
         </div>
 
         {/* Feature categories pills */}
@@ -228,7 +282,7 @@ export const AcademyPortal: React.FC = () => {
           {['todos', 'dama', 'ia', 'arquitectura'].map((cat) => (
             <button
               key={cat}
-              onClick={() => setActiveCategory(cat as any)}
+              onClick={() => handleCategoryChange(cat as any)}
               className={`px-4 py-2.5 rounded-xl capitalize transition-all ${
                 activeCategory === cat 
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' 
@@ -242,7 +296,7 @@ export const AcademyPortal: React.FC = () => {
 
         {/* Course Catalog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {filteredCourses.map((course) => {
+          {paginatedCourses.map((course) => {
             const priceInfo = calculateMasterclassPrice(course, contactInfo);
             return (
               <div
@@ -350,6 +404,31 @@ export const AcademyPortal: React.FC = () => {
             );
           })}
         </div>
+
+        {/* Regular Catalog Pagination Buttons */}
+        {totalCoursePages > 1 && (
+          <div className="flex items-center justify-center space-x-2 mt-12 text-xs font-bold">
+            <button
+              disabled={coursesPage === 0}
+              onClick={() => setCoursesPage(prev => prev - 1)}
+              className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none transition-all flex items-center space-x-1"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Anterior</span>
+            </button>
+            <span className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-350 font-mono">
+              Página {coursesPage + 1} de {totalCoursePages}
+            </span>
+            <button
+              disabled={coursesPage >= totalCoursePages - 1}
+              onClick={() => setCoursesPage(prev => prev + 1)}
+              className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none transition-all flex items-center space-x-1"
+            >
+              <span>Siguiente</span>
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
       </div>
 

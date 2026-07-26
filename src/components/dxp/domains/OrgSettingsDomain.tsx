@@ -216,6 +216,29 @@ export const OrgSettingsDomain: React.FC = () => {
               <p className="text-[10px] text-slate-500 leading-normal">
                 Las Masterclasses programadas calcularán dinámicamente su valor en la web: si faltan más de los días indicados para la sesión, se cobrará el precio anticipado; de lo contrario, se cobrará el precio regular.
               </p>
+
+              <div className="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-slate-850">
+                <div className="space-y-1.5">
+                  <label className="block text-slate-350 font-bold">Paginación Masterclass (Tarjetas por página)</label>
+                  <input
+                    type="number"
+                    required
+                    value={form.masterclassPageSize || 3}
+                    onChange={(e) => setForm({ ...form, masterclassPageSize: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-center"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-slate-350 font-bold">Paginación Cursos (Tarjetas por página)</label>
+                  <input
+                    type="number"
+                    required
+                    value={form.coursePageSize || 6}
+                    onChange={(e) => setForm({ ...form, coursePageSize: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-center"
+                  />
+                </div>
+              </div>
             </div>
 
           </div>
