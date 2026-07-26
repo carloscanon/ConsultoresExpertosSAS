@@ -107,14 +107,14 @@ export const AcademyPortal: React.FC = () => {
               {tuesdayMasterclasses.map((course) => (
                 <div
                   key={course.id}
-                  className="bg-slate-950/80 rounded-2xl p-5 border border-slate-800 hover:border-purple-500/40 transition-all flex flex-col justify-between group shadow-lg"
+                  className="bg-slate-950/80 rounded-2xl p-5 border border-slate-800 hover:border-purple-500/40 transition-all flex flex-col justify-between group shadow-lg animate-in fade-in-50"
                 >
                   <div>
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-purple-500/15 text-purple-400 border border-purple-500/20">
                         {course.badge || 'Martes'}
                       </span>
-                      <span className="text-[9px] font-mono font-bold text-emerald-450">
+                      <span className="text-[9px] font-mono font-bold text-slate-400">
                         {course.duration}
                       </span>
                     </div>
@@ -136,6 +136,27 @@ export const AcademyPortal: React.FC = () => {
                         <span>Fecha:</span>
                         <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
                       </div>
+                      <div className="flex justify-between border-t border-slate-800/80 pt-1.5 mt-1.5 font-bold">
+                        <span>Inversión:</span>
+                        {course.priceType === 'discount' ? (
+                          <div className="flex items-center space-x-1.5">
+                            <span className="text-[9px] text-slate-500 line-through">
+                              ${Number(course.priceValue || 0).toLocaleString()}
+                            </span>
+                            <span className="text-emerald-450 font-extrabold">
+                              ${Number(course.discountPriceValue || 0).toLocaleString()}
+                            </span>
+                          </div>
+                        ) : course.priceType === 'paid' ? (
+                          <span className="text-white font-extrabold">
+                            ${Number(course.priceValue || 0).toLocaleString()}
+                          </span>
+                        ) : (
+                          <span className="text-emerald-400 font-extrabold uppercase text-[9px]">
+                            Gratis (Sin Costo)
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -143,7 +164,7 @@ export const AcademyPortal: React.FC = () => {
                     onClick={() => setSelectedCourse(course)}
                     className="w-full py-2 rounded-xl text-[11px] font-bold text-white bg-purple-600 hover:bg-purple-500 transition-all flex items-center justify-center space-x-1"
                   >
-                    <span>Inscribirme Gratis</span>
+                    <span>{course.priceType === 'free' ? 'Inscribirse Gratis' : 'Preinscribirme'}</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                 </div>
@@ -216,6 +237,27 @@ export const AcademyPortal: React.FC = () => {
                   <div className="flex justify-between">
                     <span className="text-slate-500">Cohorte:</span>
                     <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
+                  </div>
+                  <div className="flex justify-between border-t border-slate-800/80 pt-1.5 mt-1.5 font-bold">
+                    <span className="text-slate-500">Inversión:</span>
+                    {course.priceType === 'discount' ? (
+                      <div className="flex items-center space-x-1.5">
+                        <span className="text-[9px] text-slate-500 line-through">
+                          ${Number(course.priceValue || 0).toLocaleString()}
+                        </span>
+                        <span className="text-emerald-450 font-extrabold">
+                          ${Number(course.discountPriceValue || 0).toLocaleString()}
+                        </span>
+                      </div>
+                    ) : course.priceType === 'paid' ? (
+                      <span className="text-white font-extrabold">
+                        ${Number(course.priceValue || 0).toLocaleString()}
+                      </span>
+                    ) : (
+                      <span className="text-emerald-450 font-extrabold uppercase text-[10px]">
+                        Gratuito
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

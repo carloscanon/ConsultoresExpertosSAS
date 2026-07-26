@@ -179,7 +179,9 @@ export const coursesData: Course[] = [
     },
     modulesCount: 1,
     certification: 'Asistencia Oficial Certificada',
-    upcomingDate: 'Martes 04 de Agosto, 2026'
+    upcomingDate: 'Martes 04 de Agosto, 2026',
+    priceType: 'free',
+    priceValue: 0
   },
   {
     id: 'tuesday-snowflake-dimensional',
@@ -197,7 +199,9 @@ export const coursesData: Course[] = [
     },
     modulesCount: 1,
     certification: 'Asistencia Oficial Certificada',
-    upcomingDate: 'Martes 11 de Agosto, 2026'
+    upcomingDate: 'Martes 11 de Agosto, 2026',
+    priceType: 'paid',
+    priceValue: 149000
   },
   {
     id: 'tuesday-metadata-lineage',
@@ -215,6 +219,9 @@ export const coursesData: Course[] = [
     },
     modulesCount: 1,
     certification: 'Asistencia Oficial Certificada',
-    upcomingDate: 'Martes 18 de Agosto, 2026'
+    upcomingDate: 'Martes 18 de Agosto, 2026',
+    priceType: 'discount',
+    priceValue: 199000,
+    discountPriceValue: 79000
   }
 ];

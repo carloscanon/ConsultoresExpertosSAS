@@ -464,24 +464,46 @@ export async function getCoursesCatalogFromDb(): Promise<Course[]> {
 
     if (!data || data.length === 0) return [];
 
-    return data.map((item: any) => ({
-      id: item.id,
-      title: item.title,
-      level: item.level,
-      duration: item.duration,
-      format: item.format,
-      category: item.category,
-      badge: item.badge || '',
-      description: item.description,
-      instructor: {
-        name: item.instructor_name,
-        role: item.instructor_role,
-        experience: item.instructor_experience || ''
-      },
-      modulesCount: item.modules_count || 1,
-      certification: item.certification,
-      upcomingDate: item.upcoming_date
-    }));
+    return data.map((item: any) => {
+      let experience = item.instructor_experience || '';
+      let priceType: 'free' | 'paid' | 'discount' = 'free';
+      let priceValue = 0;
+      let discountPriceValue = 0;
+
+      try {
+        if (item.instructor_experience && item.instructor_experience.trim().startsWith('{')) {
+          const parsed = JSON.parse(item.instructor_experience);
+          experience = parsed.experience || '';
+          priceType = parsed.priceType || 'free';
+          priceValue = parsed.priceValue || 0;
+          discountPriceValue = parsed.discountPriceValue || 0;
+        }
+      } catch (e) {
+        // Fallback to plain text experience
+      }
+
+      return {
+        id: item.id,
+        title: item.title,
+        level: item.level,
+        duration: item.duration,
+        format: item.format,
+        category: item.category,
+        badge: item.badge || '',
+        description: item.description,
+        instructor: {
+          name: item.instructor_name,
+          role: item.instructor_role,
+          experience: experience
+        },
+        modulesCount: item.modules_count || 1,
+        certification: item.certification,
+        upcomingDate: item.upcoming_date,
+        priceType,
+        priceValue,
+        discountPriceValue
+      };
+    });
   } catch (err) {
     console.warn('Supabase error getting courses catalog:', err);
     return [];
@@ -493,6 +515,13 @@ export async function getCoursesCatalogFromDb(): Promise<Course[]> {
  */
 export async function saveCourseInDb(course: Course) {
   try {
+    const serializedExperience = JSON.stringify({
+      experience: course.instructor?.experience || '',
+      priceType: course.priceType || 'free',
+      priceValue: course.priceValue || 0,
+      discountPriceValue: course.discountPriceValue || 0
+    });
+
     const { data, error } = await withTimeout(supabase
       .from('courses_catalog')
       .upsert({
@@ -504,9 +533,9 @@ export async function saveCourseInDb(course: Course) {
         category: course.category,
         badge: course.badge || '',
         description: course.description,
-        instructor_name: course.instructor.name,
-        instructor_role: course.instructor.role,
-        instructor_experience: course.instructor.experience || '',
+        instructor_name: course.instructor?.name || 'Ing. Carlos Cañón',
+        instructor_role: course.instructor?.role || 'Instructor Principal',
+        instructor_experience: serializedExperience,
         modules_count: course.modulesCount,
         certification: course.certification,
         upcoming_date: course.upcomingDate,

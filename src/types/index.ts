@@ -56,6 +56,9 @@ export interface Course {
   modulesCount: number;
   certification: string;
   upcomingDate: string;
+  priceType?: 'free' | 'paid' | 'discount';
+  priceValue?: number;
+  discountPriceValue?: number;
 }
 
 export interface CaseStudy {

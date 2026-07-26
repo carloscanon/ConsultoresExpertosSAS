@@ -41,7 +41,10 @@ export const LearningHubDomain: React.FC = () => {
     duration: '40 Horas',
     instructorName: 'Ing. Carlos Cañón',
     certification: 'Certificado de Asistencia DAMA',
-    upcomingDate: 'Agosto 2026'
+    upcomingDate: 'Agosto 2026',
+    priceType: 'free',
+    priceValue: 0,
+    discountPriceValue: 0
   });
 
   const [enrollmentForm, setEnrollmentForm] = useState({
@@ -66,7 +69,10 @@ export const LearningHubDomain: React.FC = () => {
       duration: '40 Horas',
       instructorName: 'Ing. Carlos Cañón',
       certification: 'Certificado de Asistencia DAMA',
-      upcomingDate: 'Agosto 2026'
+      upcomingDate: 'Agosto 2026',
+      priceType: 'free',
+      priceValue: 0,
+      discountPriceValue: 0
     });
     setCourseModalOpen(true);
   };
@@ -80,7 +86,10 @@ export const LearningHubDomain: React.FC = () => {
       duration: crs.duration,
       instructorName: crs.instructor?.name || crs.instructorName || 'Ing. Carlos Cañón',
       certification: crs.certification,
-      upcomingDate: crs.upcomingDate
+      upcomingDate: crs.upcomingDate,
+      priceType: crs.priceType || 'free',
+      priceValue: crs.priceValue || 0,
+      discountPriceValue: crs.discountPriceValue || 0
     });
     setCourseModalOpen(true);
   };
@@ -99,7 +108,10 @@ export const LearningHubDomain: React.FC = () => {
         description: courses.find(c => c.id === courseForm.id)?.description || 'Especialidad académica en Gobierno de Datos.',
         level: 'Intermedio',
         format: 'Online en Vivo',
-        modulesCount: 5
+        modulesCount: 5,
+        priceType: courseForm.priceType as any,
+        priceValue: courseForm.priceValue,
+        discountPriceValue: courseForm.discountPriceValue
       });
       setSuccessBanner(`✓ Programa "${courseForm.title}" actualizado.`);
     } else {
@@ -114,7 +126,10 @@ export const LearningHubDomain: React.FC = () => {
         description: 'Especialidad académica en Gobierno de Datos.',
         level: 'Intermedio',
         format: 'Online en Vivo',
-        modulesCount: 5
+        modulesCount: 5,
+        priceType: courseForm.priceType as any,
+        priceValue: courseForm.priceValue,
+        discountPriceValue: courseForm.discountPriceValue
       });
       setSuccessBanner(`✓ Programa "${courseForm.title}" creado.`);
     }
@@ -459,7 +474,49 @@ export const LearningHubDomain: React.FC = () => {
                 <label className="block text-slate-300 font-bold mb-1">Próxima Cohorte</label>
                 <input type="text" required value={courseForm.upcomingDate} onChange={(e) => setCourseForm({ ...courseForm, upcomingDate: e.target.value })} placeholder="Ej. Agosto 2026" className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono" />
               </div>
-              <button type="submit" className="w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg mt-2">
+              
+              <div className="border-t border-slate-800 pt-3">
+                <label className="block text-slate-300 font-bold mb-1 font-sans">Esquema de Precios</label>
+                <select 
+                  value={courseForm.priceType} 
+                  onChange={(e) => setCourseForm({ ...courseForm, priceType: e.target.value as any })} 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-bold"
+                >
+                  <option value="free">Gratuito (Sin Costo)</option>
+                  <option value="paid">De Costo (Valor Fijo)</option>
+                  <option value="discount">Con Descuento Especial</option>
+                </select>
+              </div>
+
+              {(courseForm.priceType === 'paid' || courseForm.priceType === 'discount') && (
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Precio Regular ($ COP/USD)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={courseForm.priceValue} 
+                    onChange={(e) => setCourseForm({ ...courseForm, priceValue: Number(e.target.value) })} 
+                    placeholder="Ej. 150000" 
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono font-bold" 
+                  />
+                </div>
+              )}
+
+              {courseForm.priceType === 'discount' && (
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1 text-emerald-400">Precio con Descuento ($ COP/USD)</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={courseForm.discountPriceValue} 
+                    onChange={(e) => setCourseForm({ ...courseForm, discountPriceValue: Number(e.target.value) })} 
+                    placeholder="Ej. 79000" 
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-emerald-400 outline-none focus:border-emerald-400 font-mono font-bold" 
+                  />
+                </div>
+              )}
+
+              <button type="submit" className="w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg mt-4 uppercase">
                 {isEditing ? 'Actualizar Programa' : 'Crear Programa'}
               </button>
             </form>
