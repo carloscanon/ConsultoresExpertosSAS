@@ -39,23 +39,37 @@ const AppContent: React.FC = () => {
 
   const { sectionOrder, contactInfo } = useData();
 
-  // Secure /nimda hidden admin panel access route effect
+  // Secure /nimda hidden admin panel access route effect and legacy URL matching
   useEffect(() => {
-    const checkNimda = () => {
-      const path = window.location.pathname;
+    const checkRoutes = () => {
+      const path = window.location.pathname.toLowerCase();
       const hash = window.location.hash;
+      
+      // Admin Panel
       if (path === '/nimda' || path === '/nimda/' || hash === '#nimda' || hash === '#/nimda' || hash.includes('nimda')) {
         setDxpPortalOpen(true);
-        // Clear history path to keep the admin entry hidden from browser history
         window.history.replaceState(null, '', '/');
+        return;
+      }
+
+      // Legacy SEO routes mapping
+      if (path.startsWith('/academia') || path.startsWith('/cursos')) {
+        setCurrentTab('academy');
+      } else if (path.startsWith('/consultoria') || path.startsWith('/servicios')) {
+        setCurrentTab('consulting');
+      } else if (path.startsWith('/contacto')) {
+        setCurrentTab('contact');
+      } else if (path.startsWith('/recursos') || path.startsWith('/blog')) {
+        setCurrentTab('resources');
       }
     };
-    checkNimda();
-    window.addEventListener('popstate', checkNimda);
-    window.addEventListener('hashchange', checkNimda);
+    
+    checkRoutes();
+    window.addEventListener('popstate', checkRoutes);
+    window.addEventListener('hashchange', checkRoutes);
     return () => {
-      window.removeEventListener('popstate', checkNimda);
-      window.removeEventListener('hashchange', checkNimda);
+      window.removeEventListener('popstate', checkRoutes);
+      window.removeEventListener('hashchange', checkRoutes);
     };
   }, []);
 

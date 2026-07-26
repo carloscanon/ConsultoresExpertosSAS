@@ -7,30 +7,51 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  <!-- Academy Portal / Formación -->
+  <!-- Academy / Academia -->
   <url>
-    <loc>https://www.consultoresexpertos.org/#academy</loc>
+    <loc>https://www.consultoresexpertos.org/academia</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <!-- Cursos -->
+  <url>
+    <loc>https://www.consultoresexpertos.org/cursos</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <!-- Consulting / Consultoría -->
   <url>
-    <loc>https://www.consultoresexpertos.org/#consulting</loc>
+    <loc>https://www.consultoresexpertos.org/consultoria</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <!-- Resources Blog -->
+  <!-- Servicios -->
   <url>
-    <loc>https://www.consultoresexpertos.org/#resources</loc>
+    <loc>https://www.consultoresexpertos.org/servicios</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Resources / Recursos -->
+  <url>
+    <loc>https://www.consultoresexpertos.org/recursos</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Blog -->
+  <url>
+    <loc>https://www.consultoresexpertos.org/blog</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <!-- Contact / Contacto -->
   <url>
-    <loc>https://www.consultoresexpertos.org/#contact</loc>
+    <loc>https://www.consultoresexpertos.org/contacto</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
