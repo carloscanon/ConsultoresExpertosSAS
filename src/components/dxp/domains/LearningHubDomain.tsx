@@ -46,7 +46,13 @@ export const LearningHubDomain: React.FC = () => {
     upcomingDate: 'Agosto 2026',
     priceType: 'free',
     priceValue: 0,
-    discountPriceValue: 0
+    discountPriceValue: 0,
+    description: '',
+    format: 'Online en Vivo',
+    level: 'Avanzado',
+    modulesCount: 5,
+    accessLink: '',
+    conferenceLink: ''
   });
 
   const [enrollmentForm, setEnrollmentForm] = useState({
@@ -74,7 +80,13 @@ export const LearningHubDomain: React.FC = () => {
       upcomingDate: 'Agosto 2026',
       priceType: 'free',
       priceValue: 0,
-      discountPriceValue: 0
+      discountPriceValue: 0,
+      description: 'Especialidad académica en Gobierno de Datos.',
+      format: 'Online en Vivo',
+      level: 'Avanzado',
+      modulesCount: 5,
+      accessLink: '',
+      conferenceLink: ''
     });
     setCourseModalOpen(true);
   };
@@ -91,7 +103,13 @@ export const LearningHubDomain: React.FC = () => {
       upcomingDate: 'Martes de Datos',
       priceType: 'free',
       priceValue: 0,
-      discountPriceValue: 0
+      discountPriceValue: 0,
+      description: 'Sesión técnica en vivo de 2 horas.',
+      format: 'Online en Vivo via Zoom',
+      level: 'Intermedio',
+      modulesCount: 1,
+      accessLink: '',
+      conferenceLink: ''
     });
     setCourseModalOpen(true);
   };
@@ -108,7 +126,13 @@ export const LearningHubDomain: React.FC = () => {
       upcomingDate: crs.upcomingDate,
       priceType: crs.priceType || 'free',
       priceValue: crs.priceValue || 0,
-      discountPriceValue: crs.discountPriceValue || 0
+      discountPriceValue: crs.discountPriceValue || 0,
+      description: crs.description || '',
+      format: crs.format || 'Online en Vivo',
+      level: crs.level || 'Avanzado',
+      modulesCount: crs.modulesCount || 5,
+      accessLink: crs.accessLink || '',
+      conferenceLink: crs.conferenceLink || ''
     });
     setCourseModalOpen(true);
   };
@@ -124,13 +148,15 @@ export const LearningHubDomain: React.FC = () => {
         instructor: { name: courseForm.instructorName, role: 'Instructor Principal', experience: '' },
         certification: courseForm.certification,
         upcomingDate: courseForm.upcomingDate,
-        description: courses.find(c => c.id === courseForm.id)?.description || 'Especialidad académica en Gobierno de Datos.',
-        level: courseForm.category === 'Martes de Masterclass' ? 'Intermedio' : 'Avanzado',
-        format: courseForm.category === 'Martes de Masterclass' ? 'Online en Vivo via Zoom' : 'Online en Vivo',
-        modulesCount: courseForm.category === 'Martes de Masterclass' ? 1 : 5,
+        description: courseForm.description,
+        level: courseForm.level,
+        format: courseForm.format,
+        modulesCount: courseForm.modulesCount,
         priceType: courseForm.priceType as any,
         priceValue: courseForm.priceValue,
-        discountPriceValue: courseForm.discountPriceValue
+        discountPriceValue: courseForm.discountPriceValue,
+        accessLink: courseForm.accessLink,
+        conferenceLink: courseForm.conferenceLink
       });
       setSuccessBanner(`✓ "${courseForm.title}" actualizado.`);
     } else {
@@ -142,13 +168,15 @@ export const LearningHubDomain: React.FC = () => {
         instructor: { name: courseForm.instructorName, role: 'Instructor Principal', experience: '' },
         certification: courseForm.certification,
         upcomingDate: courseForm.upcomingDate,
-        description: courseForm.category === 'Martes de Masterclass' ? 'Sesión técnica en vivo de 2 horas.' : 'Especialidad académica en Gobierno de Datos.',
-        level: courseForm.category === 'Martes de Masterclass' ? 'Intermedio' : 'Avanzado',
-        format: courseForm.category === 'Martes de Masterclass' ? 'Online en Vivo via Zoom' : 'Online en Vivo',
-        modulesCount: courseForm.category === 'Martes de Masterclass' ? 1 : 5,
+        description: courseForm.description,
+        level: courseForm.level,
+        format: courseForm.format,
+        modulesCount: courseForm.modulesCount,
         priceType: courseForm.priceType as any,
         priceValue: courseForm.priceValue,
-        discountPriceValue: courseForm.discountPriceValue
+        discountPriceValue: courseForm.discountPriceValue,
+        accessLink: courseForm.accessLink,
+        conferenceLink: courseForm.conferenceLink
       });
       setSuccessBanner(`✓ "${courseForm.title}" creado.`);
     }
@@ -621,6 +649,83 @@ export const LearningHubDomain: React.FC = () => {
                   placeholder="Ej. Martes 15 de Septiembre, 2026" 
                   className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono font-bold" 
                 />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-bold mb-1">Descripción / Sinopsis del Curso</label>
+                <textarea 
+                  rows={3}
+                  required 
+                  value={courseForm.description} 
+                  onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })} 
+                  placeholder="Describa brevemente los objetivos y temas del curso..." 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-sans" 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Formato / Modalidad</label>
+                  <select 
+                    value={courseForm.format} 
+                    onChange={(e) => setCourseForm({ ...courseForm, format: e.target.value })} 
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-semibold"
+                  >
+                    <option value="Online en Vivo">Online en Vivo</option>
+                    <option value="Online en Vivo via Zoom">Online en Vivo via Zoom</option>
+                    <option value="Laboratorios Prácticos 100%">Laboratorios Prácticos 100%</option>
+                    <option value="Híbrido Presencial">Híbrido Presencial</option>
+                    <option value="Autoformación Gratuita">Autoformación Gratuita</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Nivel</label>
+                  <select 
+                    value={courseForm.level} 
+                    onChange={(e) => setCourseForm({ ...courseForm, level: e.target.value })} 
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-semibold"
+                  >
+                    <option value="Principiante">Principiante</option>
+                    <option value="Intermedio">Intermedio</option>
+                    <option value="Avanzado">Avanzado</option>
+                    <option value="Especialista">Especialista</option>
+                    <option value="Ejecutivo">Ejecutivo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-bold mb-1">Cantidad de Módulos (Clases)</label>
+                <input 
+                  type="number" 
+                  required 
+                  value={courseForm.modulesCount} 
+                  onChange={(e) => setCourseForm({ ...courseForm, modulesCount: Number(e.target.value) })} 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono font-bold" 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Link de Acceso (Aula/LMS)</label>
+                  <input 
+                    type="text" 
+                    value={courseForm.accessLink} 
+                    onChange={(e) => setCourseForm({ ...courseForm, accessLink: e.target.value })} 
+                    placeholder="https://aula.academy..." 
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono text-[10px]" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">Link de Conferencia (Zoom/Teams)</label>
+                  <input 
+                    type="text" 
+                    value={courseForm.conferenceLink} 
+                    onChange={(e) => setCourseForm({ ...courseForm, conferenceLink: e.target.value })} 
+                    placeholder="https://zoom.us/j/..." 
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono text-[10px]" 
+                  />
+                </div>
               </div>
               
               <div className="border-t border-slate-800 pt-3">

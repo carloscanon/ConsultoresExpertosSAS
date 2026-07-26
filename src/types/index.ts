@@ -59,6 +59,8 @@ export interface Course {
   priceType?: 'free' | 'paid' | 'discount';
   priceValue?: number;
   discountPriceValue?: number;
+  accessLink?: string;
+  conferenceLink?: string;
 }
 
 export interface CaseStudy {

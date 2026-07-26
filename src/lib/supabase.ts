@@ -469,6 +469,8 @@ export async function getCoursesCatalogFromDb(): Promise<Course[]> {
       let priceType: 'free' | 'paid' | 'discount' = 'free';
       let priceValue = 0;
       let discountPriceValue = 0;
+      let accessLink = '';
+      let conferenceLink = '';
 
       try {
         if (item.instructor_experience && item.instructor_experience.trim().startsWith('{')) {
@@ -477,6 +479,8 @@ export async function getCoursesCatalogFromDb(): Promise<Course[]> {
           priceType = parsed.priceType || 'free';
           priceValue = parsed.priceValue || 0;
           discountPriceValue = parsed.discountPriceValue || 0;
+          accessLink = parsed.accessLink || '';
+          conferenceLink = parsed.conferenceLink || '';
         }
       } catch (e) {
         // Fallback to plain text experience
@@ -501,7 +505,9 @@ export async function getCoursesCatalogFromDb(): Promise<Course[]> {
         upcomingDate: item.upcoming_date,
         priceType,
         priceValue,
-        discountPriceValue
+        discountPriceValue,
+        accessLink,
+        conferenceLink
       };
     });
   } catch (err) {
@@ -519,7 +525,9 @@ export async function saveCourseInDb(course: Course) {
       experience: course.instructor?.experience || '',
       priceType: course.priceType || 'free',
       priceValue: course.priceValue || 0,
-      discountPriceValue: course.discountPriceValue || 0
+      discountPriceValue: course.discountPriceValue || 0,
+      accessLink: course.accessLink || '',
+      conferenceLink: course.conferenceLink || ''
     });
 
     const { data, error } = await withTimeout(supabase
