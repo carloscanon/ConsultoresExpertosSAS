@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /nimda
+Disallow: /nimda/
+
+Sitemap: https://www.consultoresexpertos.org/sitemap.xml

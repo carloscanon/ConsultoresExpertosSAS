@@ -25,8 +25,8 @@ export const AcademyPortal: React.FC = () => {
   const [coursesPage, setCoursesPage] = useState(0);
 
   // Separate Tuesday Masterclasses from standard professional programs
-  const tuesdayMasterclasses = courses.filter(c => c.category === 'Martes de Masterclass');
-  const regularCourses = courses.filter(c => c.category !== 'Martes de Masterclass');
+  const tuesdayMasterclasses = courses.filter(c => c.category === 'Martes de Masterclass' && c.active !== false);
+  const regularCourses = courses.filter(c => c.category !== 'Martes de Masterclass' && c.active !== false);
 
   const filteredCourses = activeCategory === 'todos' 
     ? regularCourses 

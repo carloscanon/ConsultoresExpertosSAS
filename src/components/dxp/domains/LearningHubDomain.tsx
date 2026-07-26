@@ -52,7 +52,8 @@ export const LearningHubDomain: React.FC = () => {
     level: 'Avanzado',
     modulesCount: 5,
     accessLink: '',
-    conferenceLink: ''
+    conferenceLink: '',
+    active: true
   });
 
   const [enrollmentForm, setEnrollmentForm] = useState({
@@ -86,7 +87,8 @@ export const LearningHubDomain: React.FC = () => {
       level: 'Avanzado',
       modulesCount: 5,
       accessLink: '',
-      conferenceLink: ''
+      conferenceLink: '',
+      active: true
     });
     setCourseModalOpen(true);
   };
@@ -109,7 +111,8 @@ export const LearningHubDomain: React.FC = () => {
       level: 'Intermedio',
       modulesCount: 1,
       accessLink: '',
-      conferenceLink: ''
+      conferenceLink: '',
+      active: true
     });
     setCourseModalOpen(true);
   };
@@ -132,7 +135,8 @@ export const LearningHubDomain: React.FC = () => {
       level: crs.level || 'Avanzado',
       modulesCount: crs.modulesCount || 5,
       accessLink: crs.accessLink || '',
-      conferenceLink: crs.conferenceLink || ''
+      conferenceLink: crs.conferenceLink || '',
+      active: crs.active !== false
     });
     setCourseModalOpen(true);
   };
@@ -156,7 +160,8 @@ export const LearningHubDomain: React.FC = () => {
         priceValue: courseForm.priceValue,
         discountPriceValue: courseForm.discountPriceValue,
         accessLink: courseForm.accessLink,
-        conferenceLink: courseForm.conferenceLink
+        conferenceLink: courseForm.conferenceLink,
+        active: courseForm.active
       });
       setSuccessBanner(`✓ "${courseForm.title}" actualizado.`);
     } else {
@@ -176,7 +181,8 @@ export const LearningHubDomain: React.FC = () => {
         priceValue: courseForm.priceValue,
         discountPriceValue: courseForm.discountPriceValue,
         accessLink: courseForm.accessLink,
-        conferenceLink: courseForm.conferenceLink
+        conferenceLink: courseForm.conferenceLink,
+        active: courseForm.active
       });
       setSuccessBanner(`✓ "${courseForm.title}" creado.`);
     }
@@ -454,6 +460,11 @@ export const LearningHubDomain: React.FC = () => {
                       <div className="flex items-center space-x-2">
                         <GraduationCap className="w-4 h-4 text-cyan-400 shrink-0" />
                         <span>{crs.title}</span>
+                        {crs.active === false ? (
+                          <span className="px-1.5 py-0.5 rounded text-[8px] bg-red-500/10 text-red-400 border border-red-500/20 font-bold shrink-0">Inactivo</span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded text-[8px] bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 font-bold shrink-0">Activo</span>
+                        )}
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-cyan-400 font-mono">{crs.category}</td>
@@ -523,6 +534,11 @@ export const LearningHubDomain: React.FC = () => {
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-purple-400 shrink-0" />
                         <span>{crs.title}</span>
+                        {crs.active === false ? (
+                          <span className="px-1.5 py-0.5 rounded text-[8px] bg-red-500/10 text-red-400 border border-red-500/20 font-bold shrink-0">Inactivo</span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded text-[8px] bg-emerald-500/10 text-emerald-450 border border-emerald-500/20 font-bold shrink-0">Activo</span>
+                        )}
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-cyan-400 font-mono font-bold">{crs.upcomingDate}</td>
@@ -768,6 +784,19 @@ export const LearningHubDomain: React.FC = () => {
                   />
                 </div>
               )}
+
+              <div className="flex items-center space-x-2.5 pt-3 border-t border-slate-800">
+                <input
+                  type="checkbox"
+                  id="courseActive"
+                  checked={courseForm.active}
+                  onChange={(e) => setCourseForm({ ...courseForm, active: e.target.checked })}
+                  className="w-4.5 h-4.5 accent-cyan-500 rounded cursor-pointer"
+                />
+                <label htmlFor="courseActive" className="text-slate-350 font-bold cursor-pointer select-none">
+                  Publicado / Activo en la Web
+                </label>
+              </div>
 
               <button 
                 type="submit" 

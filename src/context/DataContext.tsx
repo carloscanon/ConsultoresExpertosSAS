@@ -383,8 +383,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (fetchedConfig) {
         setContactInfo(fetchedConfig.contact);
-        if (fetchedConfig.logoUrl) setLogoUrl(fetchedConfig.logoUrl);
-        if (fetchedConfig.logoSize) setLogoSize(fetchedConfig.logoSize);
+        if (fetchedConfig.logoUrl) setLogoUrl(fetchedConfig.logoUrl, true);
+        if (fetchedConfig.logoSize) setLogoSize(fetchedConfig.logoSize, true);
       }
 
       if (fetchedLayout) {

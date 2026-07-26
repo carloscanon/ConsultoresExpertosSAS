@@ -61,6 +61,7 @@ export interface Course {
   discountPriceValue?: number;
   accessLink?: string;
   conferenceLink?: string;
+  active?: boolean;
 }
 
 export interface CaseStudy {

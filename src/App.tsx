@@ -44,7 +44,7 @@ const AppContent: React.FC = () => {
     const checkNimda = () => {
       const path = window.location.pathname;
       const hash = window.location.hash;
-      if (path === '/nimda' || path === '/nimda/' || hash === '#nimda') {
+      if (path === '/nimda' || path === '/nimda/' || hash === '#nimda' || hash === '#/nimda' || hash.includes('nimda')) {
         setDxpPortalOpen(true);
         // Clear history path to keep the admin entry hidden from browser history
         window.history.replaceState(null, '', '/');

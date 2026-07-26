@@ -105,8 +105,8 @@ interface ThemeContextType {
   isLight: boolean;
   logoUrl: string;
   logoSize: number;
-  setLogoUrl: (url: string) => void;
-  setLogoSize: (size: number) => void;
+  setLogoUrl: (url: string, skipDb?: boolean) => void;
+  setLogoSize: (size: number, skipDb?: boolean) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -283,9 +283,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return saved ? parseInt(saved, 10) : 180;
   });
 
-  const setLogoUrl = (url: string) => {
+  const setLogoUrl = (url: string, skipDb = false) => {
     setLogoUrlState(url);
     localStorage.setItem('dxp_logo_url', url);
+    if (skipDb) return;
     
     // Asynchronously update in database
     const savedContact = localStorage.getItem('dxp_contact_info');
@@ -308,9 +309,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     saveSiteConfigurationInDb(contact, url, logoSize).catch(console.warn);
   };
 
-  const setLogoSize = (size: number) => {
+  const setLogoSize = (size: number, skipDb = false) => {
     setLogoSizeState(size);
     localStorage.setItem('dxp_logo_size', String(size));
+    if (skipDb) return;
     
     // Asynchronously update in database
     const savedContact = localStorage.getItem('dxp_contact_info');

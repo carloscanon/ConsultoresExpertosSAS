@@ -47,11 +47,11 @@ export const AcademySection: React.FC = () => {
   };
 
   // Filter lists for home page
-  const regularCourses = courses.filter(c => c.category !== 'Martes de Masterclass');
+  const regularCourses = courses.filter(c => c.category !== 'Martes de Masterclass' && c.active !== false);
   
   // Sort chronologically and take only the next N upcoming Tuesday Masterclasses
   const next3Masterclasses = courses
-    .filter(c => c.category === 'Martes de Masterclass')
+    .filter(c => c.category === 'Martes de Masterclass' && c.active !== false)
     .map(c => ({
       ...c,
       parsedDate: parseSpanishDate(c.upcomingDate) || new Date(8640000000000000)
