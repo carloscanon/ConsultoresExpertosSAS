@@ -292,7 +292,6 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     localStorage.setItem('dxp_logo_url', url);
     if (skipDb) return;
     
-    // Asynchronously update in database
     const savedContact = localStorage.getItem('dxp_contact_info');
     const contact = savedContact ? JSON.parse(savedContact) : {
       companyName: 'Consultores Expertos SAS',
@@ -310,7 +309,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       masterclassPageSize: 3,
       coursePageSize: 6
     };
-    saveSiteConfigurationInDb(contact, url, logoSize).catch(console.warn);
+    saveSiteConfigurationInDb(contact, url, logoSize, logoHeight, logoWidth).catch(console.warn);
   };
 
   const setLogoSize = (size: number, skipDb = false) => {
@@ -318,7 +317,6 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     localStorage.setItem('dxp_logo_size', String(size));
     if (skipDb) return;
     
-    // Asynchronously update in database
     const savedContact = localStorage.getItem('dxp_contact_info');
     const contact = savedContact ? JSON.parse(savedContact) : {
       companyName: 'Consultores Expertos SAS',
@@ -336,7 +334,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       masterclassPageSize: 3,
       coursePageSize: 6
     };
-    saveSiteConfigurationInDb(contact, logoUrl, size).catch(console.warn);
+    saveSiteConfigurationInDb(contact, logoUrl, size, logoHeight, logoWidth).catch(console.warn);
   };
 
   const [logoHeight, setLogoHeightState] = useState<number>(() => {
@@ -349,14 +347,22 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return saved ? parseInt(saved, 10) : 100; // pct
   });
 
-  const setLogoHeight = (height: number) => {
+  const setLogoHeight = (height: number, skipDb = false) => {
     setLogoHeightState(height);
     localStorage.setItem('dxp_logo_height', String(height));
+    if (skipDb) return;
+    const savedContact = localStorage.getItem('dxp_contact_info');
+    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
+    saveSiteConfigurationInDb(contact, logoUrl, logoSize, height, logoWidth).catch(console.warn);
   };
 
-  const setLogoWidth = (width: number) => {
+  const setLogoWidth = (width: number, skipDb = false) => {
     setLogoWidthState(width);
     localStorage.setItem('dxp_logo_width', String(width));
+    if (skipDb) return;
+    const savedContact = localStorage.getItem('dxp_contact_info');
+    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
+    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, width).catch(console.warn);
   };
 
   return (

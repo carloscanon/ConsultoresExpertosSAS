@@ -228,7 +228,7 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { logoUrl, logoSize, setLogoUrl, setLogoSize } = useTheme();
+  const { logoUrl, logoSize, logoHeight, logoWidth, setLogoUrl, setLogoSize, setLogoHeight, setLogoWidth } = useTheme();
 
   const [courses, setCourses] = useState<Course[]>(() => {
     const saved = localStorage.getItem('dxp_courses');
@@ -393,6 +393,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setContactInfo(fetchedConfig.contact);
         if (fetchedConfig.logoUrl) setLogoUrl(fetchedConfig.logoUrl, true);
         if (fetchedConfig.logoSize) setLogoSize(fetchedConfig.logoSize, true);
+        if (fetchedConfig.logoHeight) setLogoHeight(fetchedConfig.logoHeight);
+        if (fetchedConfig.logoWidth) setLogoWidth(fetchedConfig.logoWidth);
       }
 
       if (fetchedLayout) {
@@ -643,7 +645,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Institutional Info action
   const updateContactInfo = async (info: ContactInfo) => {
     setContactInfo(info);
-    const res = await saveSiteConfigurationInDb(info, logoUrl, logoSize);
+    const res = await saveSiteConfigurationInDb(info, logoUrl, logoSize, logoHeight, logoWidth);
     if (!res.success && res.error) {
       throw new Error(res.error.message || 'Error guardando config SEO en Supabase');
     }

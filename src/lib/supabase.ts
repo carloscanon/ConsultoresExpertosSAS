@@ -690,17 +690,30 @@ export async function deleteBlogResourceFromDb(id: string) {
 /**
  * Guardar Parámetros de Contacto, SEO y Logo de Marca en la Base de Datos (en fila especial)
  */
-export async function saveSiteConfigurationInDb(contact: ContactInfo, logoUrl: string, logoSize: number) {
+export async function saveSiteConfigurationInDb(
+  contact: ContactInfo, 
+  logoUrl: string, 
+  logoSize: number, 
+  logoHeight?: number, 
+  logoWidth?: number
+) {
   try {
+    const serializedLogoMeta = JSON.stringify({
+      url: logoUrl || '',
+      size: logoSize || 180,
+      height: logoHeight || 56,
+      width: logoWidth || 100
+    });
+
     const { data, error } = await withTimeout(supabase
       .from('blog_resources')
       .upsert({
         id: 'site_seo_settings',
         title: 'Configuración DXP Centralizada',
         category: 'site_config',
-        read_time: String(logoSize), // Store logoSize as read_time string
+        read_time: String(logoSize), // Store logoSize as read_time string for backwards compatibility
         summary: JSON.stringify(contact), // Store contact info object as JSON in summary
-        ai_summary: logoUrl || '', // Store logoUrl string in ai_summary
+        ai_summary: serializedLogoMeta, // Store complete logo metadata JSON in ai_summary
         author: 'Super Admin',
         author_role: 'System settings',
         date: new Date().toLocaleDateString('es-ES'),
@@ -732,10 +745,28 @@ export async function getSiteConfigurationFromDb() {
     }
 
     const contact = JSON.parse(data.summary) as ContactInfo;
-    const logoUrl = data.ai_summary || '';
-    const logoSize = Number(data.read_time) || 180;
+    let logoUrl = '';
+    let logoSize = Number(data.read_time) || 180;
+    let logoHeight = 56;
+    let logoWidth = 100;
 
-    return { contact, logoUrl, logoSize };
+    if (data.ai_summary) {
+      if (data.ai_summary.trim().startsWith('{')) {
+        try {
+          const parsedLogo = JSON.parse(data.ai_summary);
+          logoUrl = parsedLogo.url || '';
+          logoSize = parsedLogo.size || logoSize;
+          logoHeight = parsedLogo.height || 56;
+          logoWidth = parsedLogo.width || 100;
+        } catch (e) {
+          logoUrl = data.ai_summary;
+        }
+      } else {
+        logoUrl = data.ai_summary;
+      }
+    }
+
+    return { contact, logoUrl, logoSize, logoHeight, logoWidth };
   } catch (err) {
     console.warn('Supabase exception reading site configurations:', err);
     return null;
