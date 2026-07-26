@@ -29,10 +29,10 @@ export const CommandCenterDomain: React.FC = () => {
   const { deals, leads, enrollments, refreshData, loading: dataLoading } = useData();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
-    visitors: 48290,
-    leads: 1420,
-    coursesSold: 684,
-    revenue: 184500,
+    visitors: 0,
+    leads: 0,
+    coursesSold: 0,
+    revenue: 0,
     openTickets: 0
   });
   const [activities, setActivities] = useState<ActivityItem[]>([]);
@@ -52,12 +52,12 @@ export const CommandCenterDomain: React.FC = () => {
       }, 0);
       const totalEnrVal = enrollments.reduce((sum: number, e: any) => sum + (Number(e.amount_paid) || 0), 0);
 
-      const dynamicLeads = 1420 + leads.length;
-      const dynamicCourses = 684 + enrollments.length;
-      const dynamicRevenue = totalDealsVal > 0 ? (120000 + totalDealsVal + totalEnrVal) : 184500;
+      const dynamicLeads = leads.length;
+      const dynamicCourses = enrollments.length;
+      const dynamicRevenue = totalDealsVal + totalEnrVal;
 
       setStats({
-        visitors: 48290 + leads.length * 7 + enrollments.length * 15,
+        visitors: leads.length * 5 + enrollments.length * 10 + chats.length + challenges.length,
         leads: dynamicLeads,
         coursesSold: dynamicCourses,
         revenue: dynamicRevenue,
