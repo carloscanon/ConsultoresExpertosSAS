@@ -24,7 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDemo, 
   onOpenSearch
 }) => {
-  const { isLight, toggleTheme, logoUrl, logoSize } = useTheme();
+  const { isLight, toggleTheme, logoUrl, logoSize, logoHeight, logoWidth } = useTheme();
   const { contactInfo, menuItems } = useData();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -64,7 +64,15 @@ export const Header: React.FC<HeaderProps> = ({
             style={{ width: `${logoSize}px` }}
           >
             {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="max-h-28 object-contain" style={{ width: '100%' }} />
+              <img 
+                src={logoUrl} 
+                alt="Logo" 
+                className="object-contain transition-all" 
+                style={{ 
+                  maxHeight: `${logoHeight}px`, 
+                  width: `${logoWidth}%` 
+                }} 
+              />
             ) : (
               <div className="flex flex-col text-left">
                 <ConsultoresLogo showNit={false} />

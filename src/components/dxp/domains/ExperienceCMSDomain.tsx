@@ -17,11 +17,9 @@ import {
   Link2,
   Star
 } from 'lucide-react';
-import { useTheme } from '../../../context/ThemeContext';
 import { saveSuperAdminAuditLog } from '../../../lib/supabase';
 
 export const ExperienceCMSDomain: React.FC = () => {
-  const { logoUrl, logoSize, setLogoUrl, setLogoSize } = useTheme();
   const { 
     contactInfo, 
     updateContactInfo, 
@@ -437,43 +435,6 @@ export const ExperienceCMSDomain: React.FC = () => {
             <p className="text-xs text-slate-400 mt-1">
               Configure las variables de contacto de la landing page y las etiquetas meta orgánicas de indexación de Google.
             </p>
-          </div>
-
-          {/* Logo Branding & Size Slider */}
-          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
-            <h4 className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest border-b border-slate-850 pb-2">
-              🎨 LOGOTIPO INSTITUCIONAL & TAMAÑO CABECERA
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="block text-slate-350 font-bold">URL del Logo Institucional</label>
-                <input
-                  type="url"
-                  value={logoUrl}
-                  onChange={(e) => setLogoUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white font-mono text-[11px]"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center">
-                  <label className="block text-slate-350 font-bold">Ancho del Logo en Cabecera</label>
-                  <span className="text-cyan-400 font-mono font-bold">{logoSize}px</span>
-                </div>
-                <input
-                  type="range"
-                  min={120}
-                  max={380}
-                  step={5}
-                  value={logoSize}
-                  onChange={(e) => setLogoSize(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-                />
-                <p className="text-[10px] text-slate-500 font-mono">
-                  Deslice para ampliar el tamaño de la imagen del logo en el menú superior.
-                </p>
-              </div>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

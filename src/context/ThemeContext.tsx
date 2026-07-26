@@ -105,8 +105,12 @@ interface ThemeContextType {
   isLight: boolean;
   logoUrl: string;
   logoSize: number;
+  logoHeight: number;
+  logoWidth: number;
   setLogoUrl: (url: string, skipDb?: boolean) => void;
   setLogoSize: (size: number, skipDb?: boolean) => void;
+  setLogoHeight: (height: number) => void;
+  setLogoWidth: (width: number) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -335,6 +339,26 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     saveSiteConfigurationInDb(contact, logoUrl, size).catch(console.warn);
   };
 
+  const [logoHeight, setLogoHeightState] = useState<number>(() => {
+    const saved = localStorage.getItem('dxp_logo_height');
+    return saved ? parseInt(saved, 10) : 56;
+  });
+
+  const [logoWidth, setLogoWidthState] = useState<number>(() => {
+    const saved = localStorage.getItem('dxp_logo_width');
+    return saved ? parseInt(saved, 10) : 100; // pct
+  });
+
+  const setLogoHeight = (height: number) => {
+    setLogoHeightState(height);
+    localStorage.setItem('dxp_logo_height', String(height));
+  };
+
+  const setLogoWidth = (width: number) => {
+    setLogoWidthState(width);
+    localStorage.setItem('dxp_logo_width', String(width));
+  };
+
   return (
     <ThemeContext.Provider value={{ 
       theme, 
@@ -344,8 +368,12 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       isLight,
       logoUrl,
       logoSize,
+      logoHeight,
+      logoWidth,
       setLogoUrl,
-      setLogoSize
+      setLogoSize,
+      setLogoHeight,
+      setLogoWidth
     }}>
       {children}
     </ThemeContext.Provider>

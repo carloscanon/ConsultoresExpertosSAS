@@ -20,8 +20,12 @@ export const ThemeSelectorDomain: React.FC = () => {
     currentThemeDef,
     logoUrl,
     logoSize,
+    logoHeight,
+    logoWidth,
     setLogoUrl,
-    setLogoSize
+    setLogoSize,
+    setLogoHeight,
+    setLogoWidth
   } = useTheme();
   const [appliedNotification, setAppliedNotification] = useState<string | null>(null);
 
@@ -309,7 +313,7 @@ export const ThemeSelectorDomain: React.FC = () => {
 
             <div className="space-y-1.5 text-left">
               <div className="flex justify-between font-bold text-slate-300">
-                <span>Ancho de Visualización (Logo Width)</span>
+                <span>Ancho del Contenedor (Container Width)</span>
                 <span className="text-cyan-400 font-mono">{logoSize}px</span>
               </div>
               <input
@@ -319,12 +323,56 @@ export const ThemeSelectorDomain: React.FC = () => {
                 step="5"
                 value={logoSize}
                 onChange={(e) => setLogoSize(parseInt(e.target.value, 10))}
-                className="w-full h-1 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-400"
               />
               <div className="flex justify-between text-[9px] text-slate-500 font-mono">
                 <span>60px</span>
                 <span>180px (Default)</span>
                 <span>600px</span>
+              </div>
+            </div>
+
+            {/* Vertical Image Slider (Height) */}
+            <div className="space-y-1.5 text-left">
+              <div className="flex justify-between font-bold text-slate-300">
+                <span>↕️ Alto de la Imagen (Vertical Size)</span>
+                <span className="text-cyan-400 font-mono">{logoHeight}px</span>
+              </div>
+              <input
+                type="range"
+                min="20"
+                max="160"
+                step="2"
+                value={logoHeight}
+                onChange={(e) => setLogoHeight(parseInt(e.target.value, 10))}
+                className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-400"
+              />
+              <div className="flex justify-between text-[9px] text-slate-500 font-mono">
+                <span>20px</span>
+                <span>56px (Default)</span>
+                <span>160px</span>
+              </div>
+            </div>
+
+            {/* Horizontal Image Slider (Width %) */}
+            <div className="space-y-1.5 text-left">
+              <div className="flex justify-between font-bold text-slate-300">
+                <span>↔️ Ancho de la Imagen (Horizontal Fill %)</span>
+                <span className="text-cyan-400 font-mono">{logoWidth}%</span>
+              </div>
+              <input
+                type="range"
+                min="20"
+                max="100"
+                step="5"
+                value={logoWidth}
+                onChange={(e) => setLogoWidth(parseInt(e.target.value, 10))}
+                className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+              />
+              <div className="flex justify-between text-[9px] text-slate-500 font-mono">
+                <span>20%</span>
+                <span>100% (Default)</span>
+                <span>100%</span>
               </div>
             </div>
 
@@ -362,7 +410,12 @@ export const ThemeSelectorDomain: React.FC = () => {
               style={{ width: `${logoSize}px`, minHeight: '60px' }}
             >
               {logoUrl ? (
-                <img src={logoUrl} alt="Vista previa logo" className="max-h-16 object-contain" style={{ width: '100%' }} />
+                <img 
+                  src={logoUrl} 
+                  alt="Vista previa logo" 
+                  className="object-contain transition-all" 
+                  style={{ maxHeight: `${logoHeight}px`, width: `${logoWidth}%` }} 
+                />
               ) : (
                 <div className="text-center py-2">
                   <p className="text-[10px] text-slate-500 font-mono font-bold uppercase">LOGO DEFECTO</p>
