@@ -19,13 +19,19 @@ export const ResourcesPortal: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
 
-  // Helper to extract YouTube video ID and get thumbnail (supports watch, embed, shorts, and youtu.be links)
+  // Helper to extract YouTube video ID and get thumbnail
   const getYoutubeThumbnail = (url: string) => {
     if (!url) return '';
-    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    // Try multiple regex patterns to cover every possible YouTube link format
+    const regExp = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/;
     const match = url.match(regExp);
     if (match && match[1]) {
       return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+    }
+    // Secondary fallback search for 11-char video ID if standard regex misses query params
+    const secondaryMatch = url.match(/v=([\w-]{11})/);
+    if (secondaryMatch && secondaryMatch[1]) {
+      return `https://img.youtube.com/vi/${secondaryMatch[1]}/hqdefault.jpg`;
     }
     return '';
   };
@@ -33,10 +39,14 @@ export const ResourcesPortal: React.FC = () => {
   // Helper to extract YouTube embed URL
   const getYoutubeEmbedUrl = (url: string) => {
     if (!url) return '';
-    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const regExp = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/;
     const match = url.match(regExp);
     if (match && match[1]) {
       return `https://www.youtube.com/embed/${match[1]}?autoplay=1`;
+    }
+    const secondaryMatch = url.match(/v=([\w-]{11})/);
+    if (secondaryMatch && secondaryMatch[1]) {
+      return `https://www.youtube.com/embed/${secondaryMatch[1]}?autoplay=1`;
     }
     return '';
   };
