@@ -10,7 +10,8 @@ import {
   Trash2,
   Edit2,
   RefreshCw,
-  CheckCircle2
+  CheckCircle2,
+  Calendar
 } from 'lucide-react';
 
 export const LearningHubDomain: React.FC = () => {
@@ -26,12 +27,13 @@ export const LearningHubDomain: React.FC = () => {
     refreshData 
   } = useData();
 
-  const [activeTab, setActiveTab] = useState<'enrollments' | 'catalog'>('enrollments');
-
   // Modals
   const [courseModalOpen, setCourseModalOpen] = useState(false);
   const [enrollmentModalOpen, setEnrollmentModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+
+  // Tabs: enrollments, catalog, masterclasses
+  const [activeTab, setActiveTab] = useState<'enrollments' | 'catalog' | 'masterclasses'>('enrollments');
 
   // Forms State
   const [courseForm, setCourseForm] = useState({
@@ -59,7 +61,7 @@ export const LearningHubDomain: React.FC = () => {
 
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
 
-  // Course operations
+  // Course / Masterclass operations
   const handleOpenCreateCourse = () => {
     setIsEditing(false);
     setCourseForm({
@@ -70,6 +72,23 @@ export const LearningHubDomain: React.FC = () => {
       instructorName: 'Ing. Carlos Cañón',
       certification: 'Certificado de Asistencia DAMA',
       upcomingDate: 'Agosto 2026',
+      priceType: 'free',
+      priceValue: 0,
+      discountPriceValue: 0
+    });
+    setCourseModalOpen(true);
+  };
+
+  const handleOpenCreateMasterclass = () => {
+    setIsEditing(false);
+    setCourseForm({
+      id: `tuesday-${Date.now()}`,
+      title: 'Masterclass: ',
+      category: 'Martes de Masterclass',
+      duration: '2 Horas (Sesión Única)',
+      instructorName: 'Ing. Carlos Cañón',
+      certification: 'Asistencia Oficial Certificada',
+      upcomingDate: 'Martes de Datos',
       priceType: 'free',
       priceValue: 0,
       discountPriceValue: 0
@@ -106,41 +125,41 @@ export const LearningHubDomain: React.FC = () => {
         certification: courseForm.certification,
         upcomingDate: courseForm.upcomingDate,
         description: courses.find(c => c.id === courseForm.id)?.description || 'Especialidad académica en Gobierno de Datos.',
-        level: 'Intermedio',
-        format: 'Online en Vivo',
-        modulesCount: 5,
+        level: courseForm.category === 'Martes de Masterclass' ? 'Intermedio' : 'Avanzado',
+        format: courseForm.category === 'Martes de Masterclass' ? 'Online en Vivo via Zoom' : 'Online en Vivo',
+        modulesCount: courseForm.category === 'Martes de Masterclass' ? 1 : 5,
         priceType: courseForm.priceType as any,
         priceValue: courseForm.priceValue,
         discountPriceValue: courseForm.discountPriceValue
       });
-      setSuccessBanner(`✓ Programa "${courseForm.title}" actualizado.`);
+      setSuccessBanner(`✓ "${courseForm.title}" actualizado.`);
     } else {
       addCourse({
-        id: `course-${Date.now()}`,
+        id: courseForm.id || `course-${Date.now()}`,
         title: courseForm.title,
         category: courseForm.category,
         duration: courseForm.duration,
         instructor: { name: courseForm.instructorName, role: 'Instructor Principal', experience: '' },
         certification: courseForm.certification,
         upcomingDate: courseForm.upcomingDate,
-        description: 'Especialidad académica en Gobierno de Datos.',
-        level: 'Intermedio',
-        format: 'Online en Vivo',
-        modulesCount: 5,
+        description: courseForm.category === 'Martes de Masterclass' ? 'Sesión técnica en vivo de 2 horas.' : 'Especialidad académica en Gobierno de Datos.',
+        level: courseForm.category === 'Martes de Masterclass' ? 'Intermedio' : 'Avanzado',
+        format: courseForm.category === 'Martes de Masterclass' ? 'Online en Vivo via Zoom' : 'Online en Vivo',
+        modulesCount: courseForm.category === 'Martes de Masterclass' ? 1 : 5,
         priceType: courseForm.priceType as any,
         priceValue: courseForm.priceValue,
         discountPriceValue: courseForm.discountPriceValue
       });
-      setSuccessBanner(`✓ Programa "${courseForm.title}" creado.`);
+      setSuccessBanner(`✓ "${courseForm.title}" creado.`);
     }
     setCourseModalOpen(false);
     setTimeout(() => setSuccessBanner(null), 3000);
   };
 
   const handleDeleteCourse = (id: string, title: string) => {
-    if (!confirm(`¿Está seguro de eliminar el programa "${title}"?`)) return;
+    if (!confirm(`¿Está seguro de eliminar el programa/masterclass "${title}"?`)) return;
     deleteCourse(id);
-    setSuccessBanner(`✓ Programa "${title}" eliminado.`);
+    setSuccessBanner(`✓ "${title}" eliminado.`);
     setTimeout(() => setSuccessBanner(null), 3000);
   };
 
@@ -163,12 +182,12 @@ export const LearningHubDomain: React.FC = () => {
     setIsEditing(true);
     setEnrollmentForm({
       id: enr.id,
-      courseTitle: enr.course_title,
-      fullName: enr.full_name,
+      courseTitle: enr.course_title || enr.courseTitle,
+      fullName: enr.full_name || enr.fullName,
       email: enr.email,
-      company: enr.company || '',
-      paymentStatus: enr.payment_status,
-      cohortDate: enr.cohort_date || 'Agosto 2026'
+      company: enr.company_name || enr.company || '',
+      paymentStatus: enr.payment_status || enr.paymentStatus || 'Preinscrito',
+      cohortDate: enr.cohort_date || enr.cohortDate || 'Agosto 2026'
     });
     setEnrollmentModalOpen(true);
   };
@@ -176,47 +195,50 @@ export const LearningHubDomain: React.FC = () => {
   const handleEnrollmentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isEditing) {
-      // For updates, we replace the enrollment with the new values
-      await removeEnrollment(enrollmentForm.id);
       await enrollStudent({
-        courseId: 'manual',
+        id: enrollmentForm.id,
+        courseId: courses.find(c => c.title === enrollmentForm.courseTitle)?.id || 'generic',
         courseTitle: enrollmentForm.courseTitle,
         fullName: enrollmentForm.fullName,
         email: enrollmentForm.email,
         company: enrollmentForm.company,
-        cohortDate: enrollmentForm.cohortDate,
-        paymentStatus: enrollmentForm.paymentStatus
+        paymentStatus: enrollmentForm.paymentStatus as any,
+        cohortDate: enrollmentForm.cohortDate
       });
       setSuccessBanner(`✓ Matrícula de "${enrollmentForm.fullName}" actualizada.`);
     } else {
       await enrollStudent({
-        courseId: 'manual',
+        id: `enroll-${Date.now()}`,
+        courseId: courses.find(c => c.title === enrollmentForm.courseTitle)?.id || 'generic',
         courseTitle: enrollmentForm.courseTitle,
         fullName: enrollmentForm.fullName,
         email: enrollmentForm.email,
         company: enrollmentForm.company,
-        cohortDate: enrollmentForm.cohortDate,
-        paymentStatus: enrollmentForm.paymentStatus
+        paymentStatus: enrollmentForm.paymentStatus as any,
+        cohortDate: enrollmentForm.cohortDate
       });
-      setSuccessBanner(`✓ Estudiante "${enrollmentForm.fullName}" matriculado.`);
+      setSuccessBanner(`✓ Alumno "${enrollmentForm.fullName}" matriculado.`);
     }
     setEnrollmentModalOpen(false);
     setTimeout(() => setSuccessBanner(null), 3000);
   };
 
   const handleDeleteEnrollment = async (id: string, name: string) => {
-    if (!confirm(`¿Está seguro de eliminar la matrícula de "${name}"?`)) return;
+    if (!confirm(`¿Está seguro de anular la preinscripción de "${name}"?`)) return;
     await removeEnrollment(id);
-    setSuccessBanner(`✓ Matrícula de "${name}" eliminada.`);
+    setSuccessBanner(`✓ Matrícula de "${name}" anulada.`);
     setTimeout(() => setSuccessBanner(null), 3000);
   };
 
-  const totalRevenue = enrollments.reduce((sum, e) => sum + (Number(e.amount_paid) || 0), 0);
+
+  // Filter lists
+  const regularCoursesList = courses.filter(c => c.category !== 'Martes de Masterclass');
+  const tuesdayMasterclassesList = courses.filter(c => c.category === 'Martes de Masterclass');
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-300 text-left">
+    <div className="space-y-6 animate-in fade-in duration-300 text-left font-sans">
       
-      {/* Header Bar */}
+      {/* View Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
         <div>
           <span className="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-widest block">DOMINIO 4 DE 7 • LEARNING HUB LMS (MASTERCLASSNOW.ONLINE)</span>
@@ -232,11 +254,23 @@ export const LearningHubDomain: React.FC = () => {
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           </button>
           <button 
-            onClick={activeTab === 'catalog' ? handleOpenCreateCourse : handleOpenCreateEnrollment}
+            onClick={
+              activeTab === 'catalog' 
+                ? handleOpenCreateCourse 
+                : activeTab === 'masterclasses' 
+                ? handleOpenCreateMasterclass 
+                : handleOpenCreateEnrollment
+            }
             className="px-4 py-2.5 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-xl flex items-center space-x-1.5"
           >
             <Plus className="w-4 h-4" />
-            <span>{activeTab === 'catalog' ? 'Crear Nuevo Programa' : 'Registrar Alumno'}</span>
+            <span>
+              {activeTab === 'catalog' 
+                ? 'Crear Nuevo Programa' 
+                : activeTab === 'masterclasses' 
+                ? 'Añadir Masterclass' 
+                : 'Registrar Alumno'}
+            </span>
           </button>
         </div>
       </div>
@@ -252,15 +286,15 @@ export const LearningHubDomain: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
           <span className="text-[10px] font-bold uppercase text-slate-400">Total Programas</span>
-          <div className="text-2xl font-extrabold text-white font-mono mt-1">{courses.length} Cursos</div>
+          <div className="text-2xl font-extrabold text-white font-mono mt-1">{regularCoursesList.length} Cursos</div>
+        </div>
+        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
+          <span className="text-[10px] font-bold uppercase text-slate-400">Masterclass Únicas</span>
+          <div className="text-2xl font-extrabold text-purple-400 font-mono mt-1">{tuesdayMasterclassesList.length} Clases</div>
         </div>
         <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
           <span className="text-[10px] font-bold uppercase text-slate-400">Preinscritos Activos</span>
-          <div className="text-2xl font-extrabold text-cyan-400 font-mono mt-1">{enrollments.length} Leads</div>
-        </div>
-        <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-          <span className="text-[10px] font-bold uppercase text-slate-400">Ingresos LMS</span>
-          <div className="text-2xl font-extrabold text-emerald-400 font-mono mt-1">${(totalRevenue || 12450).toLocaleString()}</div>
+          <div className="text-2xl font-extrabold text-cyan-400 font-mono mt-1">{enrollments.length} Alumnos</div>
         </div>
         <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
           <span className="text-[10px] font-bold uppercase text-slate-400">Valoración Promedio</span>
@@ -272,20 +306,27 @@ export const LearningHubDomain: React.FC = () => {
       </div>
 
       {/* LMS Sub Navigation */}
-      <div className="flex gap-2 border-b border-slate-800 pb-3 text-xs font-semibold">
+      <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-3 text-xs font-semibold">
         <button
           onClick={() => setActiveTab('enrollments')}
           className={`px-4 py-2 rounded-xl flex items-center space-x-2 transition-all ${activeTab === 'enrollments' ? 'bg-purple-600 text-white shadow-lg' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
         >
           <Users className="w-4 h-4" />
-          <span>Matrículas & Estudiantes ({enrollments.length} Registrados)</span>
+          <span>Matrículas & Estudiantes ({enrollments.length})</span>
         </button>
         <button
           onClick={() => setActiveTab('catalog')}
           className={`px-4 py-2 rounded-xl flex items-center space-x-2 transition-all ${activeTab === 'catalog' ? 'bg-purple-600 text-white shadow-lg' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
         >
           <BookOpen className="w-4 h-4" />
-          <span>Catálogo de Programas ({courses.length} Especialidades)</span>
+          <span>Catálogo de Cursos ({regularCoursesList.length})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('masterclasses')}
+          className={`px-4 py-2 rounded-xl flex items-center space-x-2 transition-all ${activeTab === 'masterclasses' ? 'bg-purple-600 text-white shadow-lg' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+        >
+          <Calendar className="w-4 h-4" />
+          <span>Martes de Masterclass ({tuesdayMasterclassesList.length})</span>
         </button>
       </div>
 
@@ -300,129 +341,49 @@ export const LearningHubDomain: React.FC = () => {
           </div>
 
           <div className="overflow-x-auto">
-            {enrollments.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-xs font-mono">
-                No hay matrículas registradas. Presione "Registrar Alumno" para matricular uno.
-              </div>
-            ) : (
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px]">
-                    <th className="py-3 px-4 font-bold">Estudiante</th>
-                    <th className="py-3 px-4 font-bold">Programa / Masterclass</th>
-                    <th className="py-3 px-4 font-bold">Empresa / Entidad</th>
-                    <th className="py-3 px-4 font-bold">Estado de Pago</th>
-                    <th className="py-3 px-4 font-bold">Cohorte / Fecha</th>
-                    <th className="py-3 px-4 font-bold">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800 font-medium">
-                  {enrollments.map((enr) => (
-                    <tr key={enr.id} className="hover:bg-slate-800/50">
-                      <td className="py-3.5 px-4 text-white">
-                        <div>
-                          <p className="font-bold">{enr.full_name}</p>
-                          <p className="text-[10px] text-slate-400 font-mono">{enr.email}</p>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4 text-cyan-400">
-                        <div className="flex items-center space-x-1">
-                          <GraduationCap className="w-3.5 h-3.5" />
-                          <span>{enr.course_title}</span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-300">{enr.company || 'Independiente'}</td>
-                      <td className="py-3.5 px-4">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                          enr.payment_status === 'Confirmado' || enr.payment_status === 'Certificado'
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
-                            : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                        }`}>
-                          {enr.payment_status}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-300 font-mono">{enr.cohort_date || 'N/A'}</td>
-                      <td className="py-3.5 px-4 text-slate-500 font-mono">
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() => handleOpenEditEnrollment(enr)}
-                            className="p-1 rounded bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-colors"
-                            title="Editar Matrícula"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteEnrollment(enr.id, enr.full_name)}
-                            className="p-1 rounded bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors"
-                            title="Eliminar Matrícula"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* TAB 2: Courses Catalog */}
-      {activeTab === 'catalog' && (
-        <div className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl animate-in fade-in duration-200">
-          <div className="p-5 border-b border-slate-800 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white font-heading">Catálogo de Programas en MasterClassNow.online</h3>
-            <span className="text-[10px] font-mono px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
-              Plataforma Certificada DAMA
-            </span>
-          </div>
-
-          <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px]">
-                  <th className="py-3 px-4 font-bold">Programa</th>
-                  <th className="py-3 px-4 font-bold">Categoría</th>
-                  <th className="py-3 px-4 font-bold">Duración</th>
-                  <th className="py-3 px-4 font-bold">Instructor Principal</th>
-                  <th className="py-3 px-4 font-bold">Certificación</th>
-                  <th className="py-3 px-4 font-bold">Próxima Cohorte</th>
-                  <th className="py-3 px-4 font-bold">Acciones</th>
+                <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px] bg-slate-950/40">
+                  <th className="py-3.5 px-4 font-bold">Estudiante</th>
+                  <th className="py-3.5 px-4 font-bold">Programa / Masterclass</th>
+                  <th className="py-3.5 px-4 font-bold">Empresa</th>
+                  <th className="py-3.5 px-4 font-bold">Cohorte / Fecha</th>
+                  <th className="py-3.5 px-4 font-bold">Estado de Pago</th>
+                  <th className="py-3.5 px-4 font-bold">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800 font-medium">
-                {courses.map((crs) => (
-                  <tr key={crs.id} className="hover:bg-slate-800/50">
-                    <td className="py-3.5 px-4 font-bold text-white">
-                      <div className="flex items-center space-x-2">
-                        <GraduationCap className="w-4 h-4 text-cyan-400 shrink-0" />
-                        <span>{crs.title}</span>
-                      </div>
+                {enrollments.map((enr) => (
+                  <tr key={enr.id} className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4">
+                      <div className="font-bold text-white text-sm">{enr.full_name || enr.fullName}</div>
+                      <div className="text-[10px] text-slate-500 font-mono">{enr.email}</div>
                     </td>
-                    <td className="py-3.5 px-4 text-cyan-400 font-mono">{crs.category}</td>
-                    <td className="py-3.5 px-4 text-slate-300">{crs.duration}</td>
-                    <td className="py-3.5 px-4 text-slate-300">{(crs as any).instructor?.name || (crs as any).instructorName || 'Ing. Carlos Cañón'}</td>
-                    <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        {crs.certification}
+                    <td className="py-3 px-4 text-cyan-400 font-bold">{enr.course_title || enr.courseTitle}</td>
+                    <td className="py-3 px-4 text-slate-300">{enr.company_name || enr.company || 'Particular'}</td>
+                    <td className="py-3 px-4 font-mono text-slate-400">{enr.cohort_date || enr.cohortDate}</td>
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                        (enr.payment_status || enr.paymentStatus) === 'Pagado'
+                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                      }`}>
+                        {enr.payment_status || enr.paymentStatus}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-cyan-400">{crs.upcomingDate}</td>
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center space-x-2">
+                    <td className="py-3 px-4">
+                      <div className="flex items-center space-x-2 text-slate-500">
                         <button
-                          onClick={() => handleOpenEditCourse(crs)}
+                          onClick={() => handleOpenEditEnrollment(enr)}
                           className="p-1.5 rounded bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-colors"
-                          title="Editar Programa"
+                          title="Editar"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
-                          onClick={() => handleDeleteCourse(crs.id, crs.title)}
+                          onClick={() => handleDeleteEnrollment(enr.id, enr.full_name || enr.fullName)}
                           className="p-1.5 rounded bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors"
-                          title="Eliminar Programa"
+                          title="Eliminar"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -436,43 +397,230 @@ export const LearningHubDomain: React.FC = () => {
         </div>
       )}
 
-      {/* COURSE CREATION/EDIT MODAL */}
+      {/* TAB 2: Courses Catalog (Excludes Masterclasses) */}
+      {activeTab === 'catalog' && (
+        <div className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl animate-in fade-in duration-200">
+          <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-white font-heading">Catálogo de Programas y Diplomados en MasterClassNow.online</h3>
+            <span className="text-[10px] font-mono px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              Plataforma Certificada DAMA
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px] bg-slate-950/40">
+                  <th className="py-3.5 px-4 font-bold">Programa</th>
+                  <th className="py-3.5 px-4 font-bold">Categoría</th>
+                  <th className="py-3.5 px-4 font-bold">Duración</th>
+                  <th className="py-3.5 px-4 font-bold">Instructor Principal</th>
+                  <th className="py-3.5 px-4 font-bold">Esquema de Precio</th>
+                  <th className="py-3.5 px-4 font-bold">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800 font-medium">
+                {regularCoursesList.map((crs) => (
+                  <tr key={crs.id} className="hover:bg-slate-800/30">
+                    <td className="py-3.5 px-4 font-bold text-white">
+                      <div className="flex items-center space-x-2">
+                        <GraduationCap className="w-4 h-4 text-cyan-400 shrink-0" />
+                        <span>{crs.title}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-cyan-400 font-mono">{crs.category}</td>
+                    <td className="py-3.5 px-4 text-slate-350">{crs.duration}</td>
+                    <td className="py-3.5 px-4 text-slate-300">{(crs as any).instructor?.name || (crs as any).instructorName || 'Ing. Carlos Cañón'}</td>
+                    <td className="py-3.5 px-4 font-mono">
+                      {crs.priceType === 'discount' ? (
+                        <span className="text-emerald-400 font-bold">Desc (${crs.discountPriceValue?.toLocaleString()})</span>
+                      ) : crs.priceType === 'paid' ? (
+                        <span className="text-white font-bold">${crs.priceValue?.toLocaleString()}</span>
+                      ) : (
+                        <span className="text-emerald-500 font-semibold">Gratuito</span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleOpenEditCourse(crs)}
+                          className="p-1.5 rounded bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-colors"
+                          title="Editar"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCourse(crs.id, crs.title)}
+                          className="p-1.5 rounded bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors"
+                          title="Eliminar"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: Tuesday Masterclasses Parameterizer */}
+      {activeTab === 'masterclasses' && (
+        <div className="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl animate-in fade-in duration-200">
+          <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-white font-heading">Programación Martes de Masterclass (Sesiones Únicas de los Martes)</h3>
+            <span className="text-[10px] font-mono px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">
+              Martes de Datos
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-800 text-slate-400 font-mono text-[11px] bg-slate-950/40">
+                  <th className="py-3.5 px-4 font-bold">Masterclass</th>
+                  <th className="py-3.5 px-4 font-bold">Fecha Programada</th>
+                  <th className="py-3.5 px-4 font-bold">Badge / Etiqueta</th>
+                  <th className="py-3.5 px-4 font-bold">Instructor</th>
+                  <th className="py-3.5 px-4 font-bold">Esquema de Precio</th>
+                  <th className="py-3.5 px-4 font-bold">Acciones</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800 font-medium">
+                {tuesdayMasterclassesList.map((crs) => (
+                  <tr key={crs.id} className="hover:bg-slate-800/30">
+                    <td className="py-3.5 px-4 font-bold text-white">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="w-4 h-4 text-purple-400 shrink-0" />
+                        <span>{crs.title}</span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-cyan-400 font-mono font-bold">{crs.upcomingDate}</td>
+                    <td className="py-3.5 px-4 text-slate-350">{crs.badge || 'Martes'}</td>
+                    <td className="py-3.5 px-4 text-slate-300">{(crs as any).instructor?.name || (crs as any).instructorName || 'Ing. Carlos Cañón'}</td>
+                    <td className="py-3.5 px-4 font-mono">
+                      {crs.priceType === 'discount' ? (
+                        <span className="text-emerald-400 font-bold">Desc (${crs.discountPriceValue?.toLocaleString()})</span>
+                      ) : crs.priceType === 'paid' ? (
+                        <span className="text-white font-bold">${crs.priceValue?.toLocaleString()}</span>
+                      ) : (
+                        <span className="text-emerald-500 font-semibold">Gratuito</span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleOpenEditCourse(crs)}
+                          className="p-1.5 rounded bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-colors"
+                          title="Editar"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCourse(crs.id, crs.title)}
+                          className="p-1.5 rounded bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors"
+                          title="Eliminar"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* COURSE / MASTERCLASS REGISTRATION OR EDIT MODAL */}
       {courseModalOpen && (
         <div className="fixed inset-0 z-[60] overflow-y-auto bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 text-white shadow-2xl relative space-y-4 text-left">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 text-white shadow-2xl relative space-y-4 text-left font-sans">
             <button onClick={() => setCourseModalOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-bold text-white font-heading">{isEditing ? 'Editar Programa Académico' : 'Crear Nuevo Programa Académico'}</h3>
+            <h3 className="text-lg font-bold text-white font-heading">
+              {isEditing ? 'Editar Registro' : (courseForm.category === 'Martes de Masterclass' ? 'Crear Nueva Masterclass del Martes' : 'Crear Nuevo Programa')}
+            </h3>
+            
             <form onSubmit={handleCourseSubmit} className="space-y-3 text-xs">
+              
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Título del Programa</label>
-                <input type="text" required value={courseForm.title} onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })} placeholder="Ej. Bootcamp CDMP DAMA" className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-bold" />
+                <label className="block text-slate-300 font-bold mb-1">Título del Programa / Clase</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={courseForm.title} 
+                  onChange={(e) => setCourseForm({ ...courseForm, title: e.target.value })} 
+                  placeholder="Ej. Masterclass: RLS Policies in PostgreSQL" 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-bold" 
+                />
               </div>
+
               <div>
                 <label className="block text-slate-300 font-bold mb-1">Categoría</label>
-                <select value={courseForm.category} onChange={(e) => setCourseForm({ ...courseForm, category: e.target.value })} className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400">
+                <select 
+                  value={courseForm.category} 
+                  disabled={isEditing || courseForm.category === 'Martes de Masterclass'}
+                  onChange={(e) => setCourseForm({ ...courseForm, category: e.target.value })} 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-805 text-white outline-none focus:border-cyan-400 disabled:opacity-60"
+                >
                   <option value="Gobernanza de Datos">Gobernanza de Datos (DAMA)</option>
                   <option value="Inteligencia Artificial">Inteligencia Artificial & IA Gen</option>
                   <option value="Arquitectura de Datos">Arquitectura & Big Data</option>
                   <option value="Analítica Avanzada">Analítica Avanzada & Business Intelligence</option>
+                  <option value="Martes de Masterclass">Martes de Masterclass (Programación Especial)</option>
                 </select>
               </div>
+
               <div>
                 <label className="block text-slate-300 font-bold mb-1">Duración</label>
-                <input type="text" required value={courseForm.duration} onChange={(e) => setCourseForm({ ...courseForm, duration: e.target.value })} placeholder="Ej. 40 Horas" className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" />
+                <input 
+                  type="text" 
+                  required 
+                  value={courseForm.duration} 
+                  onChange={(e) => setCourseForm({ ...courseForm, duration: e.target.value })} 
+                  placeholder="Ej. 2 Horas" 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" 
+                />
               </div>
+
               <div>
                 <label className="block text-slate-300 font-bold mb-1">Instructor Principal</label>
-                <input type="text" required value={courseForm.instructorName} onChange={(e) => setCourseForm({ ...courseForm, instructorName: e.target.value })} className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" />
+                <input 
+                  type="text" 
+                  required 
+                  value={courseForm.instructorName} 
+                  onChange={(e) => setCourseForm({ ...courseForm, instructorName: e.target.value })} 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" 
+                />
               </div>
+
               <div>
                 <label className="block text-slate-300 font-bold mb-1">Tipo de Certificación</label>
-                <input type="text" required value={courseForm.certification} onChange={(e) => setCourseForm({ ...courseForm, certification: e.target.value })} placeholder="Ej. Certificado de Asistencia DAMA" className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" />
+                <input 
+                  type="text" 
+                  required 
+                  value={courseForm.certification} 
+                  onChange={(e) => setCourseForm({ ...courseForm, certification: e.target.value })} 
+                  placeholder="Ej. Asistencia Oficial Certificada" 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" 
+                />
               </div>
+
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Próxima Cohorte</label>
-                <input type="text" required value={courseForm.upcomingDate} onChange={(e) => setCourseForm({ ...courseForm, upcomingDate: e.target.value })} placeholder="Ej. Agosto 2026" className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono" />
+                <label className="block text-slate-300 font-bold mb-1">Próxima Cohorte / Fecha Programada</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={courseForm.upcomingDate} 
+                  onChange={(e) => setCourseForm({ ...courseForm, upcomingDate: e.target.value })} 
+                  placeholder="Ej. Martes 15 de Septiembre, 2026" 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono font-bold" 
+                />
               </div>
               
               <div className="border-t border-slate-800 pt-3">
@@ -504,20 +652,23 @@ export const LearningHubDomain: React.FC = () => {
 
               {courseForm.priceType === 'discount' && (
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1 text-emerald-400">Precio con Descuento ($ COP/USD)</label>
+                  <label className="block text-slate-300 font-bold mb-1 text-emerald-450">Precio con Descuento ($ COP/USD)</label>
                   <input 
                     type="number" 
                     required 
                     value={courseForm.discountPriceValue} 
                     onChange={(e) => setCourseForm({ ...courseForm, discountPriceValue: Number(e.target.value) })} 
                     placeholder="Ej. 79000" 
-                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-emerald-400 outline-none focus:border-emerald-400 font-mono font-bold" 
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-emerald-450 outline-none focus:border-emerald-400 font-mono font-bold" 
                   />
                 </div>
               )}
 
-              <button type="submit" className="w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg mt-4 uppercase">
-                {isEditing ? 'Actualizar Programa' : 'Crear Programa'}
+              <button 
+                type="submit" 
+                className="w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg mt-4 uppercase"
+              >
+                {isEditing ? 'Actualizar Registro' : (courseForm.category === 'Martes de Masterclass' ? 'Crear Masterclass del Martes' : 'Crear Programa')}
               </button>
             </form>
           </div>
@@ -531,41 +682,86 @@ export const LearningHubDomain: React.FC = () => {
             <button onClick={() => setEnrollmentModalOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-bold text-white font-heading">{isEditing ? 'Editar Matrícula de Alumno' : 'Registrar/Matricular Alumno Manualmente'}</h3>
+            <h3 className="text-lg font-bold text-white font-heading">{isEditing ? 'Editar Matrícula del Alumno' : 'Matricular Nuevo Alumno'}</h3>
+            
             <form onSubmit={handleEnrollmentSubmit} className="space-y-3 text-xs">
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Programa / Masterclass de Interés</label>
-                <select value={enrollmentForm.courseTitle} onChange={(e) => setEnrollmentForm({ ...enrollmentForm, courseTitle: e.target.value })} className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400">
-                  {courses.map(c => <option key={c.id} value={c.title}>{c.title}</option>)}
-                </select>
+                <label className="block text-slate-300 font-bold mb-1">Nombre Completo</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={enrollmentForm.fullName} 
+                  onChange={(e) => setEnrollmentForm({ ...enrollmentForm, fullName: e.target.value })} 
+                  placeholder="Ej. Carlos Cañón" 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" 
+                />
               </div>
-              <div>
-                <label className="block text-slate-300 font-bold mb-1">Nombre Completo del Alumno</label>
-                <input type="text" required value={enrollmentForm.fullName} onChange={(e) => setEnrollmentForm({ ...enrollmentForm, fullName: e.target.value })} placeholder="Ej. Carlos Cañón" className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" />
-              </div>
+
               <div>
                 <label className="block text-slate-300 font-bold mb-1">Correo Electrónico</label>
-                <input type="email" required value={enrollmentForm.email} onChange={(e) => setEnrollmentForm({ ...enrollmentForm, email: e.target.value })} placeholder="carlos@empresa.com" className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" />
+                <input 
+                  type="email" 
+                  required 
+                  value={enrollmentForm.email} 
+                  onChange={(e) => setEnrollmentForm({ ...enrollmentForm, email: e.target.value })} 
+                  placeholder="carlos@consultores.com" 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" 
+                />
               </div>
+
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Empresa / Entidad</label>
-                <input type="text" value={enrollmentForm.company} onChange={(e) => setEnrollmentForm({ ...enrollmentForm, company: e.target.value })} placeholder="Ej. Positiva Compañía de Seguros" className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" />
+                <label className="block text-slate-300 font-bold mb-1">Empresa</label>
+                <input 
+                  type="text" 
+                  value={enrollmentForm.company} 
+                  onChange={(e) => setEnrollmentForm({ ...enrollmentForm, company: e.target.value })} 
+                  placeholder="Particular" 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" 
+                />
               </div>
+
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Estado de Pago / Matrícula</label>
-                <select value={enrollmentForm.paymentStatus} onChange={(e) => setEnrollmentForm({ ...enrollmentForm, paymentStatus: e.target.value })} className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400">
-                  <option value="Preinscrito">Preinscrito</option>
-                  <option value="Confirmado">Confirmado (Pago Recibido)</option>
-                  <option value="En Cursado">En Cursado</option>
-                  <option value="Certificado">Certificado Emitido</option>
+                <label className="block text-slate-300 font-bold mb-1 font-sans">Curso / Masterclass Relacionada</label>
+                <select 
+                  value={enrollmentForm.courseTitle} 
+                  onChange={(e) => setEnrollmentForm({ ...enrollmentForm, courseTitle: e.target.value })} 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-semibold"
+                >
+                  {courses.map(c => (
+                    <option key={c.id} value={c.title}>{c.title}</option>
+                  ))}
                 </select>
               </div>
+
               <div>
-                <label className="block text-slate-300 font-bold mb-1">Fecha / Cohorte</label>
-                <input type="text" required value={enrollmentForm.cohortDate} onChange={(e) => setEnrollmentForm({ ...enrollmentForm, cohortDate: e.target.value })} className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono" />
+                <label className="block text-slate-300 font-bold mb-1">Cohorte / Fecha de Carga</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={enrollmentForm.cohortDate} 
+                  onChange={(e) => setEnrollmentForm({ ...enrollmentForm, cohortDate: e.target.value })} 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400" 
+                />
               </div>
-              <button type="submit" className="w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg mt-2">
-                {isEditing ? 'Guardar Cambios' : 'Matricular Estudiante'}
+
+              <div>
+                <label className="block text-slate-300 font-bold mb-1">Estado de Pago</label>
+                <select 
+                  value={enrollmentForm.paymentStatus} 
+                  onChange={(e) => setEnrollmentForm({ ...enrollmentForm, paymentStatus: e.target.value })} 
+                  className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400"
+                >
+                  <option value="Preinscrito">Preinscrito</option>
+                  <option value="Pagado">Pagado (Aprobado)</option>
+                  <option value="Anulado">Anulado</option>
+                </select>
+              </div>
+
+              <button 
+                type="submit" 
+                className="w-full py-3 rounded-xl font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-lg mt-2 uppercase"
+              >
+                {isEditing ? 'Actualizar Matrícula' : 'Confirmar Matrícula'}
               </button>
             </form>
           </div>
