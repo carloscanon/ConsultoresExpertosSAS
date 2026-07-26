@@ -15,6 +15,19 @@ export const resourcesData: BlogPost[] = [
     featured: true
   },
   {
+    id: 'masterclass-governance-intro',
+    title: 'Video Masterclass: Introducción Práctica al Gobierno de Datos Moderno (DAMA-DMBOK2)',
+    category: 'Videos & Grabaciones',
+    summary: 'Una sesión técnica en vivo detallando el framework DAMA, el rol del CDO y la implementación del Catálogo de Metadatos 2.0.',
+    readTime: '45 min de video',
+    date: '24 de Julio, 2026',
+    author: 'Ing. Carlos Cañón',
+    authorRole: 'Principal Consultant',
+    tags: ['DAMA', 'Framework', 'Webinar', 'YouTube'],
+    aiSummary: 'Video explicativo en el cual aprenderás paso a paso las fases iniciales de una estrategia de gobernanza empresarial.',
+    videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+  },
+  {
     id: 'data-mesh-vs-data-fabric',
     title: 'Data Mesh vs. Data Fabric: ¿Cuál es la Arquitectura Adecuada para tu Organización?',
     category: 'Arquitectura de Datos',

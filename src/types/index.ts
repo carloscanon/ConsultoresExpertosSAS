@@ -90,6 +90,8 @@ export interface BlogPost {
   tags: string[];
   aiSummary: string;
   featured?: boolean;
+  videoUrl?: string;
+  imageUrl?: string;
 }
 
 export interface CloudPlatform {
