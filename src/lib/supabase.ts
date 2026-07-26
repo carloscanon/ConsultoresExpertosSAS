@@ -675,3 +675,57 @@ export async function getSiteConfigurationFromDb() {
     return null;
   }
 }
+
+/**
+ * Guardar Configuración de Menús y Secciones en la Base de Datos
+ */
+export async function saveSiteLayoutInDb(menuItems: any[], sectionOrder: string[]) {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .upsert({
+        id: 'site_layout_settings',
+        title: 'Configuración de Menús y Secciones',
+        category: 'layout_config',
+        read_time: 'layout_v1',
+        summary: JSON.stringify(menuItems),
+        ai_summary: JSON.stringify(sectionOrder),
+        author: 'Super Admin',
+        author_role: 'System settings',
+        date: new Date().toLocaleDateString('es-ES'),
+        is_published: true,
+        created_at: new Date().toISOString()
+      }));
+
+    if (error) console.warn('Supabase save error (site_layout):', error.message);
+    return { success: !error, data, error };
+  } catch (err) {
+    console.warn('Supabase exception saving layout configurations:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * Obtener Configuración de Menús y Secciones de la Base de Datos
+ */
+export async function getSiteLayoutFromDb() {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .select('*')
+      .eq('id', 'site_layout_settings')
+      .single());
+
+    if (error || !data) {
+      return null;
+    }
+
+    const menuItems = JSON.parse(data.summary);
+    const sectionOrder = JSON.parse(data.ai_summary);
+
+    return { menuItems, sectionOrder };
+  } catch (err) {
+    console.warn('Supabase exception reading layout configurations:', err);
+    return null;
+  }
+}

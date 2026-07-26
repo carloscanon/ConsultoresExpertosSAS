@@ -19,7 +19,9 @@ import {
   saveBlogResourceInDb,
   deleteBlogResourceFromDb,
   getSiteConfigurationFromDb,
-  saveSiteConfigurationInDb
+  saveSiteConfigurationInDb,
+  saveSiteLayoutInDb,
+  getSiteLayoutFromDb
 } from '../lib/supabase';
 import type { Course } from '../types';
 
@@ -43,6 +45,15 @@ export interface ResourceItem {
   redirectUrl: string; // Redirection link
 }
 
+export interface MenuItem {
+  id: string;
+  label: string;
+  link: string;
+  icon: string;
+  active: boolean;
+  order: number;
+}
+
 const INITIAL_RESOURCES: ResourceItem[] = [
   { id: 'res-1', title: 'Introducción al CDMP DAMA Internacional', type: 'video', description: 'Video clase explicativa de 20 minutos detallando el plan de estudio y certificación CDMP.', durationOrSize: '20 Minutos', redirectUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
   { id: 'res-2', title: 'Estrategia de Gobierno de Datos Corporativa', type: 'whitepaper', description: 'Guía ejecutiva en PDF sobre cómo convencer a la junta directiva de financiar gobernanza.', durationOrSize: '2.4 MB', redirectUrl: 'https://www.govdatanexus.com/strategy' },
@@ -50,6 +61,31 @@ const INITIAL_RESOURCES: ResourceItem[] = [
   { id: 'res-4', title: 'Plantilla Canvas de Gobierno de Datos', type: 'template', description: 'Plantilla editable de una página para modelar la gobernanza de su entidad.', durationOrSize: '850 KB', redirectUrl: 'https://www.govdatanexus.com/canvas' },
   { id: 'res-5', title: 'Optimización DAX en Power BI Enterprise', type: 'video', description: 'Taller práctico de optimización de consultas complejas en Power BI.', durationOrSize: '45 Minutos', redirectUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
   { id: 'res-6', title: 'Glosario de Negocio MIPG/DAMA', type: 'template', description: 'Catálogo de términos estándar del sector público colombiano.', durationOrSize: '1.2 MB', redirectUrl: 'https://legalcol.vercel.app/glosario' }
+];
+
+export const DEFAULT_MENU_ITEMS: MenuItem[] = [
+  { id: 'home', label: 'Inicio', link: 'home', icon: 'Home', active: true, order: 1 },
+  { id: 'consulting', label: 'Consultoría', link: 'consulting', icon: 'Briefcase', active: true, order: 2 },
+  { id: 'academy', label: 'Academia', icon: 'GraduationCap', link: 'academy', active: true, order: 3 },
+  { id: 'legal', label: 'Centro Legal', icon: 'Scale', link: 'legal', active: true, order: 4 },
+  { id: 'research', label: 'Investigación', icon: 'Search', link: 'research', active: true, order: 5 },
+  { id: 'labs', label: 'Laboratorio IA', icon: 'Cpu', link: 'labs', active: true, order: 6 },
+  { id: 'community', label: 'Comunidad', icon: 'Users', link: 'community', active: true, order: 7 },
+  { id: 'resources', label: 'Recursos', icon: 'FileText', link: 'resources', active: true, order: 8 },
+  { id: 'glossary', label: 'Conceptos SEO', icon: 'Award', link: 'glossary', active: true, order: 9 },
+  { id: 'contact', label: 'Contacto', icon: 'Mail', link: 'contact', active: true, order: 10 }
+];
+
+export const DEFAULT_SECTION_ORDER = [
+  'hero',
+  'ai_features',
+  'academy_banner',
+  'govdata_nexus',
+  'services',
+  'academy_info',
+  'specialized_ai',
+  'case_studies',
+  'blog_resources'
 ];
 
 interface DataContextType {
@@ -89,6 +125,11 @@ interface DataContextType {
   addResource: (item: ResourceItem) => Promise<void>;
   editResource: (item: ResourceItem) => Promise<void>;
   deleteResource: (id: string) => Promise<void>;
+
+  // Layout Management (Menus & Sections)
+  menuItems: MenuItem[];
+  sectionOrder: string[];
+  updateLayoutConfig: (menuItems: MenuItem[], sectionOrder: string[]) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -140,6 +181,19 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return INITIAL_RESOURCES;
   });
 
+  // Layout Management State
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(() => {
+    const saved = localStorage.getItem('dxp_menu_items');
+    if (saved) return JSON.parse(saved);
+    return DEFAULT_MENU_ITEMS;
+  });
+
+  const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
+    const saved = localStorage.getItem('dxp_section_order');
+    if (saved) return JSON.parse(saved);
+    return DEFAULT_SECTION_ORDER;
+  });
+
   const [loading, setLoading] = useState(true);
 
   // Sync to local storage for offline resiliency
@@ -167,6 +221,14 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('dxp_resources', JSON.stringify(resources));
   }, [resources]);
 
+  useEffect(() => {
+    localStorage.setItem('dxp_menu_items', JSON.stringify(menuItems));
+  }, [menuItems]);
+
+  useEffect(() => {
+    localStorage.setItem('dxp_section_order', JSON.stringify(sectionOrder));
+  }, [sectionOrder]);
+
   // Apply SEO parameters to index document in background
   useEffect(() => {
     document.querySelector('meta[name="description"]')?.setAttribute("content", contactInfo.metaDescription);
@@ -183,6 +245,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const fetchedCourses = await getCoursesCatalogFromDb();
       const fetchedResources = await getBlogResourcesFromDb();
       const fetchedConfig = await getSiteConfigurationFromDb();
+      const fetchedLayout = await getSiteLayoutFromDb();
 
       if (fetchedDeals.length > 0) {
         setDeals(fetchedDeals.map((d: any) => ({
@@ -212,6 +275,15 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setContactInfo(fetchedConfig.contact);
         if (fetchedConfig.logoUrl) setLogoUrl(fetchedConfig.logoUrl);
         if (fetchedConfig.logoSize) setLogoSize(fetchedConfig.logoSize);
+      }
+
+      if (fetchedLayout) {
+        if (fetchedLayout.menuItems && fetchedLayout.menuItems.length > 0) {
+          setMenuItems(fetchedLayout.menuItems.sort((a: any, b: any) => a.order - b.order));
+        }
+        if (fetchedLayout.sectionOrder && fetchedLayout.sectionOrder.length > 0) {
+          setSectionOrder(fetchedLayout.sectionOrder);
+        }
       }
     } catch (e) {
       console.warn('Supabase refresh failed, falling back to local storage:', e);
@@ -492,6 +564,15 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const updateLayoutConfig = async (newMenuItems: MenuItem[], newSectionOrder: string[]) => {
+    setMenuItems(newMenuItems.sort((a, b) => a.order - b.order));
+    setSectionOrder(newSectionOrder);
+    const res = await saveSiteLayoutInDb(newMenuItems, newSectionOrder);
+    if (!res.success && res.error) {
+      throw new Error(res.error.message || 'Error guardando diseño de menús y secciones en Supabase');
+    }
+  };
+
   return (
     <DataContext.Provider value={{
       courses,
@@ -517,7 +598,10 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       resources,
       addResource,
       editResource,
-      deleteResource
+      deleteResource,
+      menuItems,
+      sectionOrder,
+      updateLayoutConfig
     }}>
       {children}
     </DataContext.Provider>

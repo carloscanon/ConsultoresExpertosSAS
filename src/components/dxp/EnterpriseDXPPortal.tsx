@@ -8,6 +8,7 @@ import { MarketingHubDomain } from './domains/MarketingHubDomain';
 import { EnterpriseAdminDomain } from './domains/EnterpriseAdminDomain';
 import { ThemeSelectorDomain } from './domains/ThemeSelectorDomain';
 import { OrgSettingsDomain } from './domains/OrgSettingsDomain';
+import { MenuLayoutDomain } from './domains/MenuLayoutDomain';
 import { 
   X, 
   LayoutDashboard, 
@@ -27,7 +28,8 @@ import {
   KeyRound,
   AlertCircle,
   Settings,
-  ExternalLink
+  ExternalLink,
+  Layers
 } from 'lucide-react';
 
 interface EnterpriseDXPPortalProps {
@@ -37,7 +39,7 @@ interface EnterpriseDXPPortalProps {
 
 export const EnterpriseDXPPortal: React.FC<EnterpriseDXPPortalProps> = ({ isOpen, onClose }) => {
   const [activeDomain, setActiveDomain] = useState<
-    'command_center' | 'experience_cms' | 'sales_crm' | 'learning_hub' | 'govdata_nexus' | 'marketing_hub' | 'enterprise_admin' | 'theme_selector' | 'org_settings'
+    'command_center' | 'experience_cms' | 'sales_crm' | 'learning_hub' | 'govdata_nexus' | 'marketing_hub' | 'enterprise_admin' | 'theme_selector' | 'org_settings' | 'menu_layout'
   >('command_center');
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -80,7 +82,8 @@ export const EnterpriseDXPPortal: React.FC<EnterpriseDXPPortalProps> = ({ isOpen
     { id: 'marketing_hub', name: '6. Marketing Hub', icon: Target, category: 'Landings & Growth' },
     { id: 'enterprise_admin', name: '7. Administration', icon: ShieldCheck, category: 'RBAC, IA & Security' },
     { id: 'theme_selector', name: '8. Temas & Apariencia', icon: Palette, category: 'Identidad Visual' },
-    { id: 'org_settings', name: '9. Datos Empresa & SEO', icon: Settings, category: 'Configuración Global' }
+    { id: 'org_settings', name: '9. Datos Empresa & SEO', icon: Settings, category: 'Configuración Global' },
+    { id: 'menu_layout', name: '10. Menús & Secciones', icon: Layers, category: 'Configuración Global' }
   ];
 
   // Secure Auth Guard Panel (Apple/Stripe Premium Design style)
@@ -161,12 +164,7 @@ export const EnterpriseDXPPortal: React.FC<EnterpriseDXPPortalProps> = ({ isOpen
             </button>
           </form>
 
-          {/* Help Prompt */}
-          <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-850 text-[10px] text-slate-400 space-y-1 text-left font-mono">
-            <p className="font-bold text-slate-300">🔑 CREDENCIALES DE DESARROLLO:</p>
-            <p><strong>Usuario:</strong> admin@consultoresexpertos.com</p>
-            <p><strong>Contraseña:</strong> expertos2030</p>
-          </div>
+          {/* Credentials help panel removed for security */}
 
         </div>
 
@@ -305,6 +303,7 @@ export const EnterpriseDXPPortal: React.FC<EnterpriseDXPPortalProps> = ({ isOpen
           {activeDomain === 'enterprise_admin' && <EnterpriseAdminDomain />}
           {activeDomain === 'theme_selector' && <ThemeSelectorDomain />}
           {activeDomain === 'org_settings' && <OrgSettingsDomain />}
+          {activeDomain === 'menu_layout' && <MenuLayoutDomain />}
 
         </main>
 

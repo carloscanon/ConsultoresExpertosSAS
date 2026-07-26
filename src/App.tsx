@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Header } from './components/Header';
@@ -27,7 +27,7 @@ import { ResourcesPortal } from './components/dxp/domains/ResourcesPortal';
 import { SEOGlossaryPortal } from './components/SEOGlossaryPortal';
 import { SpecializedAISuite } from './components/SpecializedAISuite';
 
-import { DataProvider } from './context/DataContext';
+import { DataProvider, useData } from './context/DataContext';
 
 const AppContent: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<'home' | 'consulting' | 'academy' | 'legal' | 'research' | 'labs' | 'community' | 'resources' | 'contact' | 'glossary'>('home');
@@ -36,6 +36,28 @@ const AppContent: React.FC = () => {
   const [copilotOpen, setCopilotOpen] = useState(false);
   const [dxpPortalOpen, setDxpPortalOpen] = useState(false);
   const [demoInitialFocus, setDemoInitialFocus] = useState<string | undefined>(undefined);
+
+  const { sectionOrder } = useData();
+
+  // Secure /nimda hidden admin panel access route effect
+  useEffect(() => {
+    const checkNimda = () => {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      if (path === '/nimda' || path === '/nimda/' || hash === '#nimda') {
+        setDxpPortalOpen(true);
+        // Clear history path to keep the admin entry hidden from browser history
+        window.history.replaceState(null, '', '/');
+      }
+    };
+    checkNimda();
+    window.addEventListener('popstate', checkNimda);
+    window.addEventListener('hashchange', checkNimda);
+    return () => {
+      window.removeEventListener('popstate', checkNimda);
+      window.removeEventListener('hashchange', checkNimda);
+    };
+  }, []);
 
   const handleOpenDemoWithTopic = (topic?: string) => {
     setDemoInitialFocus(topic);
@@ -47,6 +69,64 @@ const AppContent: React.FC = () => {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const renderSection = (sectionId: string) => {
+    switch (sectionId) {
+      case 'hero':
+        return (
+          <Hero 
+            key="hero"
+            onOpenDiagnosis={() => handleOpenDemoWithTopic('Diagnóstico Estratégico DAMA')}
+            onExploreNexus={() => setCurrentTab('consulting')}
+            onTalkExpert={() => handleOpenDemoWithTopic('Consultoría con Experto DXP')}
+          />
+        );
+      case 'ai_features':
+        return (
+          <AISection 
+            key="ai_features"
+            onOpenDemo={() => handleOpenDemoWithTopic('IA & Asistente GovData')}
+            onOpenAICopilot={() => setCopilotOpen(true)}
+          />
+        );
+      case 'academy_banner':
+        return <AcademyBanner key="academy_banner" />;
+      case 'govdata_nexus':
+        return (
+          <GovDataNexusShowcase 
+            key="govdata_nexus"
+            onOpenDemo={() => handleOpenDemoWithTopic('GovData Nexus Engine Demo')}
+          />
+        );
+      case 'services':
+        return (
+          <ServicesExplorer 
+            key="services"
+            onOpenDemo={() => handleOpenDemoWithTopic('Consultoría de Servicios')}
+          />
+        );
+      case 'academy_info':
+        return <AcademySection key="academy_info" />;
+      case 'specialized_ai':
+        return <SpecializedAISuite key="specialized_ai" />;
+      case 'case_studies':
+        return (
+          <CaseStudiesTimeline 
+            key="case_studies"
+            onOpenDemo={() => handleOpenDemoWithTopic('Casos de Éxito & Benchmark')}
+          />
+        );
+      case 'blog_resources':
+        return (
+          <ResourcesAndBlog 
+            key="blog_resources"
+            onOpenDemo={() => handleOpenDemoWithTopic('Descarga de Whitepapers')}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white text-slate-900 selection:bg-blue-600 selection:text-white transition-colors duration-300">
       <Header 
@@ -54,37 +134,12 @@ const AppContent: React.FC = () => {
         onNavigate={setCurrentTab}
         onOpenDemo={() => handleOpenDemoWithTopic()}
         onOpenSearch={() => setSearchModalOpen(true)}
-        onOpenAICopilot={() => setCopilotOpen(true)}
-        onOpenCMSAdmin={() => setDxpPortalOpen(true)}
       />
 
       <main className="pt-16">
         {currentTab === 'home' && (
           <>
-            <Hero 
-              onOpenDiagnosis={() => handleOpenDemoWithTopic('Diagnóstico Estratégico DAMA')}
-              onExploreNexus={() => setCurrentTab('consulting')}
-              onTalkExpert={() => handleOpenDemoWithTopic('Consultoría con Experto DXP')}
-            />
-            <AISection 
-              onOpenDemo={() => handleOpenDemoWithTopic('IA & Asistente GovData')}
-              onOpenAICopilot={() => setCopilotOpen(true)}
-            />
-            <AcademyBanner />
-            <GovDataNexusShowcase 
-              onOpenDemo={() => handleOpenDemoWithTopic('GovData Nexus Engine Demo')}
-            />
-            <ServicesExplorer 
-              onOpenDemo={() => handleOpenDemoWithTopic('Consultoría de Servicios')}
-            />
-            <AcademySection />
-            <SpecializedAISuite />
-            <CaseStudiesTimeline 
-              onOpenDemo={() => handleOpenDemoWithTopic('Casos de Éxito & Benchmark')}
-            />
-            <ResourcesAndBlog 
-              onOpenDemo={() => handleOpenDemoWithTopic('Descarga de Whitepapers')}
-            />
+            {sectionOrder.map(sectionId => renderSection(sectionId))}
           </>
         )}
 

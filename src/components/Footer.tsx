@@ -15,15 +15,36 @@ import {
 interface FooterProps {
   onOpenDemo: () => void;
   onOpenAICopilot: () => void;
+  onNavigate?: (tab: any) => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenDemo }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenDemo, onNavigate }) => {
   const { logoUrl, logoSize } = useTheme();
-  const { contactInfo } = useData();
+  const { contactInfo, menuItems } = useData();
+
+  const activeMenuItems = menuItems.filter(item => item.active);
 
   const handleNavClick = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (onNavigate) {
+      onNavigate('home');
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 150);
+    }
+  };
+
+  const handleItemClick = (item: any) => {
+    if (item.link.startsWith('http://') || item.link.startsWith('https://')) {
+      window.open(item.link, '_blank');
+    } else if (onNavigate) {
+      onNavigate(item.link);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -36,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDemo }) => {
           <span className="text-emerald-600 font-bold">¡Estamos en línea!</span>
         </div>
         <a
-          href={`https://wa.me/${contactInfo.whatsapp}?text=Hola,%20quisiera%20recibir%20informaci%C3%B3n%20sobre%20GovData%20Nexus%20y%20sus%20servicios%25.`}
+          href={`https://wa.me/${contactInfo.whatsapp}?text=Hola,%20quisiera%20recibir%20informaci%C3%B3n%20sobre%20GovData%20Nexus%20y%20sus%2520servicios.`}
           target="_blank"
           rel="noopener noreferrer"
           title="Hablar por WhatsApp"
@@ -55,7 +76,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDemo }) => {
           <div className="lg:col-span-2 space-y-4">
             <div 
               className="cursor-pointer flex items-center" 
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={() => handleNavClick('hero')}
               style={{ width: `${logoSize}px` }}
             >
               {logoUrl ? (
@@ -80,14 +101,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDemo }) => {
           {/* Col 2: Servicios */}
           <div>
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 font-heading">
-              Servicios
+              Servicios DAMA
             </h4>
             <ul className="space-y-2 text-xs text-slate-600">
               <li><button onClick={() => handleNavClick('services')} className="hover:text-red-600 transition-colors">Gobierno de Datos</button></li>
-              <li><button onClick={() => handleNavClick('services')} className="hover:text-red-600 transition-colors">Inteligencia Artificial</button></li>
-              <li><button onClick={() => handleNavClick('services')} className="hover:text-red-600 transition-colors">Analítica Avanzada</button></li>
-              <li><button onClick={() => handleNavClick('services')} className="hover:text-red-600 transition-colors">Arquitectura Empresarial</button></li>
-              <li><button onClick={() => handleNavClick('services')} className="hover:text-red-600 transition-colors">Ver todos los servicios</button></li>
+              <li><button onClick={() => handleNavClick('services')} className="hover:text-red-600 transition-colors">Calidad de Datos</button></li>
+              <li><button onClick={() => handleNavClick('services')} className="hover:text-red-600 transition-colors">Arquitectura de Datos</button></li>
+              <li><button onClick={() => handleNavClick('ai-section')} className="hover:text-red-600 transition-colors">Inteligencia Artificial</button></li>
             </ul>
           </div>
 
@@ -98,23 +118,25 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDemo }) => {
             </h4>
             <ul className="space-y-2 text-xs text-slate-600">
               <li><button onClick={() => handleNavClick('platform')} className="hover:text-red-600 transition-colors">GovData Nexus™</button></li>
-              <li><button onClick={() => handleNavClick('platform')} className="hover:text-red-600 transition-colors">Command Center 360°</button></li>
-              <li><button onClick={() => handleNavClick('platform')} className="hover:text-red-600 transition-colors">Metadata Intelligence 2.0</button></li>
+              <li><button onClick={() => handleNavClick('ai-section')} className="hover:text-red-600 transition-colors">Command Center 360°</button></li>
               <li><button onClick={() => handleNavClick('cases')} className="hover:text-red-600 transition-colors">Casos de Éxito</button></li>
               <li><button onClick={onOpenDemo} className="hover:text-red-600 transition-colors">Solicitar Demo</button></li>
             </ul>
           </div>
 
-          {/* Col 4: Recursos */}
+          {/* Col 4: Enlaces del Menú (Dynamic) */}
           <div>
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 font-heading">
-              Recursos
+              Enlaces del Sitio
             </h4>
             <ul className="space-y-2 text-xs text-slate-600">
-              <li><button onClick={() => handleNavClick('resources')} className="hover:text-red-600 transition-colors">Blog</button></li>
-              <li><button onClick={() => handleNavClick('resources')} className="hover:text-red-600 transition-colors">Whitepapers DAMA</button></li>
-              <li><button onClick={() => handleNavClick('academy')} className="hover:text-red-600 transition-colors">GovData Academy</button></li>
-              <li><button onClick={() => handleNavClick('resources')} className="hover:text-red-600 transition-colors">Plantillas & Guías</button></li>
+              {activeMenuItems.map(item => (
+                <li key={item.id}>
+                  <button onClick={() => handleItemClick(item)} className="hover:text-red-600 transition-colors text-left">
+                    {item.label}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -123,7 +145,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDemo }) => {
             <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 font-heading">
               Contacto Directo
             </h4>
-            <ul className="space-y-2 text-xs text-slate-600">
+            <ul className="space-y-2.5 text-xs text-slate-600">
               <li className="flex items-center space-x-2">
                 <Phone className="w-3.5 h-3.5 text-red-600 shrink-0" />
                 <span>{contactInfo.phone}</span>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, type ReactNode } from 'react';
 import type { Language } from '../types';
 import { translations } from '../data/translations';
 
@@ -11,18 +11,15 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem('app_lang') as Language;
-    return saved && ['es', 'en', 'pt'].includes(saved) ? saved : 'es';
-  });
+  // Lock language to Spanish ('es')
+  const language: Language = 'es';
 
-  const setLanguage = (lang: Language) => {
-    setLanguageState(lang);
-    localStorage.setItem('app_lang', lang);
+  const setLanguage = (_lang: Language) => {
+    // Locked to Spanish, no-op
   };
 
   const t = (key: string): string => {
-    return translations[language]?.[key] || translations['es']?.[key] || key;
+    return translations['es']?.[key] || key;
   };
 
   return (
