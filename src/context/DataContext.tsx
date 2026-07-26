@@ -50,6 +50,7 @@ export interface ResourceItem {
   durationOrSize: string;
   redirectUrl: string; // Redirection link
   imageUrl?: string; // Custom cover image URL (recommended: 1280x720 px)
+  featured?: boolean; // Show in hero carousel banner
 }
 
 export function parseSpanishDate(dateStr: string): Date | null {

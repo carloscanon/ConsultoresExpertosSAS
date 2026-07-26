@@ -9,7 +9,9 @@ import {
   Download,
   Play,
   Info,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 export const ResourcesPortal: React.FC = () => {
@@ -17,13 +19,13 @@ export const ResourcesPortal: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
 
-  // Helper to extract YouTube video ID and get thumbnail
+  // Helper to extract YouTube video ID and get thumbnail (hqdefault is guaranteed to exist for all videos)
   const getYoutubeThumbnail = (url: string) => {
     if (!url) return '';
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     if (match && match[2].length === 11) {
-      return `https://img.youtube.com/vi/${match[2]}/maxresdefault.jpg`;
+      return `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg`;
     }
     return '';
   };
@@ -65,8 +67,22 @@ export const ResourcesPortal: React.FC = () => {
   const templates = searchedResources.filter(item => item.type === 'template');
   const podcasts = searchedResources.filter(item => item.type === 'podcast');
 
-  // Featured Banner Resource (Default to first video or first resource)
-  const featuredResource = searchedResources.find(item => item.type === 'video') || searchedResources[0];
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  // Featured Banner Resources (Resources marked as featured, or falling back to searched ones)
+  const featuredResourcesList = searchedResources.filter(item => item.featured).length > 0
+    ? searchedResources.filter(item => item.featured)
+    : searchedResources;
+
+  const currentHero = featuredResourcesList[heroIndex % featuredResourcesList.length] || searchedResources[0];
+
+  const handlePrevHero = () => {
+    setHeroIndex(prev => (prev - 1 + featuredResourcesList.length) % featuredResourcesList.length);
+  };
+
+  const handleNextHero = () => {
+    setHeroIndex(prev => (prev + 1) % featuredResourcesList.length);
+  };
 
   const handleAccessResource = (item: any) => {
     const embed = getYoutubeEmbedUrl(item.redirectUrl);
@@ -80,50 +96,80 @@ export const ResourcesPortal: React.FC = () => {
   return (
     <div className="bg-[#141414] text-white min-h-screen text-left pb-24 font-sans selection:bg-red-600 selection:text-white">
       
-      {/* Netflix Hero Banner — sits naturally below nav, full image visible */}
-      {featuredResource && (
-        <div className="relative w-full overflow-hidden bg-black select-none" style={{ height: 'clamp(380px, 50vw, 560px)' }}>
-          {/* Cover image or gradient — prioritize custom imageUrl for HD quality */}
-          <div className="absolute inset-0">
-            {(featuredResource as any).imageUrl ? (
+      {/* Netflix Hero Carousel Banner */}
+      {currentHero && (
+        <div className="relative w-full overflow-hidden bg-black select-none group/hero" style={{ height: 'clamp(380px, 50vw, 560px)' }}>
+          {/* Cover image or gradient */}
+          <div className="absolute inset-0 transition-all duration-700">
+            {(currentHero as any).imageUrl ? (
               <img 
-                src={(featuredResource as any).imageUrl} 
-                alt={featuredResource.title} 
-                className="w-full h-full object-cover opacity-90 transition-all duration-700" 
+                key={currentHero.id}
+                src={(currentHero as any).imageUrl} 
+                alt={currentHero.title} 
+                className="w-full h-full object-cover opacity-90 transition-all duration-700 animate-in fade-in duration-500" 
               />
-            ) : featuredResource.type === 'video' && getYoutubeThumbnail(featuredResource.redirectUrl) ? (
+            ) : getYoutubeThumbnail(currentHero.redirectUrl) ? (
               <img 
-                src={getYoutubeThumbnail(featuredResource.redirectUrl)} 
-                alt={featuredResource.title} 
-                className="w-full h-full object-cover opacity-75 transition-all duration-700" 
+                key={currentHero.id}
+                src={getYoutubeThumbnail(currentHero.redirectUrl)} 
+                alt={currentHero.title} 
+                className="w-full h-full object-cover opacity-85 transition-all duration-700 animate-in fade-in duration-500" 
               />
             ) : (
-              <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(featuredResource.type)} opacity-75`} />
+              <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(currentHero.type)} opacity-75`} />
             )}
-            {/* Gradient overlays — darken left and bottom for text legibility */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#141414]/90 via-[#141414]/40 to-transparent z-10" />
+            {/* Gradient overlays */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#141414]/90 via-[#141414]/50 to-transparent z-10" />
             <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#141414] to-transparent z-10" />
           </div>
 
-          {/* Featured Content Details — positioned at bottom-left with safe spacing */}
+          {/* Carousel Navigation Arrows */}
+          {featuredResourcesList.length > 1 && (
+            <>
+              <button 
+                onClick={handlePrevHero}
+                className="absolute left-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-black/60 text-white/80 hover:text-white hover:bg-red-600/90 transition-all backdrop-blur-sm opacity-0 group-hover/hero:opacity-100"
+                title="Anterior Recurso Destacado"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button 
+                onClick={handleNextHero}
+                className="absolute right-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-black/60 text-white/80 hover:text-white hover:bg-red-600/90 transition-all backdrop-blur-sm opacity-0 group-hover/hero:opacity-100"
+                title="Siguiente Recurso Destacado"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </>
+          )}
+
+          {/* Featured Content Details */}
           <div className="absolute left-6 sm:left-12 bottom-10 sm:bottom-14 z-20 max-w-lg space-y-3">
-            <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded bg-red-600 text-[10px] font-extrabold uppercase tracking-wider shadow">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
-              <span>Destacado</span>
-            </span>
+            <div className="flex items-center space-x-2">
+              <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded bg-red-600 text-[10px] font-extrabold uppercase tracking-wider shadow">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                <span>Destacado Premium</span>
+              </span>
+              {featuredResourcesList.length > 1 && (
+                <span className="text-[10px] font-mono text-slate-400">
+                  {heroIndex % featuredResourcesList.length + 1} de {featuredResourcesList.length}
+                </span>
+              )}
+            </div>
+
             <h1 className="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight leading-tight drop-shadow-lg">
-              {featuredResource.title}
+              {currentHero.title}
             </h1>
             <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed drop-shadow line-clamp-2">
-              {featuredResource.description}
+              {currentHero.description}
             </p>
 
             <div className="flex items-center space-x-3 pt-1">
               <button 
-                onClick={() => handleAccessResource(featuredResource)}
+                onClick={() => handleAccessResource(currentHero)}
                 className="px-5 py-2 rounded-md bg-white text-black font-extrabold text-xs sm:text-sm flex items-center space-x-2 hover:bg-slate-200 transition-all active:scale-95 shadow-md"
               >
-                {featuredResource.type === 'video' && getYoutubeEmbedUrl(featuredResource.redirectUrl) ? (
+                {currentHero.type === 'video' && getYoutubeEmbedUrl(currentHero.redirectUrl) ? (
                   <>
                     <Play className="w-4 h-4 fill-black" />
                     <span>Reproducir</span>
@@ -135,9 +181,9 @@ export const ResourcesPortal: React.FC = () => {
                   </>
                 )}
               </button>
-              {featuredResource.redirectUrl && (
+              {currentHero.redirectUrl && (
                 <a 
-                  href={featuredResource.redirectUrl}
+                  href={currentHero.redirectUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 rounded-md bg-slate-500/30 text-white border border-slate-500/25 font-bold text-xs sm:text-sm flex items-center space-x-1.5 hover:bg-slate-500/50 transition-all"
@@ -147,6 +193,23 @@ export const ResourcesPortal: React.FC = () => {
                 </a>
               )}
             </div>
+
+            {/* Dots Indicator */}
+            {featuredResourcesList.length > 1 && (
+              <div className="flex items-center space-x-1.5 pt-2">
+                {featuredResourcesList.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setHeroIndex(idx)}
+                    className={`h-1.5 rounded-full transition-all ${
+                      idx === (heroIndex % featuredResourcesList.length)
+                        ? 'w-6 bg-red-600'
+                        : 'w-1.5 bg-white/40 hover:bg-white/70'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

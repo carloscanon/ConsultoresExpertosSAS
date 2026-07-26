@@ -604,12 +604,14 @@ export async function getBlogResourcesFromDb(): Promise<ResourceItem[]> {
     return filtered.map((item: any) => {
       let desc = item.ai_summary || '';
       let imageUrl = '';
+      let featured = false;
 
       try {
         if (item.ai_summary && item.ai_summary.trim().startsWith('{')) {
           const parsed = JSON.parse(item.ai_summary);
           desc = parsed.description || '';
           imageUrl = parsed.imageUrl || '';
+          featured = parsed.featured || false;
         }
       } catch (e) {
         // Fallback
@@ -622,7 +624,8 @@ export async function getBlogResourcesFromDb(): Promise<ResourceItem[]> {
         description: desc,
         durationOrSize: item.read_time || '',
         redirectUrl: item.summary || '',
-        imageUrl: imageUrl
+        imageUrl: imageUrl,
+        featured: featured
       };
     });
   } catch (err) {
@@ -638,7 +641,8 @@ export async function saveBlogResourceInDb(res: ResourceItem) {
   try {
     const serializedSummary = JSON.stringify({
       description: res.description || '',
-      imageUrl: res.imageUrl || ''
+      imageUrl: res.imageUrl || '',
+      featured: res.featured || false
     });
 
     const { data, error } = await withTimeout(supabase

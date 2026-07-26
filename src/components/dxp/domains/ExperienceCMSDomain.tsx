@@ -14,7 +14,8 @@ import {
   Mail, 
   MapPin, 
   Sparkles,
-  Link2
+  Link2,
+  Star
 } from 'lucide-react';
 import { saveSuperAdminAuditLog } from '../../../lib/supabase';
 
@@ -42,7 +43,8 @@ export const ExperienceCMSDomain: React.FC = () => {
     description: '',
     durationOrSize: '',
     redirectUrl: '',
-    imageUrl: ''
+    imageUrl: '',
+    featured: false
   });
 
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
@@ -88,7 +90,8 @@ export const ExperienceCMSDomain: React.FC = () => {
         description: '',
         durationOrSize: '',
         redirectUrl: '',
-        imageUrl: ''
+        imageUrl: '',
+        featured: false
       });
       setTimeout(() => setSaveStatus(null), 4000);
     } catch (err: any) {
@@ -137,9 +140,21 @@ export const ExperienceCMSDomain: React.FC = () => {
       description: item.description,
       durationOrSize: item.durationOrSize,
       redirectUrl: item.redirectUrl || '',
-      imageUrl: item.imageUrl || ''
+      imageUrl: item.imageUrl || '',
+      featured: item.featured || false
     });
     setIsEditingRes(true);
+  };
+
+  const handleToggleFeatured = async (item: ResourceItem) => {
+    setSaveStatus('Actualizando destacado...');
+    try {
+      await editResource({ ...item, featured: !item.featured });
+      setSaveStatus(item.featured ? '✓ Recurso removido del banner destacado.' : '✓ Recurso marcado como destacado en el banner.');
+      setTimeout(() => setSaveStatus(null), 3000);
+    } catch (err: any) {
+      setSaveStatus(`❌ Error: ${err.message}`);
+    }
   };
 
   const getResIcon = (type: string) => {
@@ -227,6 +242,12 @@ export const ExperienceCMSDomain: React.FC = () => {
                       <span className="text-[9px] font-mono text-cyan-400">({item.durationOrSize})</span>
                     </div>
                     <h4 className="font-bold text-white truncate max-w-xs sm:max-w-md">{item.title}</h4>
+                    {item.featured && (
+                      <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">⭐ Banner</span>
+                    )}
+                    {item.imageUrl && (
+                      <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">🖼️ Imagen</span>
+                    )}
                     <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed">{item.description}</p>
                     
                     {item.redirectUrl && (
@@ -243,6 +264,17 @@ export const ExperienceCMSDomain: React.FC = () => {
                   </div>
 
                   <div className="flex space-x-1 shrink-0">
+                    <button
+                      onClick={() => handleToggleFeatured(item)}
+                      className={`p-2 rounded-xl transition-all border ${
+                        item.featured 
+                          ? 'bg-amber-500/20 border-amber-500/40 text-amber-400 hover:bg-amber-500 hover:text-white' 
+                          : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-amber-400'
+                      }`}
+                      title={item.featured ? 'Quitar del Banner' : 'Mostrar en Banner Destacado'}
+                    >
+                      <Star className="w-3.5 h-3.5" />
+                    </button>
                     <button
                       onClick={() => startEditResource(item)}
                       className="p-2 bg-slate-900 border border-slate-800 text-slate-400 hover:text-cyan-400 rounded-xl transition-all"
@@ -352,6 +384,19 @@ export const ExperienceCMSDomain: React.FC = () => {
                 />
               </div>
 
+              <div className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950 border border-slate-800">
+                <input
+                  type="checkbox"
+                  id="featured-check"
+                  checked={resForm.featured || false}
+                  onChange={(e) => setResForm({ ...resForm, featured: e.target.checked })}
+                  className="w-4 h-4 accent-amber-500 rounded"
+                />
+                <label htmlFor="featured-check" className="text-slate-300 font-bold cursor-pointer">
+                  ⭐ Mostrar en el Banner Destacado (carrusel superior)
+                </label>
+              </div>
+
               <div className="flex space-x-2 pt-2">
                 <button
                   type="submit"
@@ -365,7 +410,7 @@ export const ExperienceCMSDomain: React.FC = () => {
                     onClick={() => {
                       setIsEditingRes(false);
                       setSelectedResId(null);
-                      setResForm({ title: '', type: 'video', description: '', durationOrSize: '', redirectUrl: '', imageUrl: '' });
+                      setResForm({ title: '', type: 'video', description: '', durationOrSize: '', redirectUrl: '', imageUrl: '', featured: false });
                     }}
                     className="px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-white"
                   >
