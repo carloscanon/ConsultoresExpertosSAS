@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 export const ResourcesPortal: React.FC = () => {
-  const { resources } = useData();
+  const { resources, contactInfo } = useData();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
 
@@ -109,7 +109,13 @@ export const ResourcesPortal: React.FC = () => {
       
       {/* Netflix Hero Carousel Banner */}
       {currentHero && (
-        <div className="relative w-full overflow-hidden bg-black select-none group/hero h-[450px] sm:h-[500px]">
+        <div 
+          className="relative w-full overflow-hidden bg-black select-none group/hero transition-all duration-300" 
+          style={{ 
+            marginTop: `${contactInfo.heroMarginTop ?? 0}px`,
+            height: `${contactInfo.heroHeight ?? 480}px` 
+          }}
+        >
           {/* Cover image or gradient */}
           <div className="absolute inset-0 transition-all duration-700">
             {(currentHero as any).imageUrl ? (

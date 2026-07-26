@@ -40,6 +40,8 @@ export interface ContactInfo {
   earlyBirdDiscount: number;
   masterclassPageSize: number;
   coursePageSize: number;
+  heroMarginTop?: number;
+  heroHeight?: number;
 }
 
 export interface ResourceItem {
@@ -266,7 +268,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       earlyBirdRegularPrice: 150000,
       earlyBirdDiscount: 99000,
       masterclassPageSize: 3,
-      coursePageSize: 6
+      coursePageSize: 6,
+      heroMarginTop: 0,
+      heroHeight: 480
     };
   });
 

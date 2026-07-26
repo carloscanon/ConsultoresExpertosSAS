@@ -473,6 +473,58 @@ export const ExperienceCMSDomain: React.FC = () => {
             </p>
           </div>
 
+          {/* Netflix Hero Banner Slider Controls */}
+          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
+            <h4 className="text-xs font-mono font-bold text-red-500 uppercase tracking-widest border-b border-slate-850 pb-2 flex items-center space-x-2">
+              <span>🎬 CONTROL DE POSICIÓN Y ALTURA DEL BANNER TIPO NETFLIX</span>
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Slider 1: Vertical Margin (Move up / down) */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="block text-slate-350 font-bold">↕️ Posición Vertical del Banner (Bajar / Subir)</label>
+                  <span className="text-red-400 font-mono font-bold">{seoForm.heroMarginTop || 0}px</span>
+                </div>
+                <input
+                  type="range"
+                  min={-64}
+                  max={120}
+                  step={4}
+                  value={seoForm.heroMarginTop || 0}
+                  onChange={(e) => setSeoForm({ ...seoForm, heroMarginTop: Number(e.target.value) })}
+                  className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-red-600"
+                />
+                <div className="flex justify-between text-[9px] text-slate-500 font-mono">
+                  <span>-64px (Borde Superior)</span>
+                  <span>0px (Default)</span>
+                  <span>120px (Abajo)</span>
+                </div>
+              </div>
+
+              {/* Slider 2: Banner Height */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="block text-slate-350 font-bold">↔️ Altura del Banner Netflix</label>
+                  <span className="text-cyan-400 font-mono font-bold">{seoForm.heroHeight || 480}px</span>
+                </div>
+                <input
+                  type="range"
+                  min={320}
+                  max={700}
+                  step={10}
+                  value={seoForm.heroHeight || 480}
+                  onChange={(e) => setSeoForm({ ...seoForm, heroHeight: Number(e.target.value) })}
+                  className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                />
+                <div className="flex justify-between text-[9px] text-slate-500 font-mono">
+                  <span>320px (Compacto)</span>
+                  <span>480px (Estándar)</span>
+                  <span>700px (Gigante HD)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             {/* Left Side: Contact Information */}
