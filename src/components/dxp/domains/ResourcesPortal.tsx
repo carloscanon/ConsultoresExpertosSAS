@@ -103,6 +103,12 @@ export const ResourcesPortal: React.FC = () => {
     }
   };
 
+  // 3-by-3 Pagination State for Videos (Matching Academy/Course functionality)
+  const [videoPage, setVideoPage] = useState(0);
+  const pageSize = 3;
+  const totalVideoPages = Math.ceil(videos.length / pageSize);
+  const paginatedVideos = videos.slice(videoPage * pageSize, (videoPage + 1) * pageSize);
+
   return (
     <div className="bg-[#141414] text-white min-h-screen text-left pb-24 font-sans selection:bg-red-600 selection:text-white">
       
@@ -238,7 +244,10 @@ export const ResourcesPortal: React.FC = () => {
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setVideoPage(0);
+              }}
               placeholder="Buscar título o descripción..."
               className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white placeholder-slate-500 outline-none focus:border-red-600 transition-all"
             />
@@ -247,19 +256,50 @@ export const ResourcesPortal: React.FC = () => {
 
         {/* NETFLIX CATEGORY ROWS */}
 
-        {/* Row 1: Videos */}
+        {/* Row 1: Videos (Paginated 3-by-3) */}
         {videos.length > 0 && (
-          <div className="space-y-3">
-            <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-350 flex items-center space-x-2">
-              <span className="w-1 h-4 bg-red-600 rounded-full" />
-              <span>🎬 Grabaciones y Videos Técnicos ({videos.length})</span>
-            </h3>
-            <div className="flex space-x-4 overflow-x-auto pb-4 pt-1 scrollbar-hide custom-scrollbar">
-              {videos.map((item) => (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-extrabold uppercase tracking-wider text-slate-350 flex items-center space-x-2">
+                <span className="w-1 h-4 bg-red-600 rounded-full" />
+                <span>🎬 Grabaciones y Videos Técnicos ({videos.length})</span>
+              </h3>
+
+              {/* 3-by-3 Pagination Controls */}
+              {totalVideoPages > 1 && (
+                <div className="flex items-center space-x-3">
+                  <span className="text-[10px] font-mono text-slate-400">
+                    Página {videoPage + 1} de {totalVideoPages}
+                  </span>
+                  <div className="flex items-center space-x-1">
+                    <button
+                      onClick={() => setVideoPage(prev => Math.max(0, prev - 1))}
+                      disabled={videoPage === 0}
+                      className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 transition-all"
+                      title="Página Anterior"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setVideoPage(prev => Math.min(totalVideoPages - 1, prev + 1))}
+                      disabled={videoPage >= totalVideoPages - 1}
+                      className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-800 transition-all"
+                      title="Siguiente Página"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 3 Grid Columns (3 en 3) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {paginatedVideos.map((item) => (
                 <div 
                   key={item.id}
                   onClick={() => handleAccessResource(item)}
-                  className="flex-shrink-0 w-[260px] sm:w-[320px] flex flex-col group cursor-pointer"
+                  className="flex flex-col group cursor-pointer"
                 >
                   {/* Poster Box */}
                   <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
@@ -316,18 +356,26 @@ export const ResourcesPortal: React.FC = () => {
               <span className="w-1 h-4 bg-red-600 rounded-full" />
               <span>📄 Whitepapers y Informes Especializados ({whitepapers.length})</span>
             </h3>
-            <div className="flex space-x-4 overflow-x-auto pb-4 pt-1 scrollbar-hide custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {whitepapers.map((item) => (
                 <div 
                   key={item.id}
                   onClick={() => handleAccessResource(item)}
-                  className="flex-shrink-0 w-[260px] sm:w-[320px] flex flex-col group cursor-pointer"
+                  className="flex flex-col group cursor-pointer"
                 >
                   {/* Poster Box */}
                   <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
-                    <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
-                      {getIcon(item.type)}
-                    </div>
+                    {(item as any).imageUrl ? (
+                      <img 
+                        src={(item as any).imageUrl} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-all duration-500" 
+                      />
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
+                        {getIcon(item.type)}
+                      </div>
+                    )}
 
                     {/* Download Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
@@ -363,18 +411,26 @@ export const ResourcesPortal: React.FC = () => {
               <span className="w-1 h-4 bg-red-600 rounded-full" />
               <span>🛠️ Checklists y Plantillas de Trabajo ({templates.length})</span>
             </h3>
-            <div className="flex space-x-4 overflow-x-auto pb-4 pt-1 scrollbar-hide custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {templates.map((item) => (
                 <div 
                   key={item.id}
                   onClick={() => handleAccessResource(item)}
-                  className="flex-shrink-0 w-[260px] sm:w-[320px] flex flex-col group cursor-pointer"
+                  className="flex flex-col group cursor-pointer"
                 >
                   {/* Poster Box */}
                   <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
-                    <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
-                      {getIcon(item.type)}
-                    </div>
+                    {(item as any).imageUrl ? (
+                      <img 
+                        src={(item as any).imageUrl} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-all duration-500" 
+                      />
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
+                        {getIcon(item.type)}
+                      </div>
+                    )}
 
                     {/* Download Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
@@ -410,18 +466,26 @@ export const ResourcesPortal: React.FC = () => {
               <span className="w-1 h-4 bg-red-600 rounded-full" />
               <span>🎙️ Podcasts y Charlas Técnicas ({podcasts.length})</span>
             </h3>
-            <div className="flex space-x-4 overflow-x-auto pb-4 pt-1 scrollbar-hide custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {podcasts.map((item) => (
                 <div 
                   key={item.id}
                   onClick={() => handleAccessResource(item)}
-                  className="flex-shrink-0 w-[260px] sm:w-[320px] flex flex-col group cursor-pointer"
+                  className="flex flex-col group cursor-pointer"
                 >
                   {/* Poster Box */}
                   <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
-                    <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
-                      {getIcon(item.type)}
-                    </div>
+                    {(item as any).imageUrl ? (
+                      <img 
+                        src={(item as any).imageUrl} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-all duration-500" 
+                      />
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
+                        {getIcon(item.type)}
+                      </div>
+                    )}
 
                     {/* Play Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">

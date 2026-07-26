@@ -15,7 +15,8 @@ import {
   MapPin, 
   Sparkles,
   Link2,
-  Star
+  Star,
+  Upload
 } from 'lucide-react';
 import { saveSuperAdminAuditLog } from '../../../lib/supabase';
 
@@ -359,16 +360,51 @@ export const ExperienceCMSDomain: React.FC = () => {
               </div>
 
               <div className="space-y-1.5 text-left">
-                <label className="block text-slate-300 font-bold">🖼️ URL de Imagen de Portada (Cover Thumbnail)</label>
-                <input
-                  type="url"
-                  value={resForm.imageUrl || ''}
-                  onChange={(e) => setResForm({ ...resForm, imageUrl: e.target.value })}
-                  placeholder="Ej: https://i.imgur.com/mi-imagen-1280x720.jpg"
-                  className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono text-[11px]"
-                />
+                <label className="block text-slate-300 font-bold">🖼️ Imagen de Portada (URL o Subir Archivo Local)</label>
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    value={resForm.imageUrl || ''}
+                    onChange={(e) => setResForm({ ...resForm, imageUrl: e.target.value })}
+                    placeholder="Pape URL de imagen (Ej: https://...)"
+                    className="flex-1 p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none focus:border-cyan-400 font-mono text-[11px]"
+                  />
+                  <label className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold text-[11px] cursor-pointer flex items-center shrink-0 border border-slate-700">
+                    <Upload className="w-3.5 h-3.5 mr-1" />
+                    <span>Subir</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (evt) => {
+                            const b64 = evt.target?.result as string;
+                            if (b64) setResForm({ ...resForm, imageUrl: b64 });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                {resForm.imageUrl && (
+                  <div className="flex items-center space-x-2 mt-1">
+                    <img src={resForm.imageUrl} alt="Preview" className="w-12 h-7 object-cover rounded border border-slate-700" />
+                    <span className="text-[10px] text-emerald-400 font-mono font-bold">✓ Portada lista</span>
+                    <button
+                      type="button"
+                      onClick={() => setResForm({ ...resForm, imageUrl: '' })}
+                      className="text-[10px] text-red-400 underline font-mono"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                )}
                 <p className="text-[10px] text-slate-500 font-mono">
-                  Suba una imagen de <strong className="text-cyan-400">1280 × 720 px</strong> (proporción 16:9) para que se vea nítida en el banner y las tarjetas tipo Netflix. Puede usar Imgur, Cloudinary o cualquier CDN público.
+                  Se recomienda tamaño <strong className="text-cyan-400">1280 × 720 px</strong> (16:9) para nitidez en el banner y tarjetas Netflix.
                 </p>
               </div>
 
