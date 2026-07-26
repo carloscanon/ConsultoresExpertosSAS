@@ -16,29 +16,33 @@ export const AcademySection: React.FC = () => {
   const { courses, enrollStudent, contactInfo } = useData();
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [enrolledCourse, setEnrolledCourse] = useState<Course | null>(null);
-  const [enrollForm, setEnrollForm] = useState({ name: '', email: '', company: '' });
+  const [enrollForm, setEnrollForm] = useState({ name: '', email: '', company: '', phone: '', acceptTerms: false });
   const [enrollSuccess, setEnrollSuccess] = useState(false);
 
   const handleEnrollSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!enrolledCourse || !enrollForm.acceptTerms) return;
+
     setEnrollSuccess(true);
 
-    if (enrolledCourse) {
-      await enrollStudent({
-        courseId: enrolledCourse.id,
-        courseTitle: enrolledCourse.title,
-        fullName: enrollForm.name,
-        email: enrollForm.email,
-        company: enrollForm.company,
-        paymentStatus: 'Preinscrito',
-        cohortDate: enrolledCourse.upcomingDate
-      });
-    }
+    const finalCompany = enrollForm.company 
+      ? `${enrollForm.company} (Cel: ${enrollForm.phone})` 
+      : `Cel: ${enrollForm.phone}`;
+
+    await enrollStudent({
+      courseId: enrolledCourse.id,
+      courseTitle: enrolledCourse.title,
+      fullName: enrollForm.name,
+      email: enrollForm.email,
+      company: finalCompany,
+      paymentStatus: 'Preinscrito',
+      cohortDate: enrolledCourse.upcomingDate
+    });
 
     setTimeout(() => {
       setEnrollSuccess(false);
       setEnrolledCourse(null);
-      setEnrollForm({ name: '', email: '', company: '' });
+      setEnrollForm({ name: '', email: '', company: '', phone: '', acceptTerms: false });
     }, 2500);
   };
 
@@ -439,6 +443,32 @@ export const AcademySection: React.FC = () => {
                     placeholder="Ej. Consultores Expertos SAS"
                     className="w-full p-3 rounded-xl bg-slate-950 border border-slate-805 text-xs text-white outline-none focus:border-cyan-400"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 uppercase mb-1">Celular / WhatsApp *</label>
+                  <input
+                    required
+                    type="text"
+                    value={enrollForm.phone}
+                    onChange={(e) => setEnrollForm({ ...enrollForm, phone: e.target.value })}
+                    placeholder="Ej. +57 300 123 4567"
+                    className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white outline-none focus:border-cyan-400 font-mono"
+                  />
+                </div>
+
+                <div className="flex items-start space-x-2 pt-2">
+                  <input
+                    type="checkbox"
+                    required
+                    id="acceptTermsHome"
+                    checked={enrollForm.acceptTerms}
+                    onChange={(e) => setEnrollForm({ ...enrollForm, acceptTerms: e.target.checked })}
+                    className="mt-1 accent-cyan-600"
+                  />
+                  <label htmlFor="acceptTermsHome" className="text-[10px] text-slate-400 leading-snug cursor-pointer select-none">
+                    Acepto la política de protección y tratamiento de datos personales (Habeas Data) de Consultores Expertos SAS. *
+                  </label>
                 </div>
 
                 <button
