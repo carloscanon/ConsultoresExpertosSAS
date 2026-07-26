@@ -3,7 +3,6 @@ import { resourcesData } from '../data/resourcesData';
 import type { BlogPost } from '../types';
 import { 
   Sparkles, 
-  Clock, 
   Download, 
   BookOpen,
   X,
@@ -118,39 +117,44 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
         {/* Netflix Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredPosts.map((post) => (
-            <div
-              key={post.id}
+            <div 
+              key={post.id} 
               onClick={() => handleCardClick(post)}
-              className="flex-shrink-0 w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 hover:border-red-600 hover:scale-103 transition-all cursor-pointer relative group shadow-lg select-none"
+              className="flex flex-col group cursor-pointer"
             >
-              {/* Cover Image */}
-              {post.videoUrl && getYoutubeThumbnail(post.videoUrl) ? (
-                <img 
-                  src={getYoutubeThumbnail(post.videoUrl)} 
-                  alt={post.title} 
-                  className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all duration-500" 
-                />
-              ) : (
-                <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(post.category)} flex items-center justify-center p-4`}>
-                  {getIcon(post.category)}
-                </div>
-              )}
+              {/* Card Poster Container */}
+              <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
+                {/* Cover Image */}
+                {post.videoUrl && getYoutubeThumbnail(post.videoUrl) ? (
+                  <img 
+                    src={getYoutubeThumbnail(post.videoUrl)} 
+                    alt={post.title} 
+                    className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all duration-500" 
+                  />
+                ) : (
+                  <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(post.category)} flex items-center justify-center p-4`}>
+                    {getIcon(post.category)}
+                  </div>
+                )}
 
-              {/* Card Hover Details Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3.5 space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded bg-red-600/25 text-red-500 border border-red-500/25 font-mono tracking-wider">
-                    {post.category}
-                  </span>
-                  <span className="text-[9px] text-slate-400 font-mono flex items-center space-x-1">
-                    <Clock className="w-3 h-3 text-slate-400" />
-                    <span>{post.readTime}</span>
-                  </span>
+                {/* Card Hover Play/Download Button Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
+                  <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                    {post.videoUrl ? <Play className="w-5 h-5 fill-white ml-0.5" /> : <Download className="w-5 h-5" />}
+                  </div>
                 </div>
-                <h4 className="text-xs font-bold text-white leading-snug line-clamp-1 group-hover:line-clamp-none transition-all">
+              </div>
+
+              {/* Text Description below the Resource (Always visible) */}
+              <div className="text-left mt-2.5 space-y-1">
+                <div className="flex items-center justify-between text-[9px] text-slate-500 font-mono">
+                  <span className="uppercase font-bold text-red-500">{post.category}</span>
+                  <span>{post.readTime}</span>
+                </div>
+                <h4 className="text-xs font-bold text-white group-hover:text-red-500 transition-colors line-clamp-1">
                   {post.title}
                 </h4>
-                <p className="text-[9px] text-slate-350 line-clamp-2 hidden group-hover:block transition-all">
+                <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed">
                   {post.summary}
                 </p>
               </div>

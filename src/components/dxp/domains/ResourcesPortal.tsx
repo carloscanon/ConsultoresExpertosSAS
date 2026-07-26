@@ -180,31 +180,41 @@ export const ResourcesPortal: React.FC = () => {
                 <div 
                   key={item.id}
                   onClick={() => handleAccessResource(item)}
-                  className="flex-shrink-0 w-[260px] sm:w-[320px] aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 hover:border-red-600 hover:scale-102 transition-all cursor-pointer relative group shadow-lg"
+                  className="flex-shrink-0 w-[260px] sm:w-[320px] flex flex-col group cursor-pointer"
                 >
-                  {/* Thumbnail Image */}
-                  {getYoutubeThumbnail(item.redirectUrl) ? (
-                    <img 
-                      src={getYoutubeThumbnail(item.redirectUrl)} 
-                      alt={item.title} 
-                      className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all duration-500" 
-                    />
-                  ) : (
-                    <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
-                      {getIcon(item.type)}
-                    </div>
-                  )}
+                  {/* Poster Box */}
+                  <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
+                    {/* Thumbnail Image */}
+                    {getYoutubeThumbnail(item.redirectUrl) ? (
+                      <img 
+                        src={getYoutubeThumbnail(item.redirectUrl)} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all duration-500" 
+                      />
+                    ) : (
+                      <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
+                        {getIcon(item.type)}
+                      </div>
+                    )}
 
-                  {/* Poster Overlay on Hover */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3.5 space-y-1">
-                    <span className="text-[9px] font-bold text-red-500 font-mono tracking-wider flex items-center space-x-1">
-                      <Play className="w-2.5 h-2.5 fill-red-500" />
-                      <span>{item.durationOrSize || 'VIDEO'}</span>
-                    </span>
-                    <h4 className="text-xs font-bold text-white leading-snug line-clamp-1 group-hover:line-clamp-none transition-all">
+                    {/* Play Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
+                      <div className="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                        <Play className="w-4.5 h-4.5 fill-white ml-0.5" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Text underneath */}
+                  <div className="text-left mt-2 space-y-0.5">
+                    <div className="flex items-center justify-between text-[8px] text-slate-500 font-mono">
+                      <span className="uppercase font-bold text-red-500">{item.type}</span>
+                      <span>{item.durationOrSize}</span>
+                    </div>
+                    <h4 className="text-[11px] font-bold text-white group-hover:text-red-500 transition-colors line-clamp-1">
                       {item.title}
                     </h4>
-                    <p className="text-[9px] text-slate-400 line-clamp-2 hidden group-hover:block transition-all">
+                    <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
@@ -226,20 +236,32 @@ export const ResourcesPortal: React.FC = () => {
                 <div 
                   key={item.id}
                   onClick={() => handleAccessResource(item)}
-                  className="flex-shrink-0 w-[260px] sm:w-[320px] aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 hover:border-red-600 hover:scale-102 transition-all cursor-pointer relative group shadow-lg"
+                  className="flex-shrink-0 w-[260px] sm:w-[320px] flex flex-col group cursor-pointer"
                 >
-                  <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
-                    {getIcon(item.type)}
+                  {/* Poster Box */}
+                  <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
+                    <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
+                      {getIcon(item.type)}
+                    </div>
+
+                    {/* Download Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
+                      <div className="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                        <Download className="w-4.5 h-4.5" />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-3.5 flex flex-col justify-end space-y-1">
-                    <span className="text-[9px] font-bold text-red-500 font-mono tracking-wider">
-                      {item.durationOrSize || 'PDF'}
-                    </span>
-                    <h4 className="text-xs font-bold text-white leading-snug line-clamp-1 group-hover:line-clamp-none transition-all">
+                  {/* Text underneath */}
+                  <div className="text-left mt-2 space-y-0.5">
+                    <div className="flex items-center justify-between text-[8px] text-slate-500 font-mono">
+                      <span className="uppercase font-bold text-red-500">{item.type}</span>
+                      <span>{item.durationOrSize}</span>
+                    </div>
+                    <h4 className="text-[11px] font-bold text-white group-hover:text-red-500 transition-colors line-clamp-1">
                       {item.title}
                     </h4>
-                    <p className="text-[9px] text-slate-400 line-clamp-2 hidden group-hover:block transition-all">
+                    <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
@@ -261,20 +283,32 @@ export const ResourcesPortal: React.FC = () => {
                 <div 
                   key={item.id}
                   onClick={() => handleAccessResource(item)}
-                  className="flex-shrink-0 w-[260px] sm:w-[320px] aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 hover:border-red-600 hover:scale-102 transition-all cursor-pointer relative group shadow-lg"
+                  className="flex-shrink-0 w-[260px] sm:w-[320px] flex flex-col group cursor-pointer"
                 >
-                  <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
-                    {getIcon(item.type)}
+                  {/* Poster Box */}
+                  <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
+                    <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
+                      {getIcon(item.type)}
+                    </div>
+
+                    {/* Download Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
+                      <div className="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                        <Download className="w-4.5 h-4.5" />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-3.5 flex flex-col justify-end space-y-1">
-                    <span className="text-[9px] font-bold text-red-500 font-mono tracking-wider">
-                      {item.durationOrSize || 'DESCARGABLE'}
-                    </span>
-                    <h4 className="text-xs font-bold text-white leading-snug line-clamp-1 group-hover:line-clamp-none transition-all">
+                  {/* Text underneath */}
+                  <div className="text-left mt-2 space-y-0.5">
+                    <div className="flex items-center justify-between text-[8px] text-slate-500 font-mono">
+                      <span className="uppercase font-bold text-red-500">{item.type}</span>
+                      <span>{item.durationOrSize}</span>
+                    </div>
+                    <h4 className="text-[11px] font-bold text-white group-hover:text-red-500 transition-colors line-clamp-1">
                       {item.title}
                     </h4>
-                    <p className="text-[9px] text-slate-400 line-clamp-2 hidden group-hover:block transition-all">
+                    <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
@@ -296,20 +330,32 @@ export const ResourcesPortal: React.FC = () => {
                 <div 
                   key={item.id}
                   onClick={() => handleAccessResource(item)}
-                  className="flex-shrink-0 w-[260px] sm:w-[320px] aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 hover:border-red-600 hover:scale-102 transition-all cursor-pointer relative group shadow-lg"
+                  className="flex-shrink-0 w-[260px] sm:w-[320px] flex flex-col group cursor-pointer"
                 >
-                  <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
-                    {getIcon(item.type)}
+                  {/* Poster Box */}
+                  <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
+                    <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(item.type)} flex items-center justify-center p-4`}>
+                      {getIcon(item.type)}
+                    </div>
+
+                    {/* Play Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
+                      <div className="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
+                        <Play className="w-4.5 h-4.5 fill-white ml-0.5" />
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-3.5 flex flex-col justify-end space-y-1">
-                    <span className="text-[9px] font-bold text-red-500 font-mono tracking-wider">
-                      {item.durationOrSize || 'PODCAST'}
-                    </span>
-                    <h4 className="text-xs font-bold text-white leading-snug line-clamp-1 group-hover:line-clamp-none transition-all">
+                  {/* Text underneath */}
+                  <div className="text-left mt-2 space-y-0.5">
+                    <div className="flex items-center justify-between text-[8px] text-slate-500 font-mono">
+                      <span className="uppercase font-bold text-red-500">{item.type}</span>
+                      <span>{item.durationOrSize}</span>
+                    </div>
+                    <h4 className="text-[11px] font-bold text-white group-hover:text-red-500 transition-colors line-clamp-1">
                       {item.title}
                     </h4>
-                    <p className="text-[9px] text-slate-400 line-clamp-2 hidden group-hover:block transition-all">
+                    <p className="text-[10px] text-slate-400 line-clamp-2 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
