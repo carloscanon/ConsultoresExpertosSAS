@@ -42,6 +42,7 @@ export interface ContactInfo {
   coursePageSize: number;
   heroMarginTop?: number;
   heroHeight?: number;
+  heroOpacity?: number;
 }
 
 export interface ResourceItem {
@@ -270,7 +271,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       masterclassPageSize: 3,
       coursePageSize: 6,
       heroMarginTop: 0,
-      heroHeight: 480
+      heroHeight: 480,
+      heroOpacity: 100
     };
   });
 

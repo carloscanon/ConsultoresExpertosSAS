@@ -478,11 +478,11 @@ export const ExperienceCMSDomain: React.FC = () => {
             <h4 className="text-xs font-mono font-bold text-red-500 uppercase tracking-widest border-b border-slate-850 pb-2 flex items-center space-x-2">
               <span>🎬 CONTROL DE POSICIÓN Y ALTURA DEL BANNER TIPO NETFLIX</span>
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Slider 1: Vertical Margin (Move up / down) */}
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <label className="block text-slate-350 font-bold">↕️ Posición Vertical del Banner (Bajar / Subir)</label>
+                  <label className="block text-slate-350 font-bold">↕️ Posición Vertical (Bajar/Subir)</label>
                   <span className="text-red-400 font-mono font-bold">{seoForm.heroMarginTop || 0}px</span>
                 </div>
                 <input
@@ -495,16 +495,16 @@ export const ExperienceCMSDomain: React.FC = () => {
                   className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-red-600"
                 />
                 <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                  <span>-64px (Borde Superior)</span>
-                  <span>0px (Default)</span>
-                  <span>120px (Abajo)</span>
+                  <span>-64px</span>
+                  <span>0px</span>
+                  <span>120px</span>
                 </div>
               </div>
 
               {/* Slider 2: Banner Height */}
               <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <label className="block text-slate-350 font-bold">↔️ Altura del Banner Netflix</label>
+                  <label className="block text-slate-350 font-bold">↔️ Altura del Banner</label>
                   <span className="text-cyan-400 font-mono font-bold">{seoForm.heroHeight || 480}px</span>
                 </div>
                 <input
@@ -517,9 +517,31 @@ export const ExperienceCMSDomain: React.FC = () => {
                   className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
                 />
                 <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                  <span>320px (Compacto)</span>
-                  <span>480px (Estándar)</span>
-                  <span>700px (Gigante HD)</span>
+                  <span>320px</span>
+                  <span>480px</span>
+                  <span>700px</span>
+                </div>
+              </div>
+
+              {/* Slider 3: Image Brightness & Clarity */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="block text-slate-350 font-bold">☀️ Claridad de Imagen (Brillo)</label>
+                  <span className="text-amber-400 font-mono font-bold">{seoForm.heroOpacity ?? 100}%</span>
+                </div>
+                <input
+                  type="range"
+                  min={30}
+                  max={100}
+                  step={5}
+                  value={seoForm.heroOpacity ?? 100}
+                  onChange={(e) => setSeoForm({ ...seoForm, heroOpacity: Number(e.target.value) })}
+                  className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                />
+                <div className="flex justify-between text-[9px] text-slate-500 font-mono">
+                  <span>30% (Oscuro)</span>
+                  <span>75% (Medio)</span>
+                  <span>100% (100% Claridad HD)</span>
                 </div>
               </div>
             </div>

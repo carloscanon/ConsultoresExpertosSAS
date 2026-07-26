@@ -123,7 +123,8 @@ export const ResourcesPortal: React.FC = () => {
                 key={currentHero.id}
                 src={(currentHero as any).imageUrl} 
                 alt={currentHero.title} 
-                className="w-full h-full object-cover object-center opacity-95 transition-all duration-700 animate-in fade-in duration-500" 
+                className="w-full h-full object-cover object-center transition-all duration-700 animate-in fade-in duration-500" 
+                style={{ opacity: (contactInfo.heroOpacity ?? 100) / 100 }}
               />
             ) : getYoutubeThumbnail(currentHero.redirectUrl) ? (
               <img 
@@ -137,10 +138,11 @@ export const ResourcesPortal: React.FC = () => {
                     target.src = target.src.replace('maxresdefault.jpg', 'hqdefault.jpg');
                   }
                 }}
-                className="w-full h-full object-cover object-center opacity-90 transition-all duration-700 animate-in fade-in duration-500" 
+                className="w-full h-full object-cover object-center transition-all duration-700 animate-in fade-in duration-500" 
+                style={{ opacity: (contactInfo.heroOpacity ?? 100) / 100 }}
               />
             ) : (
-              <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(currentHero.type)} opacity-85`} />
+              <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(currentHero.type)}`} style={{ opacity: (contactInfo.heroOpacity ?? 100) / 100 }} />
             )}
             {/* Gradient overlays — Netflix Cinematic Vignette */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#141414] via-[#141414]/60 to-transparent z-10" />
