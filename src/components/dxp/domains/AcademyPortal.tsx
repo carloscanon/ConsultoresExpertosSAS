@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useData } from '../../../context/DataContext';
+import { useData, calculateMasterclassPrice } from '../../../context/DataContext';
 import { 
   GraduationCap, 
   ArrowRight,
@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 
 export const AcademyPortal: React.FC = () => {
-  const { courses, enrollStudent } = useData();
+  const { courses, enrollStudent, contactInfo } = useData();
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [enrollForm, setEnrollForm] = useState({ name: '', email: '', company: '' });
   const [enrollSuccess, setEnrollSuccess] = useState(false);
@@ -101,111 +101,114 @@ export const AcademyPortal: React.FC = () => {
                 </p>
               </div>
               <span className="px-3 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-[10px] font-bold text-purple-300">
-                Próximas 3 Clases Agendadas
+                Línea Completa Programada
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {tuesdayMasterclasses.map((course) => (
-                <div
-                  key={course.id}
-                  className="bg-slate-950/80 rounded-2xl p-5 border border-slate-800 hover:border-purple-500/40 transition-all flex flex-col justify-between group shadow-lg animate-in fade-in-50"
-                >
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-purple-500/15 text-purple-400 border border-purple-500/20">
-                        {course.badge || 'Martes'}
-                      </span>
-                      <span className="text-[9px] font-mono font-bold text-slate-400">
-                        {course.duration}
-                      </span>
+              {tuesdayMasterclasses.map((course) => {
+                const priceInfo = calculateMasterclassPrice(course, contactInfo);
+                return (
+                  <div
+                    key={course.id}
+                    className="bg-slate-950/80 rounded-2xl p-5 border border-slate-800 hover:border-purple-500/40 transition-all flex flex-col justify-between group shadow-lg animate-in fade-in-50"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-purple-500/15 text-purple-400 border border-purple-500/20">
+                          {course.badge || 'Martes'}
+                        </span>
+                        <span className="text-[9px] font-mono font-bold text-slate-400">
+                          {course.duration}
+                        </span>
+                      </div>
+
+                      <h4 className="text-sm font-bold text-white mb-2 group-hover:text-purple-300 transition-colors font-heading leading-snug">
+                        {course.title}
+                      </h4>
+
+                      <p className="text-[11px] text-slate-400 leading-relaxed mb-4 line-clamp-3">
+                        {course.description}
+                      </p>
+
+                      <div className="space-y-1 text-[10px] text-slate-400 bg-slate-900/40 p-2.5 rounded-xl border border-slate-805 font-mono mb-4">
+                        <div className="flex justify-between">
+                          <span>Instructor:</span>
+                          <span className="font-bold text-white">{course.instructor?.name}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Modalidad:</span>
+                          <span className="font-bold text-slate-350">{course.format || 'Online en Vivo'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Nivel:</span>
+                          <span className="font-bold text-slate-350">{course.level || 'Intermedio'}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Fecha:</span>
+                          <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-slate-800/80 pt-1.5 mt-1.5 font-bold">
+                          <span>Inversión:</span>
+                          {priceInfo.priceType === 'discount' ? (
+                            <div className="flex items-center space-x-1.5">
+                              <span className="text-[9px] text-slate-500 line-through">
+                                ${Number(priceInfo.priceValue || 0).toLocaleString()}
+                              </span>
+                              <span className="text-emerald-400 font-extrabold">
+                                ${Number(priceInfo.discountPriceValue || 0).toLocaleString()}
+                              </span>
+                            </div>
+                          ) : priceInfo.priceType === 'paid' ? (
+                            <span className="text-white font-extrabold">
+                              ${Number(priceInfo.priceValue || 0).toLocaleString()}
+                            </span>
+                          ) : (
+                            <span className="text-emerald-400 font-extrabold uppercase text-[9px]">
+                              Gratis (Sin Costo)
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
-                    <h4 className="text-sm font-bold text-white mb-2 group-hover:text-purple-300 transition-colors font-heading leading-snug">
-                      {course.title}
-                    </h4>
+                    <div className="pt-3 border-t border-slate-800 flex flex-col space-y-2">
+                      <button
+                        onClick={() => setSelectedCourse(course)}
+                        className="w-full py-2 rounded-xl text-[11px] font-bold text-white bg-purple-600 hover:bg-purple-500 transition-all flex items-center justify-center space-x-1"
+                      >
+                        <span>{priceInfo.priceType === 'free' ? 'Inscribirse Gratis' : 'Preinscribirme'}</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
 
-                    <p className="text-[11px] text-slate-400 leading-relaxed mb-4">
-                      {course.description}
-                    </p>
+                      {course.conferenceLink && (
+                        <a
+                          href={course.conferenceLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-cyan-400 bg-cyan-950/20 border border-cyan-500/20 hover:bg-cyan-950/40 transition-all flex items-center justify-center space-x-1"
+                        >
+                          <Video className="w-3.5 h-3.5" />
+                          <span>Conectarse a Clase (Zoom)</span>
+                        </a>
+                      )}
 
-                    <div className="space-y-1 text-[10px] text-slate-400 bg-slate-900/40 p-2.5 rounded-xl border border-slate-805 font-mono mb-4">
-                      <div className="flex justify-between">
-                        <span>Instructor:</span>
-                        <span className="font-bold text-white">{course.instructor?.name}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Modalidad:</span>
-                        <span className="font-bold text-slate-350">{course.format || 'Online en Vivo'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Nivel:</span>
-                        <span className="font-bold text-slate-350">{course.level || 'Intermedio'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Fecha:</span>
-                        <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
-                      </div>
-                      <div className="flex justify-between border-t border-slate-800/80 pt-1.5 mt-1.5 font-bold">
-                        <span>Inversión:</span>
-                        {course.priceType === 'discount' ? (
-                          <div className="flex items-center space-x-1.5">
-                            <span className="text-[9px] text-slate-500 line-through">
-                              ${Number(course.priceValue || 0).toLocaleString()}
-                            </span>
-                            <span className="text-emerald-450 font-extrabold">
-                              ${Number(course.discountPriceValue || 0).toLocaleString()}
-                            </span>
-                          </div>
-                        ) : course.priceType === 'paid' ? (
-                          <span className="text-white font-extrabold">
-                            ${Number(course.priceValue || 0).toLocaleString()}
-                          </span>
-                        ) : (
-                          <span className="text-emerald-400 font-extrabold uppercase text-[9px]">
-                            Gratis (Sin Costo)
-                          </span>
-                        )}
-                      </div>
+                      {course.accessLink && (
+                        <a
+                          href={course.accessLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-purple-300 bg-purple-950/20 border border-purple-500/20 hover:bg-purple-950/40 transition-all flex items-center justify-center space-x-1"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" />
+                          <span>Aula & Materiales</span>
+                        </a>
+                      )}
                     </div>
+
                   </div>
-
-                  <div className="pt-3 border-t border-slate-800 flex flex-col space-y-2">
-                    <button
-                      onClick={() => setSelectedCourse(course)}
-                      className="w-full py-2 rounded-xl text-[11px] font-bold text-white bg-purple-600 hover:bg-purple-500 transition-all flex items-center justify-center space-x-1"
-                    >
-                      <span>{course.priceType === 'free' ? 'Inscribirse Gratis' : 'Preinscribirme'}</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-
-                    {course.conferenceLink && (
-                      <a
-                        href={course.conferenceLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-cyan-400 bg-cyan-950/20 border border-cyan-500/20 hover:bg-cyan-950/40 transition-all flex items-center justify-center space-x-1"
-                      >
-                        <Video className="w-3.5 h-3.5" />
-                        <span>Conectarse a Clase (Zoom)</span>
-                      </a>
-                    )}
-
-                    {course.accessLink && (
-                      <a
-                        href={course.accessLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-purple-300 bg-purple-950/20 border border-purple-500/20 hover:bg-purple-950/40 transition-all flex items-center justify-center space-x-1"
-                      >
-                        <BookOpen className="w-3.5 h-3.5" />
-                        <span>Aula & Materiales</span>
-                      </a>
-                    )}
-                  </div>
-
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
@@ -239,110 +242,113 @@ export const AcademyPortal: React.FC = () => {
 
         {/* Course Catalog Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {filteredCourses.map((course) => (
-            <div
-              key={course.id}
-              className="glass-panel rounded-3xl p-6 border border-slate-800 hover:border-purple-500/50 transition-all flex flex-col justify-between group shadow-xl bg-slate-900/60"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-purple-500/15 text-purple-400 border border-purple-500/20">
-                    {course.category}
-                  </span>
-                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
-                    {course.duration}
-                  </span>
+          {filteredCourses.map((course) => {
+            const priceInfo = calculateMasterclassPrice(course, contactInfo);
+            return (
+              <div
+                key={course.id}
+                className="glass-panel rounded-3xl p-6 border border-slate-800 hover:border-purple-500/50 transition-all flex flex-col justify-between group shadow-xl bg-slate-900/60"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-purple-500/15 text-purple-400 border border-purple-500/20">
+                      {course.category}
+                    </span>
+                    <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
+                      {course.duration}
+                    </span>
+                  </div>
+
+                  <h3 className="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition-colors font-heading leading-tight">
+                    {course.title}
+                  </h3>
+
+                  <p className="text-xs text-slate-400 leading-relaxed mb-4 line-clamp-3">
+                    {course.description || 'Especialidad académica en Gobierno de Datos.'}
+                  </p>
+
+                  <div className="space-y-1.5 text-[11px] text-slate-300 bg-slate-950/60 p-3 rounded-xl border border-slate-800 font-mono mb-4">
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Instructor:</span>
+                      <span className="font-bold text-white">{(course as any).instructor?.name || 'Ing. Carlos Cañón'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Modalidad:</span>
+                      <span className="font-bold text-slate-350">{course.format || 'Online en Vivo'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Nivel:</span>
+                      <span className="font-bold text-slate-350">{course.level || 'Avanzado'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Certificación:</span>
+                      <span className="font-bold text-purple-400">{course.certification}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Cohorte:</span>
+                      <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
+                    </div>
+                    <div className="flex justify-between border-t border-slate-800/80 pt-1.5 mt-1.5 font-bold">
+                      <span className="text-slate-500">Inversión:</span>
+                      {priceInfo.priceType === 'discount' ? (
+                        <div className="flex items-center space-x-1.5">
+                          <span className="text-[9px] text-slate-500 line-through">
+                            ${Number(priceInfo.priceValue || 0).toLocaleString()}
+                          </span>
+                          <span className="text-emerald-450 font-extrabold">
+                            ${Number(priceInfo.discountPriceValue || 0).toLocaleString()}
+                          </span>
+                        </div>
+                      ) : priceInfo.priceType === 'paid' ? (
+                        <span className="text-white font-extrabold">
+                          ${Number(priceInfo.priceValue || 0).toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-emerald-450 font-extrabold uppercase text-[10px]">
+                          Gratuito
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-purple-400 transition-colors font-heading leading-tight">
-                  {course.title}
-                </h3>
+                <div className="pt-3 border-t border-slate-800 flex flex-col space-y-2">
+                  <button
+                    onClick={() => setSelectedCourse(course)}
+                    className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all flex items-center justify-center space-x-1.5"
+                  >
+                    <span>Preinscribirme</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
 
-                <p className="text-xs text-slate-400 leading-relaxed mb-4">
-                  {course.description || 'Especialidad académica en Gobierno de Datos.'}
-                </p>
+                  {course.conferenceLink && (
+                    <a
+                      href={course.conferenceLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-cyan-400 bg-cyan-950/20 border border-cyan-500/20 hover:bg-cyan-950/40 transition-all flex items-center justify-center space-x-1"
+                    >
+                      <Video className="w-3.5 h-3.5" />
+                      <span>Conectarse a Clase (Zoom)</span>
+                    </a>
+                  )}
 
-                <div className="space-y-1.5 text-[11px] text-slate-300 bg-slate-950/60 p-3 rounded-xl border border-slate-800 font-mono mb-4">
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Instructor:</span>
-                    <span className="font-bold text-white">{(course as any).instructor?.name || 'Ing. Carlos Cañón'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Modalidad:</span>
-                    <span className="font-bold text-slate-350">{course.format || 'Online en Vivo'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Nivel:</span>
-                    <span className="font-bold text-slate-350">{course.level || 'Avanzado'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Certificación:</span>
-                    <span className="font-bold text-purple-400">{course.certification}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Cohorte:</span>
-                    <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
-                  </div>
-                  <div className="flex justify-between border-t border-slate-800/80 pt-1.5 mt-1.5 font-bold">
-                    <span className="text-slate-500">Inversión:</span>
-                    {course.priceType === 'discount' ? (
-                      <div className="flex items-center space-x-1.5">
-                        <span className="text-[9px] text-slate-500 line-through">
-                          ${Number(course.priceValue || 0).toLocaleString()}
-                        </span>
-                        <span className="text-emerald-450 font-extrabold">
-                          ${Number(course.discountPriceValue || 0).toLocaleString()}
-                        </span>
-                      </div>
-                    ) : course.priceType === 'paid' ? (
-                      <span className="text-white font-extrabold">
-                        ${Number(course.priceValue || 0).toLocaleString()}
-                      </span>
-                    ) : (
-                      <span className="text-emerald-450 font-extrabold uppercase text-[10px]">
-                        Gratuito
-                      </span>
-                    )}
-                  </div>
+                  {course.accessLink && (
+                    <a
+                      href={course.accessLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-purple-300 bg-purple-950/20 border border-purple-500/20 hover:bg-purple-950/40 transition-all flex items-center justify-center space-x-1"
+                    >
+                      <BookOpen className="w-3.5 h-3.5" />
+                      <span>Aula & Materiales</span>
+                    </a>
+                  )}
                 </div>
+
               </div>
-
-              <div className="pt-3 border-t border-slate-800 flex flex-col space-y-2">
-                <button
-                  onClick={() => setSelectedCourse(course)}
-                  className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all flex items-center justify-center space-x-1.5"
-                >
-                  <span>Preinscribirme</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-
-                {course.conferenceLink && (
-                  <a
-                    href={course.conferenceLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-cyan-400 bg-cyan-950/20 border border-cyan-500/20 hover:bg-cyan-950/40 transition-all flex items-center justify-center space-x-1"
-                  >
-                    <Video className="w-3.5 h-3.5" />
-                    <span>Conectarse a Clase (Zoom)</span>
-                  </a>
-                )}
-
-                {course.accessLink && (
-                  <a
-                    href={course.accessLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-purple-300 bg-purple-950/20 border border-purple-500/20 hover:bg-purple-950/40 transition-all flex items-center justify-center space-x-1"
-                  >
-                    <BookOpen className="w-3.5 h-3.5" />
-                    <span>Aula & Materiales</span>
-                  </a>
-                )}
-              </div>
-
-            </div>
-          ))}
+            );
+          })}
         </div>
 
       </div>

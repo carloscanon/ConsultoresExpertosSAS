@@ -8,7 +8,8 @@ import {
   Globe, 
   CheckCircle2, 
   AlertCircle,
-  Hash
+  Hash,
+  Calendar
 } from 'lucide-react';
 import { saveSuperAdminAuditLog } from '../../../lib/supabase';
 
@@ -171,6 +172,50 @@ export const OrgSettingsDomain: React.FC = () => {
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-white font-semibold"
                 />
               </div>
+            </div>
+
+            {/* Masterclass Early Bird Rules */}
+            <div className="space-y-4 pt-4 border-t border-slate-850">
+              <h3 className="text-xs font-mono font-bold text-purple-400 uppercase tracking-widest border-b border-slate-850 pb-2 flex items-center space-x-1.5">
+                <Calendar className="w-4 h-4 text-purple-400" />
+                <span>Regla de Precios Especial: Martes de Masterclass</span>
+              </h3>
+
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1.5">
+                  <label className="block text-slate-350 font-bold">Días Anticipación</label>
+                  <input
+                    type="number"
+                    required
+                    value={form.earlyBirdDays || 8}
+                    onChange={(e) => setForm({ ...form, earlyBirdDays: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-center"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-slate-350 font-bold">Precio Regular ($)</label>
+                  <input
+                    type="number"
+                    required
+                    value={form.earlyBirdRegularPrice || 150000}
+                    onChange={(e) => setForm({ ...form, earlyBirdRegularPrice: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-center"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-slate-350 font-bold">Precio Anticipado ($)</label>
+                  <input
+                    type="number"
+                    required
+                    value={form.earlyBirdDiscount || 99000}
+                    onChange={(e) => setForm({ ...form, earlyBirdDiscount: Number(e.target.value) })}
+                    className="w-full p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white font-mono font-bold text-center"
+                  />
+                </div>
+              </div>
+              <p className="text-[10px] text-slate-500 leading-normal">
+                Las Masterclasses programadas calcularán dinámicamente su valor en la web: si faltan más de los días indicados para la sesión, se cobrará el precio anticipado; de lo contrario, se cobrará el precio regular.
+              </p>
             </div>
 
           </div>

@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { useData } from '../context/DataContext';
+import { useData, calculateMasterclassPrice, parseSpanishDate } from '../context/DataContext';
 import type { Course } from '../types';
 import { 
   GraduationCap, 
   ArrowRight,
   Sparkles,
-  X
+  X,
+  Calendar,
+  Video
 } from 'lucide-react';
 
 export const AcademySection: React.FC = () => {
   const { t } = useLanguage();
-  const { courses, enrollStudent } = useData();
+  const { courses, enrollStudent, contactInfo } = useData();
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [enrolledCourse, setEnrolledCourse] = useState<Course | null>(null);
   const [enrollForm, setEnrollForm] = useState({ name: '', email: '', company: '' });
@@ -40,6 +42,24 @@ export const AcademySection: React.FC = () => {
     }, 2500);
   };
 
+  // Filter lists for home page
+  const regularCourses = courses.filter(c => c.category !== 'Martes de Masterclass');
+  
+  // Sort chronologically and take only the next 3 upcoming Tuesday Masterclasses
+  const next3Masterclasses = courses
+    .filter(c => c.category === 'Martes de Masterclass')
+    .map(c => ({
+      ...c,
+      parsedDate: parseSpanishDate(c.upcomingDate) || new Date(8640000000000000)
+    }))
+    .filter(c => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return c.parsedDate.getTime() >= today.getTime();
+    })
+    .sort((a, b) => a.parsedDate.getTime() - b.parsedDate.getTime())
+    .slice(0, 3);
+
   return (
     <section id="academy" className="py-24 relative bg-slate-950 text-white border-y border-slate-800 transition-colors overflow-hidden">
       
@@ -63,78 +83,242 @@ export const AcademySection: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {courses.map((course) => (
-            <div
-              key={course.id}
-              className="glass-panel rounded-2xl p-6 border border-slate-800 hover:border-cyan-500/50 transition-all card-hover-tilt flex flex-col justify-between group shadow-2xl bg-slate-900/80 text-white"
-            >
+        {/* Dynamic Tuesday Masterclass Shelf (Next 3 Upcoming Only) */}
+        {next3Masterclasses.length > 0 && (
+          <div className="mb-20 bg-slate-900/30 rounded-3xl p-6 sm:p-8 border border-purple-950/40 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800/80 pb-4">
               <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                    {course.category}
-                  </span>
-                  {course.badge && (
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      {course.badge}
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors font-heading">
-                  {course.title}
+                <span className="text-[9px] font-mono font-bold text-purple-400 uppercase tracking-widest block mb-0.5">
+                  ⚡ CLASES ABIERTAS SEMANALES
+                </span>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-white font-heading flex items-center space-x-2">
+                  <Calendar className="w-5.5 h-5.5 text-purple-450" />
+                  <span>Próximos Martes de Masterclass</span>
                 </h3>
-
-                <p className="text-xs text-slate-400 leading-relaxed mb-6 line-clamp-3">
-                  {course.description}
-                </p>
-
-                <div className="space-y-2 text-xs text-slate-300 mb-6 bg-slate-950/60 p-3 rounded-xl border border-slate-800 font-mono">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Duración:</span>
-                    <span className="font-bold text-white">{course.duration}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Modalidad:</span>
-                    <span className="font-bold text-white">{course.format}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Próxima Cohorte:</span>
-                    <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
-                  </div>
-                </div>
               </div>
-
-              <div className="pt-4 border-t border-slate-800 space-y-3">
-                <div className="flex items-center space-x-2.5">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-xs text-white">
-                    {course.instructor.name.substring(0, 2)}
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-white">{course.instructor.name}</div>
-                    <div className="text-[10px] text-slate-400">{course.instructor.role}</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2 pt-2">
-                  <button
-                    onClick={() => setSelectedCourse(course)}
-                    className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700"
-                  >
-                    Ver Contenido
-                  </button>
-                  <button
-                    onClick={() => setEnrolledCourse(course)}
-                    className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 transition-all shadow-lg flex items-center justify-center space-x-1"
-                  >
-                    <span>Preinscribirme</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
+              <a
+                href="#/formation"
+                onClick={() => {
+                  window.location.hash = '#/formation';
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-purple-300 bg-purple-500/10 border border-purple-500/25 hover:bg-purple-500/20 transition-all flex items-center space-x-1"
+              >
+                <span>Ver toda la programación</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
             </div>
-          ))}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {next3Masterclasses.map((course) => {
+                const priceInfo = calculateMasterclassPrice(course, contactInfo);
+                return (
+                  <div
+                    key={course.id}
+                    className="bg-slate-950/80 rounded-2xl p-5 border border-slate-800 hover:border-purple-500/40 transition-all flex flex-col justify-between group shadow-lg"
+                  >
+                    <div>
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded bg-purple-500/15 text-purple-400 border border-purple-500/20">
+                          {course.badge || 'Martes'}
+                        </span>
+                        <span className="text-[9px] font-mono font-bold text-slate-400">
+                          {course.duration}
+                        </span>
+                      </div>
+
+                      <h4 className="text-sm font-bold text-white mb-2 group-hover:text-purple-300 transition-colors font-heading leading-snug">
+                        {course.title}
+                      </h4>
+
+                      <p className="text-[11px] text-slate-400 leading-relaxed mb-4 line-clamp-3">
+                        {course.description}
+                      </p>
+
+                      <div className="space-y-1 text-[10px] text-slate-400 bg-slate-900/40 p-2.5 rounded-xl border border-slate-805 font-mono mb-4">
+                        <div className="flex justify-between">
+                          <span>Instructor:</span>
+                          <span className="font-bold text-white">{course.instructor?.name}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Fecha:</span>
+                          <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
+                        </div>
+                        <div className="flex justify-between border-t border-slate-800/80 pt-1.5 mt-1.5 font-bold">
+                          <span>Inversión:</span>
+                          {priceInfo.priceType === 'discount' ? (
+                            <div className="flex items-center space-x-1.5">
+                              <span className="text-[9px] text-slate-500 line-through">
+                                ${Number(priceInfo.priceValue || 0).toLocaleString()}
+                              </span>
+                              <span className="text-emerald-450 font-extrabold">
+                                ${Number(priceInfo.discountPriceValue || 0).toLocaleString()}
+                              </span>
+                            </div>
+                          ) : priceInfo.priceType === 'paid' ? (
+                            <span className="text-white font-extrabold">
+                              ${Number(priceInfo.priceValue || 0).toLocaleString()}
+                            </span>
+                          ) : (
+                            <span className="text-emerald-400 font-extrabold uppercase text-[9px]">
+                              Gratis (Sin Costo)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-800 flex flex-col space-y-2">
+                      <button
+                        onClick={() => setEnrolledCourse(course as any)}
+                        className="w-full py-2 rounded-xl text-[11px] font-bold text-white bg-purple-600 hover:bg-purple-500 transition-all flex items-center justify-center space-x-1"
+                      >
+                        <span>{priceInfo.priceType === 'free' ? 'Inscribirse Gratis' : 'Preinscribirme'}</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
+
+                      {course.conferenceLink && (
+                        <a
+                          href={course.conferenceLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-cyan-400 bg-cyan-950/20 border border-cyan-500/20 hover:bg-cyan-950/40 transition-all flex items-center justify-center space-x-1"
+                        >
+                          <Video className="w-3.5 h-3.5" />
+                          <span>Conectarse a Clase (Zoom)</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Regular Catalog Section */}
+        <div className="border-t border-slate-800/80 pt-10 mb-8 text-left">
+          <h3 className="text-xl sm:text-2xl font-extrabold text-white font-heading mb-2">
+            Diplomados & Bootcamps Ejecutivos
+          </h3>
+          <p className="text-xs text-slate-400">
+            Programas oficiales orientados a las certificaciones mundiales DAMA CDMP® y TOGAF®.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {regularCourses.map((course) => {
+            const priceInfo = calculateMasterclassPrice(course, contactInfo);
+            return (
+              <div
+                key={course.id}
+                className="glass-panel rounded-2xl p-6 border border-slate-800 hover:border-cyan-500/50 transition-all card-hover-tilt flex flex-col justify-between group shadow-2xl bg-slate-900/80 text-white"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                      {course.category}
+                    </span>
+                    {course.badge && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        {course.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-cyan-400 transition-colors font-heading">
+                    {course.title}
+                  </h3>
+
+                  <p className="text-xs text-slate-400 leading-relaxed mb-6 line-clamp-3">
+                    {course.description}
+                  </p>
+
+                  <div className="space-y-2 text-xs text-slate-300 mb-6 bg-slate-950/60 p-3 rounded-xl border border-slate-800 font-mono">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Duración:</span>
+                      <span className="font-bold text-white">{course.duration}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Modalidad:</span>
+                      <span className="font-bold text-white">{course.format}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Próxima Cohorte:</span>
+                      <span className="font-bold text-cyan-400">{course.upcomingDate}</span>
+                    </div>
+                    {priceInfo.priceType && (
+                      <div className="flex justify-between border-t border-slate-800/80 pt-1.5 mt-1.5 font-bold">
+                        <span className="text-slate-400">Inversión:</span>
+                        {priceInfo.priceType === 'discount' ? (
+                          <div className="flex items-center space-x-1.5">
+                            <span className="text-[9px] text-slate-500 line-through">
+                              ${Number(priceInfo.priceValue || 0).toLocaleString()}
+                            </span>
+                            <span className="text-emerald-450 font-extrabold">
+                              ${Number(priceInfo.discountPriceValue || 0).toLocaleString()}
+                            </span>
+                          </div>
+                        ) : priceInfo.priceType === 'paid' ? (
+                          <span className="text-white font-extrabold">
+                            ${Number(priceInfo.priceValue || 0).toLocaleString()}
+                          </span>
+                        ) : (
+                          <span className="text-emerald-450 font-extrabold uppercase text-[10px]">
+                            Gratuito
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-800 space-y-3">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-xs text-white">
+                      {course.instructor.name.substring(0, 2)}
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-white">{course.instructor.name}</div>
+                      <div className="text-[10px] text-slate-400">{course.instructor.role}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col space-y-2 pt-2">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => setSelectedCourse(course)}
+                        className="flex-1 py-2.5 rounded-xl text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 transition-colors border border-slate-700"
+                      >
+                        Ver Contenido
+                      </button>
+                      <button
+                        onClick={() => setEnrolledCourse(course)}
+                        className="flex-1 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 transition-all shadow-lg flex items-center justify-center space-x-1"
+                      >
+                        <span>Preinscribirme</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {course.conferenceLink && (
+                      <a
+                        href={course.conferenceLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-2 rounded-xl text-[10px] font-bold text-center text-cyan-400 bg-cyan-950/20 border border-cyan-500/20 hover:bg-cyan-950/40 transition-all flex items-center justify-center space-x-1"
+                      >
+                        <Video className="w-3.5 h-3.5" />
+                        <span>Conectarse a Clase (Zoom)</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+            );
+          })}
         </div>
 
       </div>
@@ -253,7 +437,7 @@ export const AcademySection: React.FC = () => {
                     value={enrollForm.company}
                     onChange={(e) => setEnrollForm({ ...enrollForm, company: e.target.value })}
                     placeholder="Ej. Consultores Expertos SAS"
-                    className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white outline-none focus:border-cyan-400"
+                    className="w-full p-3 rounded-xl bg-slate-950 border border-slate-805 text-xs text-white outline-none focus:border-cyan-400"
                   />
                 </div>
 

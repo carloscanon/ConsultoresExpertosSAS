@@ -298,7 +298,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       address: 'Bogotá, Colombia',
       metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo reunidos en un único ecosistema.',
       metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG',
-      initialScrollSection: 'hero'
+      initialScrollSection: 'hero',
+      earlyBirdDays: 8,
+      earlyBirdRegularPrice: 150000,
+      earlyBirdDiscount: 99000
     };
     saveSiteConfigurationInDb(contact, url, logoSize).catch(console.warn);
   };
@@ -318,7 +321,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       address: 'Bogotá, Colombia',
       metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo reunidos en un único ecosistema.',
       metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG',
-      initialScrollSection: 'hero'
+      initialScrollSection: 'hero',
+      earlyBirdDays: 8,
+      earlyBirdRegularPrice: 150000,
+      earlyBirdDiscount: 99000
     };
     saveSiteConfigurationInDb(contact, logoUrl, size).catch(console.warn);
   };

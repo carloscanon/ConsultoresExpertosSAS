@@ -35,6 +35,9 @@ export interface ContactInfo {
   metaDescription: string;
   metaKeywords: string;
   initialScrollSection: string;
+  earlyBirdDays: number;
+  earlyBirdRegularPrice: number;
+  earlyBirdDiscount: number;
 }
 
 export interface ResourceItem {
@@ -44,6 +47,88 @@ export interface ResourceItem {
   description: string;
   durationOrSize: string;
   redirectUrl: string; // Redirection link
+}
+
+export function parseSpanishDate(dateStr: string): Date | null {
+  try {
+    if (!dateStr) return null;
+    const clean = dateStr.toLowerCase().replace(/de\s+/g, '').replace(/,/g, '');
+    const tokens = clean.split(/\s+/); 
+    if (tokens.length < 4) {
+      const d = new Date(dateStr);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    const day = parseInt(tokens[1]);
+    const year = parseInt(tokens[3]);
+    const monthName = tokens[2];
+    
+    const months: Record<string, number> = {
+      enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5,
+      julio: 6, agosto: 7, septiembre: 8, octubre: 9, noviembre: 10, diciembre: 11
+    };
+    
+    const month = months[monthName];
+    if (isNaN(day) || isNaN(year) || month === undefined) {
+      const d = new Date(dateStr);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return new Date(year, month, day);
+  } catch (e) {
+    return null;
+  }
+}
+
+export function calculateMasterclassPrice(course: Course, config: ContactInfo) {
+  if (course.category !== 'Martes de Masterclass') {
+    return {
+      priceType: course.priceType || 'free',
+      priceValue: course.priceValue || 0,
+      discountPriceValue: course.discountPriceValue || 0
+    };
+  }
+
+  if (course.priceType === 'free') {
+    return {
+      priceType: 'free',
+      priceValue: 0,
+      discountPriceValue: 0
+    };
+  }
+
+  const daysThreshold = Number(config.earlyBirdDays ?? 8);
+  const regularPrice = Number(config.earlyBirdRegularPrice ?? 150000);
+  const discountPrice = Number(config.earlyBirdDiscount ?? 99000);
+
+  const classDate = parseSpanishDate(course.upcomingDate);
+  if (!classDate) {
+    return {
+      priceType: 'paid',
+      priceValue: regularPrice,
+      discountPriceValue: 0
+    };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const classDateClean = new Date(classDate);
+  classDateClean.setHours(0, 0, 0, 0);
+
+  const diffTime = classDateClean.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays >= daysThreshold) {
+    return {
+      priceType: 'discount',
+      priceValue: regularPrice,
+      discountPriceValue: discountPrice
+    };
+  } else {
+    return {
+      priceType: 'paid',
+      priceValue: regularPrice,
+      discountPriceValue: 0
+    };
+  }
 }
 
 export interface MenuItem {
@@ -172,7 +257,10 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       address: 'Bogotá, Colombia',
       metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo reunidos en un único ecosistema.',
       metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG',
-      initialScrollSection: 'hero'
+      initialScrollSection: 'hero',
+      earlyBirdDays: 8,
+      earlyBirdRegularPrice: 150000,
+      earlyBirdDiscount: 99000
     };
   });
 

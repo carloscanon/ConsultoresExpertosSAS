@@ -13,155 +13,53 @@ export const coursesData: Course[] = [
     instructor: {
       name: 'Ing. Carlos Cañón',
       role: 'Presidente DAMA Chapter & Principal Consultant',
-      experience: '25+ años de experiencia'
-    },
-    modulesCount: 11,
-    certification: 'CDMP® Certified Data Management Professional',
-    upcomingDate: '15 de Agosto, 2026'
-  },
-  {
-    id: 'nexus-architect',
-    title: 'GovData Nexus™ Certified Solutions Architect',
-    level: 'Especialista',
-    duration: '32 Horas (3 Semanas)',
-    format: 'Laboratorios Prácticos 100%',
-    category: 'Plataforma & IA',
-    badge: 'Insignia Digital',
-    description: 'Masterclass técnica sobre despliegue, parametrización, linaje automático en grafo 3D y reglas de calidad con IA Generativa sobre GovData Nexus Engine 4.0.',
-    instructor: {
-      name: 'Dra. María Paula Gómez',
-      role: 'Chief Technology Officer (CTO)',
-      experience: '18+ años en Arquitectura de Datos'
-    },
-    modulesCount: 8,
-    certification: 'GovData Nexus Enterprise Architect',
-    upcomingDate: '01 de Septiembre, 2026'
-  },
-  {
-    id: 'data-stewards',
-    title: 'Programa de Certificación de Data Stewards & Quality Leaders',
-    level: 'Intermedio',
-    duration: '24 Horas (2 Semanas)',
-    format: 'Executive Hybrid Workshop',
-    category: 'Calidad & Custodia',
-    badge: 'Alta Demanda',
-    description: 'Capacitación práctica para custodios de negocio y técnicos. Metodologías de perfilamiento de datos, definición de reglas de calidad, matriz RACI y workflows de remediación.',
-    instructor: {
-      name: 'Dr. Jorge Eliécer Silva',
-      role: 'Senior Data Governance Director',
-      experience: '20+ años en Sector Financiero'
-    },
-    modulesCount: 6,
-    certification: 'Certified Data Steward Professional (CDSP)',
-    upcomingDate: '22 de Septiembre, 2026'
-  },
-  {
-    id: 'genai-llm-governance',
-    title: 'GenAI & LLM Governance Master: IA Ética y RAG Auditado',
-    level: 'Avanzado',
-    duration: '40 Horas (4 Semanas)',
-    format: 'Live Online + Hands-On LLMOps Lab',
-    category: 'Inteligencia Artificial',
-    badge: 'Nuevo 2026',
-    description: 'Gobierno de modelos de IA Generativa, prevención de alucinaciones, auditoría de vectores en arquitecturas RAG y custodia de privacidad en LLMs corporativos.',
-    instructor: {
-      name: 'Dra. Claudia Mendoza',
-      role: 'Head of AI Governance & LLMOps',
-      experience: '14+ años en Inteligencia Artificial'
-    },
-    modulesCount: 9,
-    certification: 'Certified GenAI & LLM Auditor (CGIA)',
-    upcomingDate: '05 de Octubre, 2026'
-  },
-  {
-    id: 'lakehouse-engineer',
-    title: 'Data Architecture & Lakehouse Engineer (Databricks, Snowflake & Fabric)',
-    level: 'Avanzado',
-    duration: '60 Horas (6 Semanas)',
-    format: 'Laboratorios Multi-Cloud en Vivo',
-    category: 'Arquitectura Cloud',
-    badge: 'Multi-Cloud',
-    description: 'Diseño e implementación de arquitecturas Medallion (Bronze, Silver, Gold), dbt, Delta Lake, Snowflake, Microsoft Fabric y pipelines de datos de ultra baja latencia.',
-    instructor: {
-      name: 'Ing. Roberto Silva',
-      role: 'Principal Cloud Data Architect',
-      experience: '16+ años en Big Data & Cloud'
-    },
-    modulesCount: 12,
-    certification: 'Certified Enterprise Lakehouse Architect (CELA)',
-    upcomingDate: '12 de Octubre, 2026'
-  },
-  {
-    id: 'mdm-golden-record',
-    title: 'Master Data Management (MDM) & Golden Record Architecture',
-    level: 'Intermedio',
-    duration: '35 Horas (3.5 Semanas)',
-    format: 'Workshop de Caso de Negocio Real',
-    category: 'Datos Maestros',
-    badge: 'Estratégico',
-    description: 'Consolidación de la vista 360° del cliente y producto. Algoritmos de Fuzzy Matching con IA, resolución de entidades maestras y sincronización bidireccional ERP/CRM.',
-    instructor: {
-      name: 'Dr. Alejandro Restrepo',
-      role: 'MDM Practice Lead',
-      experience: '19+ años en Gestión de Datos Maestros'
-    },
-    modulesCount: 7,
-    certification: 'Certified MDM Specialist (CMDS)',
-    upcomingDate: '26 de Octubre, 2026'
-  },
-  {
-    id: 'cdo-executive-program',
-    title: 'Chief Data Officer (CDO) Executive Leadership Program',
-    level: 'Ejecutivo',
-    duration: '50 Horas (5 Semanas)',
-    format: 'Sesiones Ejecutivas + Mentoría 1-a-1',
-    category: 'Estrategia Ejecutiva',
-    badge: 'Nivel C-Suite',
-    description: 'Programa exclusivo para directores y vicepresidentes de tecnología. Monetización de datos, cálculo de ROI de gobierno, presentación a la Junta Directiva y cultura data-driven.',
-    instructor: {
-      name: 'Dr. Fernando Alarcón',
-      role: 'Ex-CDO & Senior Board Advisor',
-      experience: '28+ años en Dirección Estratégica'
-    },
-    modulesCount: 10,
-    certification: 'Certified Chief Data Officer (CCDO)',
-    upcomingDate: '02 de Noviembre, 2026'
-  },
-  {
-    id: 'data-mesh-ownership',
-    title: 'Data Mesh & Data Product Ownership Masterclass',
-    level: 'Avanzado',
-    duration: '30 Horas (3 Semanas)',
-    format: 'Descentralización & Casos Prácticos',
-    category: 'Arquitectura & Negocio',
-    badge: 'Data Mesh',
-    description: 'Descentralización del gobierno de datos mediante dominios autónomos, definición de Data Products, acuerdos SLA de negocio y mercado interno de datos.',
-    instructor: {
-      name: 'Ing. Sofía Valenzuela',
-      role: 'Lead Data Mesh & Domain Consultant',
-      experience: '15+ años en Modelado de Dominio'
-    },
-    modulesCount: 6,
-    certification: 'Certified Data Product Owner (CDPO)',
-    upcomingDate: '16 de Noviembre, 2026'
-  },
-  {
-    id: 'cybersecurity-gdpr-compliance',
-    title: 'Cybersecurity, Data Privacy & GDPR/Habeas Data Compliance',
-    level: 'Intermedio',
-    duration: '25 Horas (2.5 Semanas)',
-    format: 'Legal-Tech & Auditoría Normativa',
-    category: 'Seguridad & Legal',
-    badge: 'Cumplimiento',
-    description: 'Protección de datos personales, enmascaramiento dinámico PII, derecho al olvido, ISO/IEC 27001, Ley 1581 Habeas Data y mitigación de riesgos de fuga de información.',
-    instructor: {
-      name: 'Abg. Mauricio Vargas',
-      role: 'Privacy & Data Protection Specialist',
-      experience: '17+ años en Derecho Tecnológico'
+      experience: '25+ años liderando proyectos de gobernanza en Latinoamérica'
     },
     modulesCount: 5,
-    certification: 'Certified Data Privacy Officer (CDPO-Legal)',
-    upcomingDate: '30 de Noviembre, 2026'
+    certification: 'Acreditación Oficial CDMP DAMA',
+    upcomingDate: '15 de Agosto, 2026',
+    priceType: 'paid',
+    priceValue: 1500000
+  },
+  {
+    id: 'ia-gen-corporate',
+    title: 'Diplomado: Inteligencia Artificial Generativa y Gobierno Corporativo de IA',
+    level: 'Avanzado',
+    duration: '60 Horas (6 Semanas)',
+    format: 'Clases en Vivo via Teams + Labs',
+    category: 'Inteligencia Artificial',
+    badge: 'Tendencia 2026',
+    description: 'Aprenda a diseñar e implementar arquitecturas corporativas con modelos LLM y RAG, estableciendo lineamientos éticos, control de costos, seguridad e ingeniería de prompts.',
+    instructor: {
+      name: 'Dra. María Paula Gómez',
+      role: 'Head of AI Research & Ethics Board Member',
+      experience: 'Ph.D. en Ciencias de la Computación, investigadora senior'
+    },
+    modulesCount: 6,
+    certification: 'Certificado de Especialización IA Generativa',
+    upcomingDate: '24 de Agosto, 2026',
+    priceType: 'paid',
+    priceValue: 1800000
+  },
+  {
+    id: 'enterprise-arch-togaf',
+    title: 'Arquitectura Empresarial en la Práctica con TOGAF® 10',
+    level: 'Avanzado',
+    duration: '32 Horas (3 Semanas)',
+    format: 'Online en Vivo + Material de Examen',
+    category: 'Arquitectura de Datos',
+    badge: 'Más Vendido',
+    description: 'Domine el framework TOGAF® 10 Standard. Aprenda el ADM (Architecture Development Method) para alinear las estrategias de negocio y tecnología de su empresa.',
+    instructor: {
+      name: 'Dr. Jorge Eliécer Silva',
+      role: 'Enterprise Architect Advisor & TOGAF Trainer',
+      experience: '20+ años estructurando arquitecturas TI empresariales'
+    },
+    modulesCount: 4,
+    certification: 'Simulación TOGAF® Enterprise',
+    upcomingDate: '07 de Septiembre, 2026',
+    priceType: 'paid',
+    priceValue: 1200000
   },
   {
     id: 'tuesday-rls-postgres',
@@ -180,8 +78,9 @@ export const coursesData: Course[] = [
     modulesCount: 1,
     certification: 'Asistencia Oficial Certificada',
     upcomingDate: 'Martes 04 de Agosto, 2026',
-    priceType: 'free',
-    priceValue: 0
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
   },
   {
     id: 'tuesday-snowflake-dimensional',
@@ -200,8 +99,9 @@ export const coursesData: Course[] = [
     modulesCount: 1,
     certification: 'Asistencia Oficial Certificada',
     upcomingDate: 'Martes 11 de Agosto, 2026',
-    priceType: 'paid',
-    priceValue: 149000
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
   },
   {
     id: 'tuesday-metadata-lineage',
@@ -221,7 +121,322 @@ export const coursesData: Course[] = [
     certification: 'Asistencia Oficial Certificada',
     upcomingDate: 'Martes 18 de Agosto, 2026',
     priceType: 'discount',
-    priceValue: 199000,
-    discountPriceValue: 79000
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-data-quality',
+    title: 'Masterclass: Calidad de Datos Práctica y Reglas de Negocio en Producción',
+    level: 'Intermedio',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 25 Ago',
+    description: 'Definición, medición y remediación de incidentes de calidad de datos usando tableros automatizados en producción.',
+    instructor: {
+      name: 'Ing. Carlos Cañón',
+      role: 'Principal Consultant',
+      experience: '25+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 25 de Agosto, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-ai-governance',
+    title: 'Masterclass: Gobierno de Datos y Seguridad para IA Generativa (LLMs)',
+    level: 'Avanzado',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 01 Sep',
+    description: 'Control de privacidad de datos sensibles, trazabilidad y gobernanza de la información corporativa alimentada en modelos LLM y RAG.',
+    instructor: {
+      name: 'Dra. María Paula Gómez',
+      role: 'Chief Technology Officer (CTO)',
+      experience: '18+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 01 de Septiembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-catalog-classification',
+    title: 'Masterclass: Catálogo de Datos y Clasificación Automática de Activos',
+    level: 'Intermedio',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 08 Sep',
+    description: 'Cómo implementar catálogos que auto-descubran metadatos y etiqueten información personal/sensible de forma ágil.',
+    instructor: {
+      name: 'Ing. Carlos Cañón',
+      role: 'Principal Consultant',
+      experience: '25+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 08 de Septiembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-maturity-models',
+    title: 'Masterclass: Modelos de Madurez de Gobierno de Datos (DAMA DMBOK2)',
+    level: 'Avanzado',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 15 Sep',
+    description: 'Evaluación práctica del estado de la gobernanza de datos en su organización utilizando las directrices y estándares del DMBOK2.',
+    instructor: {
+      name: 'Dr. Jorge Eliécer Silva',
+      role: 'Senior Data Governance Director',
+      experience: '20+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 15 de Septiembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-privacy-1581',
+    title: 'Masterclass: Privacidad de Datos y Cumplimiento de la Ley 1581',
+    level: 'Intermedio',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 22 Sep',
+    description: 'Mejores prácticas técnicas y legales para cumplir la regulación de protección de datos personales de la SIC en Colombia.',
+    instructor: {
+      name: 'Ing. Carlos Cañón',
+      role: 'Principal Consultant',
+      experience: '25+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 22 de Septiembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-pipeline-architecture',
+    title: 'Masterclass: Arquitectura de Pipelines de Datos Seguros y Auditables',
+    level: 'Avanzado',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 29 Sep',
+    description: 'Diseño de flujos de datos auditables con trazabilidad robusta, control de accesos e integración de linaje automatizado.',
+    instructor: {
+      name: 'Dra. María Paula Gómez',
+      role: 'Chief Technology Officer (CTO)',
+      experience: '18+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 29 de Septiembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-cloud-metadata',
+    title: 'Masterclass: Estrategia de Metadatos y Linaje de Datos en la Nube',
+    level: 'Especialista',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 06 Oct',
+    description: 'Construcción y análisis de diagramas de linaje de datos dinámicos en plataformas multinube (Azure, AWS y GCP).',
+    instructor: {
+      name: 'Dr. Jorge Eliécer Silva',
+      role: 'Senior Data Governance Director',
+      experience: '20+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 06 de Octubre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-stewards-owners',
+    title: 'Masterclass: Roles y Responsabilidades de Data Stewards y Owners',
+    level: 'Intermedio',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 13 Oct',
+    description: 'Cómo conformar y empoderar la oficina de gobierno de datos mediante roles operativos definidos y funcionales.',
+    instructor: {
+      name: 'Ing. Carlos Cañón',
+      role: 'Principal Consultant',
+      experience: '25+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 13 de Octubre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-kpi-board',
+    title: 'Masterclass: Indicadores Clave de Gobierno de Datos para la Junta',
+    level: 'Ejecutivo',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 20 Oct',
+    description: 'Métricas de valor comercial, riesgos mitigados e incremento de eficiencia para presentar a comités ejecutivos y juntas directivas.',
+    instructor: {
+      name: 'Dr. Jorge Eliécer Silva',
+      role: 'Senior Data Governance Director',
+      experience: '20+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 20 de Octubre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-security-rbac',
+    title: 'Masterclass: Seguridad de Datos Basada en Roles (RBAC) y Encriptación',
+    level: 'Avanzado',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 27 Oct',
+    description: 'Cómo implementar encriptación de datos en reposo y tránsito combinada con políticas dinámicas de control de acceso.',
+    instructor: {
+      name: 'Dra. María Paula Gómez',
+      role: 'Chief Technology Officer (CTO)',
+      experience: '18+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 27 de Octubre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-integration-git',
+    title: 'Masterclass: Integración de Datos con Gobierno y Control de Versiones',
+    level: 'Intermedio',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 03 Nov',
+    description: 'Mejores prácticas para versionar flujos de integración y catalogar transformaciones de datos usando git.',
+    instructor: {
+      name: 'Ing. Carlos Cañón',
+      role: 'Principal Consultant',
+      experience: '25+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 03 de Noviembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-mesh-lakehouse',
+    title: 'Masterclass: Arquitectura de Datos Modernos (Data Lakehouse vs Mesh)',
+    level: 'Avanzado',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 10 Nov',
+    description: 'Comparativa de paradigmas modernos de almacenamiento descentralizado y gobernabilidad nativa del dato.',
+    instructor: {
+      name: 'Dra. María Paula Gómez',
+      role: 'Chief Technology Officer (CTO)',
+      experience: '18+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 10 de Noviembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-pipeline-observability',
+    title: 'Masterclass: Monitoreo de pipelines de datos y observabilidad en vivo',
+    level: 'Avanzado',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 17 Nov',
+    description: 'Cómo prevenir caídas silenciosas en los pipelines de producción mediante alertas tempranas y perfiles de calidad dinámica.',
+    instructor: {
+      name: 'Dra. María Paula Gómez',
+      role: 'Chief Technology Officer (CTO)',
+      experience: '18+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 17 de Noviembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-retention-history',
+    title: 'Masterclass: Automatización de Políticas de Retención e Históricos',
+    level: 'Intermedio',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 24 Nov',
+    description: 'Estrategias técnicas para el archivado seguro, depuración regulada e históricos eficientes de bases de datos.',
+    instructor: {
+      name: 'Ing. Carlos Cañón',
+      role: 'Principal Consultant',
+      experience: '25+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 24 de Noviembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
+  },
+  {
+    id: 'tuesday-trends-2027',
+    title: 'Masterclass: Cierre de Año - Tendencias de Gobierno de Datos 2027',
+    level: 'Ejecutivo',
+    duration: '2 Horas (Sesión Única)',
+    format: 'Online en Vivo via Zoom',
+    category: 'Martes de Masterclass',
+    badge: 'Martes 01 Dic',
+    description: 'Visión de futuro sobre los nuevos retos de gobernabilidad, regulación mundial e integración nativa de IA en las organizaciones.',
+    instructor: {
+      name: 'Ing. Carlos Cañón',
+      role: 'Principal Consultant',
+      experience: '25+ años de experiencia'
+    },
+    modulesCount: 1,
+    certification: 'Asistencia Oficial Certificada',
+    upcomingDate: 'Martes 01 de Diciembre, 2026',
+    priceType: 'discount',
+    priceValue: 150000,
+    discountPriceValue: 99000
   }
 ];
