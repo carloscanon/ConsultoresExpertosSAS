@@ -23,7 +23,7 @@ export const ResourcesPortal: React.FC = () => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     if (match && match[2].length === 11) {
-      return `https://img.youtube.com/vi/${match[2]}/hqdefault.jpg`;
+      return `https://img.youtube.com/vi/${match[2]}/maxresdefault.jpg`;
     }
     return '';
   };
@@ -78,24 +78,24 @@ export const ResourcesPortal: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#141414] text-white min-h-screen text-left pb-24 font-sans selection:bg-red-600 selection:text-white pt-16">
+    <div className="bg-[#141414] text-white min-h-screen text-left pb-24 font-sans selection:bg-red-600 selection:text-white">
       
-      {/* Netflix Hero Banner */}
+      {/* Netflix Hero Banner — extends behind nav with negative margin for edge-to-edge look */}
       {featuredResource && (
-        <div className="relative h-[56.25vw] max-h-[550px] min-h-[350px] w-full overflow-hidden bg-black select-none">
+        <div className="relative h-[56.25vw] max-h-[520px] min-h-[340px] w-full overflow-hidden bg-black select-none -mt-16">
           {/* Cover image or gradient — prioritize custom imageUrl for HD quality */}
           <div className="absolute inset-0">
             {(featuredResource as any).imageUrl ? (
               <img 
                 src={(featuredResource as any).imageUrl} 
                 alt={featuredResource.title} 
-                className="w-full h-full object-cover opacity-70 scale-105 transition-all duration-700" 
+                className="w-full h-full object-cover opacity-90 transition-all duration-700" 
               />
             ) : featuredResource.type === 'video' && getYoutubeThumbnail(featuredResource.redirectUrl) ? (
               <img 
                 src={getYoutubeThumbnail(featuredResource.redirectUrl)} 
                 alt={featuredResource.title} 
-                className="w-full h-full object-cover opacity-60 scale-105 blur-[2px] sm:blur-none transition-all duration-700" 
+                className="w-full h-full object-cover opacity-75 transition-all duration-700" 
               />
             ) : (
               <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(featuredResource.type)} opacity-75`} />
