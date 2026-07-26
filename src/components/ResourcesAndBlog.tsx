@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { resourcesData } from '../data/resourcesData';
-import type { BlogPost } from '../types';
+import { useData } from '../context/DataContext';
 import { 
   Sparkles, 
   Download, 
@@ -17,15 +16,38 @@ interface ResourcesAndBlogProps {
 }
 
 export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }) => {
+  const { resources } = useData();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const [selectedPost, setSelectedPost] = useState<any | null>(null);
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
 
-  const categories = ['All', 'Whitepapers', 'Videos & Grabaciones', 'Arquitectura de Datos', 'Checklists & Plantillas'];
+  const categories = ['All', 'video', 'podcast', 'template', 'whitepaper'];
+
+  const categoryLabels: Record<string, string> = {
+    'All': 'Todos los Recursos',
+    'video': 'Videos & Grabaciones',
+    'podcast': 'Podcasts',
+    'template': 'Checklists & Plantillas',
+    'whitepaper': 'Whitepapers'
+  };
+
+  // Convert ResourceItem from DataContext to display model
+  const displayPosts = resources.map(res => ({
+    id: res.id,
+    title: res.title,
+    category: res.type,
+    summary: res.description,
+    readTime: res.durationOrSize,
+    date: 'Actualizado',
+    imageUrl: res.imageUrl,
+    redirectUrl: res.redirectUrl,
+    type: res.type,
+    featured: res.featured
+  }));
 
   const filteredPosts = selectedCategory === 'All'
-    ? resourcesData
-    : resourcesData.filter(p => p.category === selectedCategory);
+    ? displayPosts
+    : displayPosts.filter(p => p.category === selectedCategory);
 
   // Helper to extract YouTube video ID and get thumbnail
   const getYoutubeThumbnail = (url?: string) => {
@@ -73,12 +95,12 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
     return <FileText className="w-8 h-8 text-purple-400" />;
   };
 
-  const handleCardClick = (post: BlogPost) => {
-    const embed = getYoutubeEmbedUrl(post.videoUrl);
-    if (post.videoUrl && embed) {
+  const handleCardClick = (post: any) => {
+    const embed = getYoutubeEmbedUrl(post.redirectUrl);
+    if (post.type === 'video' && embed) {
       setActiveVideoUrl(embed);
-    } else {
-      setSelectedPost(post);
+    } else if (post.redirectUrl) {
+      window.open(post.redirectUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -117,7 +139,7 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
                   : 'bg-slate-900/60 text-slate-400 hover:bg-slate-800 hover:text-white border border-slate-805'
               }`}
             >
-              {cat === 'All' ? 'Todos los Recursos' : cat}
+              {categoryLabels[cat] || cat}
             </button>
           ))}
         </div>
@@ -139,22 +161,22 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
                     alt={post.title} 
                     className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-all duration-500" 
                   />
-                ) : post.videoUrl && getYoutubeThumbnail(post.videoUrl) ? (
+                ) : getYoutubeThumbnail(post.redirectUrl) ? (
                   <img 
-                    src={getYoutubeThumbnail(post.videoUrl)} 
+                    src={getYoutubeThumbnail(post.redirectUrl)} 
                     alt={post.title} 
                     className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all duration-500" 
                   />
                 ) : (
-                  <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(post.category)} flex items-center justify-center p-4`}>
-                    {getIcon(post.category)}
+                  <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(post.type)} flex items-center justify-center p-4`}>
+                    {getIcon(post.type)}
                   </div>
                 )}
 
                 {/* Card Hover Play/Download Button Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-4">
                   <div className="w-10 h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
-                    {post.videoUrl ? <Play className="w-5 h-5 fill-white ml-0.5" /> : <Download className="w-5 h-5" />}
+                    {post.type === 'video' ? <Play className="w-5 h-5 fill-white ml-0.5" /> : <Download className="w-5 h-5" />}
                   </div>
                 </div>
               </div>
@@ -218,7 +240,7 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
 
             <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
               <div className="flex flex-wrap gap-1">
-                {selectedPost.tags.map((tag, i) => (
+                {(selectedPost.tags || []).map((tag: string, i: number) => (
                   <span key={i} className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-red-500 border border-slate-805">
                     #{tag}
                   </span>
