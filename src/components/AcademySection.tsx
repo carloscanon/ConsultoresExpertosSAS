@@ -117,6 +117,20 @@ export const AcademySection: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {next3Masterclasses.map((course) => {
                 const priceInfo = calculateMasterclassPrice(course, contactInfo);
+                const classDate = parseSpanishDate(course.upcomingDate);
+                
+                let daysRemainingForOffer = -1;
+                if (classDate) {
+                  const today = new Date();
+                  today.setHours(0,0,0,0);
+                  const cleanClass = new Date(classDate);
+                  cleanClass.setHours(0,0,0,0);
+                  const diffTime = cleanClass.getTime() - today.getTime();
+                  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                  const earlyBirdDays = Number(contactInfo.earlyBirdDays ?? 8);
+                  daysRemainingForOffer = diffDays - earlyBirdDays;
+                }
+
                 return (
                   <div
                     key={course.id}
@@ -139,6 +153,20 @@ export const AcademySection: React.FC = () => {
                       <p className="text-[11px] text-slate-400 leading-relaxed mb-4 line-clamp-3">
                         {course.description}
                       </p>
+
+                      {priceInfo.priceType === 'discount' && daysRemainingForOffer >= 0 && (
+                        <div className="mb-3 px-3 py-2 rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 text-[10px] text-emerald-300 font-bold flex items-center justify-between animate-pulse">
+                          <span className="flex items-center space-x-1.5 font-sans">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                            <span>¡Oferta de Lanzamiento!</span>
+                          </span>
+                          <span className="font-mono text-[9px] uppercase tracking-wider text-emerald-400">
+                            {daysRemainingForOffer === 0 
+                              ? '⏰ ¡Último Día!' 
+                              : `⏰ Faltan ${daysRemainingForOffer} ${daysRemainingForOffer === 1 ? 'Día' : 'Días'}`}
+                          </span>
+                        </div>
+                      )}
 
                       <div className="space-y-1 text-[10px] text-slate-400 bg-slate-900/40 p-2.5 rounded-xl border border-slate-805 font-mono mb-4">
                         <div className="flex justify-between">
