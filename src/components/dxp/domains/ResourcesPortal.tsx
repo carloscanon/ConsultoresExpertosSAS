@@ -161,24 +161,24 @@ export const ResourcesPortal: React.FC = () => {
             </>
           )}
 
-          {/* Featured Content Details */}
-          <div className="absolute left-6 sm:left-12 bottom-10 sm:bottom-14 z-20 max-w-lg space-y-3">
+          {/* Featured Content Details — shifted right for comfortable margins and no clipping */}
+          <div className="absolute left-10 sm:left-16 lg:left-20 bottom-10 sm:bottom-14 z-20 max-w-xl sm:max-w-2xl space-y-3 pr-12">
             <div className="flex items-center space-x-2">
               <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded bg-red-600 text-[10px] font-extrabold uppercase tracking-wider shadow">
                 <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
                 <span>Destacado Premium</span>
               </span>
               {featuredResourcesList.length > 1 && (
-                <span className="text-[10px] font-mono text-slate-400">
+                <span className="text-[10px] font-mono text-slate-300">
                   {heroIndex % featuredResourcesList.length + 1} de {featuredResourcesList.length}
                 </span>
               )}
             </div>
 
-            <h1 className="text-lg sm:text-2xl lg:text-3xl font-black tracking-tight leading-tight drop-shadow-lg">
+            <h1 className="text-xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight drop-shadow-xl text-white">
               {currentHero.title}
             </h1>
-            <p className="text-[11px] sm:text-xs text-slate-300 leading-relaxed drop-shadow line-clamp-2">
+            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed drop-shadow-md max-w-xl">
               {currentHero.description}
             </p>
 
