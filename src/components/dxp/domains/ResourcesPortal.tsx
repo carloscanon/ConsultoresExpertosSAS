@@ -19,19 +19,14 @@ export const ResourcesPortal: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
 
-  // Helper to extract YouTube video ID and get thumbnail
+  // Helper to extract YouTube video ID and get thumbnail (prefers maxresdefault for HD, falls back to hqdefault)
   const getYoutubeThumbnail = (url: string) => {
     if (!url) return '';
-    // Try multiple regex patterns to cover every possible YouTube link format
     const regExp = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/;
-    const match = url.match(regExp);
+    const match = url.match(regExp) || url.match(/v=([\w-]{11})/);
     if (match && match[1]) {
-      return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
-    }
-    // Secondary fallback search for 11-char video ID if standard regex misses query params
-    const secondaryMatch = url.match(/v=([\w-]{11})/);
-    if (secondaryMatch && secondaryMatch[1]) {
-      return `https://img.youtube.com/vi/${secondaryMatch[1]}/hqdefault.jpg`;
+      // Use maxresdefault for crisp HD, browser will display hqdefault if 404
+      return `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
     }
     return '';
   };
@@ -114,7 +109,7 @@ export const ResourcesPortal: React.FC = () => {
       
       {/* Netflix Hero Carousel Banner */}
       {currentHero && (
-        <div className="relative w-full overflow-hidden bg-black select-none group/hero" style={{ height: 'clamp(380px, 50vw, 560px)' }}>
+        <div className="relative w-full overflow-hidden bg-black select-none group/hero h-[450px] sm:h-[500px]">
           {/* Cover image or gradient */}
           <div className="absolute inset-0 transition-all duration-700">
             {(currentHero as any).imageUrl ? (
@@ -122,21 +117,28 @@ export const ResourcesPortal: React.FC = () => {
                 key={currentHero.id}
                 src={(currentHero as any).imageUrl} 
                 alt={currentHero.title} 
-                className="w-full h-full object-cover opacity-90 transition-all duration-700 animate-in fade-in duration-500" 
+                className="w-full h-full object-cover object-center opacity-95 transition-all duration-700 animate-in fade-in duration-500" 
               />
             ) : getYoutubeThumbnail(currentHero.redirectUrl) ? (
               <img 
                 key={currentHero.id}
                 src={getYoutubeThumbnail(currentHero.redirectUrl)} 
                 alt={currentHero.title} 
-                className="w-full h-full object-cover opacity-85 transition-all duration-700 animate-in fade-in duration-500" 
+                onError={(e) => {
+                  // Fallback to hqdefault if maxresdefault 404s
+                  const target = e.target as HTMLImageElement;
+                  if (target.src.includes('maxresdefault.jpg')) {
+                    target.src = target.src.replace('maxresdefault.jpg', 'hqdefault.jpg');
+                  }
+                }}
+                className="w-full h-full object-cover object-center opacity-90 transition-all duration-700 animate-in fade-in duration-500" 
               />
             ) : (
-              <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(currentHero.type)} opacity-75`} />
+              <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(currentHero.type)} opacity-85`} />
             )}
-            {/* Gradient overlays */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#141414]/90 via-[#141414]/50 to-transparent z-10" />
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#141414] to-transparent z-10" />
+            {/* Gradient overlays — Netflix Cinematic Vignette */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#141414] via-[#141414]/60 to-transparent z-10" />
+            <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#141414] via-[#141414]/80 to-transparent z-10" />
           </div>
 
           {/* Carousel Navigation Arrows */}
