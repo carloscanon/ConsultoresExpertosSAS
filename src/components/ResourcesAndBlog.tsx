@@ -124,8 +124,14 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
             >
               {/* Card Poster Container */}
               <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
-                {/* Cover Image */}
-                {post.videoUrl && getYoutubeThumbnail(post.videoUrl) ? (
+                {/* Cover Image — imageUrl > YouTube auto > gradient */}
+                {post.imageUrl ? (
+                  <img 
+                    src={post.imageUrl} 
+                    alt={post.title} 
+                    className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-all duration-500" 
+                  />
+                ) : post.videoUrl && getYoutubeThumbnail(post.videoUrl) ? (
                   <img 
                     src={getYoutubeThumbnail(post.videoUrl)} 
                     alt={post.title} 

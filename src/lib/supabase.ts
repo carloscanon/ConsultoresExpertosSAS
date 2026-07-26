@@ -601,14 +601,30 @@ export async function getBlogResourcesFromDb(): Promise<ResourceItem[]> {
     // Filter out the configuration config row
     const filtered = data.filter((item: any) => item.id !== 'site_seo_settings');
 
-    return filtered.map((item: any) => ({
-      id: item.id,
-      title: item.title,
-      type: item.category as any, // category column maps to resource type
-      description: item.ai_summary || '',
-      durationOrSize: item.read_time || '',
-      redirectUrl: item.summary || '' // summary column stores the redirection url
-    }));
+    return filtered.map((item: any) => {
+      let desc = item.ai_summary || '';
+      let imageUrl = '';
+
+      try {
+        if (item.ai_summary && item.ai_summary.trim().startsWith('{')) {
+          const parsed = JSON.parse(item.ai_summary);
+          desc = parsed.description || '';
+          imageUrl = parsed.imageUrl || '';
+        }
+      } catch (e) {
+        // Fallback
+      }
+
+      return {
+        id: item.id,
+        title: item.title,
+        type: item.category as any,
+        description: desc,
+        durationOrSize: item.read_time || '',
+        redirectUrl: item.summary || '',
+        imageUrl: imageUrl
+      };
+    });
   } catch (err) {
     console.warn('Supabase error getting blog resources:', err);
     return [];
@@ -620,6 +636,11 @@ export async function getBlogResourcesFromDb(): Promise<ResourceItem[]> {
  */
 export async function saveBlogResourceInDb(res: ResourceItem) {
   try {
+    const serializedSummary = JSON.stringify({
+      description: res.description || '',
+      imageUrl: res.imageUrl || ''
+    });
+
     const { data, error } = await withTimeout(supabase
       .from('blog_resources')
       .upsert({
@@ -627,8 +648,8 @@ export async function saveBlogResourceInDb(res: ResourceItem) {
         title: res.title,
         category: res.type,
         read_time: res.durationOrSize,
-        summary: res.redirectUrl || '', // Store redirect link in summary
-        ai_summary: res.description, // Store description in ai_summary
+        summary: res.redirectUrl || '',
+        ai_summary: serializedSummary,
         author: 'Super Admin',
         author_role: 'Consultor Senior',
         date: new Date().toLocaleDateString('es-ES'),

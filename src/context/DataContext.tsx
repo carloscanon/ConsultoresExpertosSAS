@@ -49,6 +49,7 @@ export interface ResourceItem {
   description: string;
   durationOrSize: string;
   redirectUrl: string; // Redirection link
+  imageUrl?: string; // Custom cover image URL (recommended: 1280x720 px)
 }
 
 export function parseSpanishDate(dateStr: string): Date | null {

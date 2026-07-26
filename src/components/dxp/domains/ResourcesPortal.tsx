@@ -78,14 +78,20 @@ export const ResourcesPortal: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#141414] text-white min-h-screen text-left pb-24 font-sans selection:bg-red-600 selection:text-white">
+    <div className="bg-[#141414] text-white min-h-screen text-left pb-24 font-sans selection:bg-red-600 selection:text-white pt-16">
       
       {/* Netflix Hero Banner */}
       {featuredResource && (
         <div className="relative h-[56.25vw] max-h-[550px] min-h-[350px] w-full overflow-hidden bg-black select-none">
-          {/* Cover image or gradient */}
+          {/* Cover image or gradient — prioritize custom imageUrl for HD quality */}
           <div className="absolute inset-0">
-            {featuredResource.type === 'video' && getYoutubeThumbnail(featuredResource.redirectUrl) ? (
+            {(featuredResource as any).imageUrl ? (
+              <img 
+                src={(featuredResource as any).imageUrl} 
+                alt={featuredResource.title} 
+                className="w-full h-full object-cover opacity-70 scale-105 transition-all duration-700" 
+              />
+            ) : featuredResource.type === 'video' && getYoutubeThumbnail(featuredResource.redirectUrl) ? (
               <img 
                 src={getYoutubeThumbnail(featuredResource.redirectUrl)} 
                 alt={featuredResource.title} 
@@ -184,8 +190,14 @@ export const ResourcesPortal: React.FC = () => {
                 >
                   {/* Poster Box */}
                   <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
-                    {/* Thumbnail Image */}
-                    {getYoutubeThumbnail(item.redirectUrl) ? (
+                    {/* Thumbnail Image — custom imageUrl > YouTube auto > gradient */}
+                    {(item as any).imageUrl ? (
+                      <img 
+                        src={(item as any).imageUrl} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-all duration-500" 
+                      />
+                    ) : getYoutubeThumbnail(item.redirectUrl) ? (
                       <img 
                         src={getYoutubeThumbnail(item.redirectUrl)} 
                         alt={item.title} 
