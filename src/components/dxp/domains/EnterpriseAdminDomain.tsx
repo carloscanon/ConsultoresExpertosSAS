@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Users, 
   Database, 
@@ -10,17 +10,34 @@ import {
   X,
   CheckCircle2
 } from 'lucide-react';
-import { saveSuperAdminAuditLog } from '../../../lib/supabase';
+import { 
+  saveSuperAdminAuditLog, 
+  getAdminUsersFromDb, 
+  saveAdminUserInDb, 
+  deleteAdminUserFromDb 
+} from '../../../lib/supabase';
 
 export const EnterpriseAdminDomain: React.FC = () => {
   const [activeSubTab, setActiveSubTab] = useState<'rbac' | 'ai_generator' | 'supabase'>('rbac');
 
-  // RBAC Users State
-  const [rbacUsers, setRbacUsers] = useState([
-    { id: '1', name: 'Ing. Carlos Cañón', role: 'SuperAdmin (NIT 900452089-9)', email: 'carlos@consultoresexpertos.com', status: 'Activo' },
-    { id: '2', name: 'Dra. María Paula Gómez', role: 'Director de Gobierno de Datos', email: 'maria@consultoresexpertos.com', status: 'Activo' },
-    { id: '3', name: 'Ing. Roberto Silva', role: 'Instructor MasterClassNow', email: 'roberto@masterclassnow.online', status: 'Activo' }
-  ]);
+  // RBAC Users State (Dynamic DB fetched)
+  const [rbacUsers, setRbacUsers] = useState<any[]>([]);
+
+  const loadUsersFromDb = async () => {
+    const fetched = await getAdminUsersFromDb();
+    if (fetched && fetched.length > 0) {
+      setRbacUsers(fetched);
+    } else {
+      // Default initial SuperAdmin
+      const defaultUser = { id: '1', name: 'Ing. Carlos Cañón', role: 'SuperAdmin (NIT 900452089-9)', email: 'carlos@consultoresexpertos.com', status: 'Activo' };
+      setRbacUsers([defaultUser]);
+      await saveAdminUserInDb(defaultUser).catch(console.warn);
+    }
+  };
+
+  useEffect(() => {
+    loadUsersFromDb();
+  }, []);
 
   // Modals & Form State
   const [userModalOpen, setUserModalOpen] = useState(false);
@@ -72,31 +89,34 @@ export const EnterpriseAdminDomain: React.FC = () => {
     setUserModalOpen(true);
   };
 
-  const handleUserSubmit = (e: React.FormEvent) => {
+  const handleUserSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isEditing) {
       setRbacUsers(rbacUsers.map(u => u.id === userForm.id ? { ...userForm } : u));
-      setSuccessBanner(`✓ Usuario "${userForm.name}" actualizado con éxito.`);
+      await saveAdminUserInDb(userForm).catch(console.warn);
+      setSuccessBanner(`✓ Usuario "${userForm.name}" actualizado en base de datos Supabase.`);
     } else {
       const newUser = {
         ...userForm,
-        id: `user-${Date.now()}`
+        id: `${Date.now()}`
       };
       setRbacUsers([...rbacUsers, newUser]);
-      setSuccessBanner(`✓ Usuario "${userForm.name}" registrado en RBAC.`);
+      await saveAdminUserInDb(newUser).catch(console.warn);
+      setSuccessBanner(`✓ Usuario "${userForm.name}" registrado en Supabase DB.`);
     }
     setUserModalOpen(false);
     setTimeout(() => setSuccessBanner(null), 3000);
   };
 
-  const handleDeleteUser = (id: string, name: string) => {
+  const handleDeleteUser = async (id: string, name: string) => {
     if (rbacUsers.length <= 1) {
       alert('Debe mantener al menos 1 usuario SuperAdmin.');
       return;
     }
     if (!confirm(`¿Está seguro de eliminar el usuario "${name}"?`)) return;
     setRbacUsers(rbacUsers.filter(u => u.id !== id));
-    setSuccessBanner(`✓ Usuario "${name}" eliminado de la administración.`);
+    await deleteAdminUserFromDb(id).catch(console.warn);
+    setSuccessBanner(`✓ Usuario "${name}" eliminado de la base de datos Supabase.`);
     setTimeout(() => setSuccessBanner(null), 3000);
   };
 

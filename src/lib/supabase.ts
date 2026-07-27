@@ -826,3 +826,68 @@ export async function getSiteLayoutFromDb() {
     return null;
   }
 }
+
+/**
+ * Guardar / Upsert Usuario RBAC en la Base de Datos
+ */
+export async function saveAdminUserInDb(user: { id: string; name: string; role: string; email: string; status: string }) {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .upsert({
+        id: `user_${user.id}`,
+        title: user.name,
+        category: 'rbac_user',
+        read_time: user.status,
+        summary: JSON.stringify(user),
+        ai_summary: user.email,
+        author: user.role,
+        author_role: 'RBAC User',
+        date: new Date().toLocaleDateString('es-ES'),
+        is_published: true,
+        created_at: new Date().toISOString()
+      }));
+
+    if (error) console.warn('Supabase save error (rbac_user):', error.message);
+    return { success: !error, data, error };
+  } catch (err) {
+    console.warn('Supabase exception saving RBAC user:', err);
+    return { success: false, error: err };
+  }
+}
+
+/**
+ * Obtener Usuarios RBAC de la Base de Datos
+ */
+export async function getAdminUsersFromDb() {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .select('*')
+      .eq('category', 'rbac_user'));
+
+    if (error || !data) return [];
+    return data.map((item: any) => JSON.parse(item.summary));
+  } catch (err) {
+    console.warn('Supabase exception reading RBAC users:', err);
+    return [];
+  }
+}
+
+/**
+ * Eliminar Usuario RBAC de la Base de Datos
+ */
+export async function deleteAdminUserFromDb(id: string) {
+  try {
+    const { data, error } = await withTimeout(supabase
+      .from('blog_resources')
+      .delete()
+      .eq('id', `user_${id}`));
+
+    if (error) console.warn('Supabase delete error (rbac_user):', error.message);
+    return { success: !error, data, error };
+  } catch (err) {
+    console.warn('Supabase exception deleting RBAC user:', err);
+    return { success: false, error: err };
+  }
+}
