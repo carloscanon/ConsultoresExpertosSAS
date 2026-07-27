@@ -332,20 +332,20 @@ export const CommandCenterDomain: React.FC = () => {
           <div className="space-y-6 animate-in fade-in duration-300">
             
             {/* 10 TOP EXECUTIVE KPIS GRID */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Visitantes Únicos</span>
                 <div className="text-xl font-extrabold text-white font-mono">{metrics.visitors.toLocaleString()}</div>
                 <span className="text-[9px] font-bold text-emerald-400 flex items-center space-x-0.5">
                   <TrendingUp className="w-3 h-3" />
-                  <span>+18.4% vs anterior</span>
+                  <span>Realtime Supabase</span>
                 </span>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Sesiones Totales</span>
                 <div className="text-xl font-extrabold text-white font-mono">{metrics.sessions.toLocaleString()}</div>
-                <span className="text-[9px] font-bold text-cyan-400">+14.2% engagement</span>
+                <span className="text-[9px] font-bold text-cyan-400">{metrics.engagementRate} engagement</span>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
@@ -360,13 +360,40 @@ export const CommandCenterDomain: React.FC = () => {
               <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Conversiones</span>
                 <div className="text-xl font-extrabold text-purple-400 font-mono">{metrics.totalConversions}</div>
-                <span className="text-[9px] font-bold text-purple-400">+12.8% leads</span>
+                <span className="text-[9px] font-bold text-purple-400">Leads + LMS + Tickets</span>
               </div>
 
               <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1">
                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Tasa Conversión</span>
                 <div className="text-xl font-extrabold text-emerald-400 font-mono">{metrics.convRate}</div>
-                <span className="text-[9px] font-bold text-emerald-400">+0.4% opt-in</span>
+                <span className="text-[9px] font-bold text-emerald-400">Opt-in Activo</span>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-1 col-span-2 sm:col-span-1">
+                <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">Ingresos Estimados</span>
+                <div className="text-xl font-extrabold text-amber-400 font-mono">${metrics.revenue.toLocaleString()} USD</div>
+                <span className="text-[9px] font-mono text-slate-400">Deals CRM + LMS</span>
+              </div>
+            </div>
+
+            {/* REVENUE BREAKDOWN & LIVE MANAGEMENT GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 space-y-2 text-left">
+                <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-widest block">PIPELINE CRM (DEALS)</span>
+                <div className="text-2xl font-black text-white font-mono">${deals.reduce((s: number, d: any) => s + (d.deal_value || 0), 0).toLocaleString()} USD</div>
+                <p className="text-[11px] text-slate-400 font-semibold">{deals.length} negociaciones en seguimiento activo</p>
+              </div>
+
+              <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 space-y-2 text-left">
+                <span className="text-[10px] font-mono font-bold text-purple-400 uppercase tracking-widest block">VENTAS CURSOS (ACADEMY LMS)</span>
+                <div className="text-2xl font-black text-white font-mono">${enrollments.reduce((s: number, e: any) => s + (Number(e.amount_paid) || 0), 0).toLocaleString()} USD</div>
+                <p className="text-[11px] text-slate-400 font-semibold">{enrollments.length} estudiantes matriculados</p>
+              </div>
+
+              <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 space-y-2 text-left">
+                <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-widest block">INTERACCIONES & SOPORTE</span>
+                <div className="text-2xl font-black text-white font-mono">{chats.length + tickets.length} eventos</div>
+                <p className="text-[11px] text-slate-400 font-semibold">{tickets.filter((t: any) => t.status === 'Nuevo').length} tickets pendientes de atención</p>
               </div>
             </div>
 
