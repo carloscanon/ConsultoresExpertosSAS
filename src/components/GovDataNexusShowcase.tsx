@@ -28,7 +28,6 @@ import {
   Trash2,
   AlertOctagon,
   ShieldAlert,
-  RotateCcw,
   Key
 } from 'lucide-react';
 
@@ -52,7 +51,6 @@ export const GovDataNexusShowcase: React.FC<GovDataNexusShowcaseProps> = ({ onOp
   const [launchpadStep, setLaunchpadStep] = useState<number>(1);
 
   // Super Admin Emergency Purge State (Cortes de Orden / Calidad)
-  const [isSuperAdminMode, setIsSuperAdminMode] = useState<boolean>(true);
   const [purgeModalOpen, setPurgeModalOpen] = useState<boolean>(false);
   const [purgeConfirmationCode, setPurgeConfirmationCode] = useState<string>('');
   const [purgeProgress, setPurgeProgress] = useState<number>(0);
@@ -162,40 +160,7 @@ export const GovDataNexusShowcase: React.FC<GovDataNexusShowcaseProps> = ({ onOp
           </p>
         </div>
 
-        {/* Super Admin Control Bar Banner */}
-        <div className="mb-8 p-3 rounded-2xl bg-slate-900 text-white border border-slate-800 flex flex-wrap items-center justify-between gap-3 shadow-xl">
-          <div className="flex items-center space-x-2.5">
-            <div className="p-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold">
-              <ShieldAlert className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Modo Super Administrador Activo</span>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              </div>
-              <p className="text-[11px] text-slate-400">Rol activo: <strong className="text-white">Super Admin (NIT 900452089-9)</strong> — Acceso a herramientas de purga de orden y remediación de calidad.</p>
-            </div>
-          </div>
 
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setIsSuperAdminMode(!isSuperAdminMode)}
-              className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700"
-            >
-              {isSuperAdminMode ? 'Desactivar Modo SuperAdmin' : 'Activar Modo SuperAdmin'}
-            </button>
-
-            {isSuperAdminMode && (
-              <button
-                onClick={() => setPurgeModalOpen(true)}
-                className="px-4 py-2 rounded-xl text-xs font-extrabold text-white bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-600 transition-all shadow-lg flex items-center space-x-1.5 animate-pulse"
-              >
-                <RotateCcw className="w-4 h-4" />
-                <span>Deshacer & Purgar Todo (Cortes de Orden)</span>
-              </button>
-            )}
-          </div>
-        </div>
 
         {orderPurgedBanner && (
           <div className="mb-6 p-4 rounded-2xl bg-emerald-500/15 border-2 border-emerald-500 text-emerald-900 flex items-center justify-between animate-in fade-in">
