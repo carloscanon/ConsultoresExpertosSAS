@@ -657,7 +657,20 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Institutional Info action
   const updateContactInfo = async (info: ContactInfo) => {
     setContactInfo(info);
-    const res = await saveSiteConfigurationInDb(info, logoUrl, logoSize, logoHeight, logoWidth);
+    const res = await saveSiteConfigurationInDb(
+      info, 
+      logoUrl, 
+      logoSize, 
+      logoHeight, 
+      logoWidth,
+      mobileLogoSize,
+      mobileLogoHeight,
+      mobileLogoWidth,
+      footerLogoUrl,
+      footerLogoSize,
+      footerLogoHeight,
+      footerLogoWidth
+    );
     if (!res.success && res.error) {
       throw new Error(res.error.message || 'Error guardando config SEO en Supabase');
     }
