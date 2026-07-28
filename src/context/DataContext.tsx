@@ -399,17 +399,51 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       if (fetchedConfig) {
         setContactInfo(fetchedConfig.contact);
         localStorage.setItem('dxp_contact_info', JSON.stringify(fetchedConfig.contact));
-        setLogoUrl(fetchedConfig.logoUrl || '', true);
-        setLogoSize(fetchedConfig.logoSize || 180, true);
-        setLogoHeight(fetchedConfig.logoHeight || 56);
-        setLogoWidth(fetchedConfig.logoWidth || 100);
-        setMobileLogoSize(fetchedConfig.mobileLogoSize || 140);
-        setMobileLogoHeight(fetchedConfig.mobileLogoHeight || 44);
-        setMobileLogoWidth(fetchedConfig.mobileLogoWidth || 100);
-        setFooterLogoUrl(fetchedConfig.footerLogoUrl || '', true);
-        setFooterLogoSize(fetchedConfig.footerLogoSize || 200);
-        setFooterLogoHeight(fetchedConfig.footerLogoHeight || 64);
-        setFooterLogoWidth(fetchedConfig.footerLogoWidth || 100);
+        
+        if (fetchedConfig.logoUrl) {
+          localStorage.setItem('dxp_logo_url', fetchedConfig.logoUrl);
+          setLogoUrl(fetchedConfig.logoUrl, true);
+        }
+        if (fetchedConfig.logoSize) {
+          localStorage.setItem('dxp_logo_size', String(fetchedConfig.logoSize));
+          setLogoSize(fetchedConfig.logoSize, true);
+        }
+        if (fetchedConfig.logoHeight) {
+          localStorage.setItem('dxp_logo_height', String(fetchedConfig.logoHeight));
+          setLogoHeight(fetchedConfig.logoHeight);
+        }
+        if (fetchedConfig.logoWidth) {
+          localStorage.setItem('dxp_logo_width', String(fetchedConfig.logoWidth));
+          setLogoWidth(fetchedConfig.logoWidth);
+        }
+        if (fetchedConfig.mobileLogoSize) {
+          localStorage.setItem('dxp_mobile_logo_size', String(fetchedConfig.mobileLogoSize));
+          setMobileLogoSize(fetchedConfig.mobileLogoSize);
+        }
+        if (fetchedConfig.mobileLogoHeight) {
+          localStorage.setItem('dxp_mobile_logo_height', String(fetchedConfig.mobileLogoHeight));
+          setMobileLogoHeight(fetchedConfig.mobileLogoHeight);
+        }
+        if (fetchedConfig.mobileLogoWidth) {
+          localStorage.setItem('dxp_mobile_logo_width', String(fetchedConfig.mobileLogoWidth));
+          setMobileLogoWidth(fetchedConfig.mobileLogoWidth);
+        }
+        if (fetchedConfig.footerLogoUrl) {
+          localStorage.setItem('dxp_footer_logo_url', fetchedConfig.footerLogoUrl);
+          setFooterLogoUrl(fetchedConfig.footerLogoUrl, true);
+        }
+        if (fetchedConfig.footerLogoSize) {
+          localStorage.setItem('dxp_footer_logo_size', String(fetchedConfig.footerLogoSize));
+          setFooterLogoSize(fetchedConfig.footerLogoSize);
+        }
+        if (fetchedConfig.footerLogoHeight) {
+          localStorage.setItem('dxp_footer_logo_height', String(fetchedConfig.footerLogoHeight));
+          setFooterLogoHeight(fetchedConfig.footerLogoHeight);
+        }
+        if (fetchedConfig.footerLogoWidth) {
+          localStorage.setItem('dxp_footer_logo_width', String(fetchedConfig.footerLogoWidth));
+          setFooterLogoWidth(fetchedConfig.footerLogoWidth);
+        }
       }
 
       if (fetchedLayout) {
