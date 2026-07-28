@@ -66,8 +66,13 @@ export const ThemeSelectorDomain: React.FC = () => {
     reader.onload = (event) => {
       const base64Url = event.target?.result as string;
       if (base64Url) {
-        setLogoUrl(base64Url);
-        setAppliedNotification("✓ Logotipo corporativo subido e instalado con éxito.");
+        if (logoTab === 'footer') {
+          setFooterLogoUrl(base64Url);
+          setAppliedNotification("✓ Logotipo del pie de página (footer) subido e instalado con éxito.");
+        } else {
+          setLogoUrl(base64Url);
+          setAppliedNotification("✓ Logotipo corporativo de la cabecera subido e instalado con éxito.");
+        }
         setTimeout(() => setAppliedNotification(null), 3000);
       }
     };
@@ -533,24 +538,7 @@ export const ThemeSelectorDomain: React.FC = () => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (!file) return;
-                      const reader = new FileReader();
-                      reader.onload = (evt) => {
-                        const base64 = evt.target?.result as string;
-                        if (base64) {
-                          if (logoTab === 'footer') {
-                            setFooterLogoUrl(base64);
-                          } else {
-                            setLogoUrl(base64);
-                          }
-                          setAppliedNotification("✓ Logotipo cargado con éxito.");
-                          setTimeout(() => setAppliedNotification(null), 3000);
-                        }
-                      };
-                      reader.readAsDataURL(file);
-                    }}
+                    onChange={handleLogoUpload}
                     className="hidden"
                   />
                 </label>

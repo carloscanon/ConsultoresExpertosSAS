@@ -230,6 +230,8 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { 
     logoUrl, logoSize, logoHeight, logoWidth, 
+    mobileLogoSize, mobileLogoHeight, mobileLogoWidth,
+    footerLogoUrl, footerLogoSize, footerLogoHeight, footerLogoWidth,
     setLogoUrl, setLogoSize, setLogoHeight, setLogoWidth,
     setMobileLogoSize, setMobileLogoHeight, setMobileLogoWidth,
     setFooterLogoUrl, setFooterLogoSize, setFooterLogoHeight, setFooterLogoWidth
