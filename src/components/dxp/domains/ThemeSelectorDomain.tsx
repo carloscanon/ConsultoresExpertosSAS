@@ -462,8 +462,37 @@ export const ThemeSelectorDomain: React.FC = () => {
               </>
             )}
 
+            {/* Prominent Image File Uploader */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-950 via-cyan-950/20 to-slate-950 border border-cyan-500/30 space-y-2 text-left">
+              <label className="block text-slate-200 font-bold font-sans text-xs flex items-center space-x-1.5">
+                <Upload className="w-4 h-4 text-cyan-400" />
+                <span>SUBIR IMAGEN DEL LOGOTIPO DESDE TU COMPUTADOR</span>
+              </label>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-extrabold text-white transition-all cursor-pointer flex items-center space-x-2 shadow-lg shadow-cyan-600/20">
+                  <Upload className="w-4 h-4" />
+                  <span>SELECCIONAR ARCHIVO DE IMAGEN (PNG, JPG, SVG, WEBP)</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                  />
+                </label>
+                {logoUrl && logoUrl.startsWith('data:') && (
+                  <span className="text-xs text-emerald-400 font-mono font-bold bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/30 flex items-center space-x-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Imagen cargada con éxito</span>
+                  </span>
+                )}
+              </div>
+              <p className="text-[10px] text-slate-400 font-mono">
+                Al seleccionar una imagen, se cargará de inmediato en la vista previa. Luego pulsa "GUARDAR PARÁMETROS" abajo para guardarla en Supabase.
+              </p>
+            </div>
+
             {/* Save Button for Logo Settings */}
-            <div className="pt-4 border-t border-slate-800 flex items-center space-x-3">
+            <div className="pt-2 border-t border-slate-800 flex items-center space-x-3">
               <button
                 type="button"
                 onClick={async () => {
@@ -479,10 +508,10 @@ export const ThemeSelectorDomain: React.FC = () => {
                   }
                 }}
                 disabled={savingLogo}
-                className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs transition-all shadow-lg flex items-center space-x-2 cursor-pointer disabled:opacity-50"
+                className="w-full justify-center px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-black text-xs transition-all shadow-xl flex items-center space-x-2 cursor-pointer disabled:opacity-50"
               >
                 <Save className={`w-4 h-4 ${savingLogo ? 'animate-spin' : ''}`} />
-                <span>{savingLogo ? 'Guardando en Supabase DB...' : '💾 GUARDAR PARÁMETROS DEL LOGO DE FORMA DEFINITIVA'}</span>
+                <span>{savingLogo ? 'Guardando en Supabase DB...' : '💾 GUARDAR PARÁMETROS Y LOGO EN BASE DE DATOS'}</span>
               </button>
             </div>
           </div>
