@@ -148,12 +148,12 @@ export interface MenuItem {
 }
 
 const INITIAL_RESOURCES: ResourceItem[] = [
-  { id: 'res-1', title: 'Introducción al CDMP DAMA Internacional', type: 'video', description: 'Video clase explicativa de 20 minutos detallando el plan de estudio y certificación CDMP.', durationOrSize: '20 Minutos', redirectUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-  { id: 'res-2', title: 'Estrategia de Gobierno de Datos Corporativa', type: 'whitepaper', description: 'Guía ejecutiva en PDF sobre cómo convencer a la junta directiva de financiar gobernanza.', durationOrSize: '2.4 MB', redirectUrl: 'https://www.govdatanexus.com/strategy' },
-  { id: 'res-3', title: 'Datos con Gobierno: El Reto de la IA', type: 'podcast', description: 'Episodio de audio conversando con el arquitecto principal sobre gobernanza de IA.', durationOrSize: '35 Minutos', redirectUrl: 'https://masterclass.online/podcast-1' },
-  { id: 'res-4', title: 'Plantilla Canvas de Gobierno de Datos', type: 'template', description: 'Plantilla editable de una página para modelar la gobernanza de su entidad.', durationOrSize: '850 KB', redirectUrl: 'https://www.govdatanexus.com/canvas' },
-  { id: 'res-5', title: 'Optimización DAX en Power BI Enterprise', type: 'video', description: 'Taller práctico de optimización de consultas complejas en Power BI.', durationOrSize: '45 Minutos', redirectUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-  { id: 'res-6', title: 'Glosario de Negocio MIPG/DAMA', type: 'template', description: 'Catálogo de términos estándar del sector público colombiano.', durationOrSize: '1.2 MB', redirectUrl: 'https://legalcol.vercel.app/glosario' }
+  { id: 'res-1', title: 'Introducción al CDMP DAMA Internacional', type: 'video', description: 'Video clase explicativa de 20 minutos detallando el plan de estudio y certificación CDMP.', durationOrSize: '20 Minutos', redirectUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', imageUrl: '/default_resource_thumbnail.jpg' },
+  { id: 'res-2', title: 'Estrategia de Gobierno de Datos Corporativa', type: 'whitepaper', description: 'Guía ejecutiva en PDF sobre cómo convencer a la junta directiva de financiar gobernanza.', durationOrSize: '2.4 MB', redirectUrl: 'https://www.govdatanexus.com/strategy', imageUrl: '/default_resource_thumbnail.jpg' },
+  { id: 'res-3', title: 'Datos con Gobierno: El Reto de la IA', type: 'podcast', description: 'Episodio de audio conversando con el arquitecto principal sobre gobernanza de IA.', durationOrSize: '35 Minutos', redirectUrl: 'https://masterclass.online/podcast-1', imageUrl: '/default_resource_thumbnail.jpg' },
+  { id: 'res-4', title: 'Plantilla Canvas de Gobierno de Datos', type: 'template', description: 'Plantilla editable de una página para modelar la gobernanza de su entidad.', durationOrSize: '850 KB', redirectUrl: 'https://www.govdatanexus.com/canvas', imageUrl: '/default_resource_thumbnail.jpg' },
+  { id: 'res-5', title: 'Optimización DAX en Power BI Enterprise', type: 'video', description: 'Taller práctico de optimización de consultas complejas en Power BI.', durationOrSize: '45 Minutos', redirectUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', imageUrl: '/default_resource_thumbnail.jpg' },
+  { id: 'res-6', title: 'Glosario de Negocio MIPG/DAMA', type: 'template', description: 'Catálogo de términos estándar del sector público colombiano.', durationOrSize: '1.2 MB', redirectUrl: 'https://legalcol.vercel.app/glosario', imageUrl: '/default_resource_thumbnail.jpg' }
 ];
 
 export const DEFAULT_MENU_ITEMS: MenuItem[] = [

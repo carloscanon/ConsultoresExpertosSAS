@@ -5,10 +5,7 @@ import {
   Download, 
   BookOpen,
   X,
-  Play,
-  FileText,
-  Volume2,
-  BookMarked
+  Play
 } from 'lucide-react';
 
 interface ResourcesAndBlogProps {
@@ -79,21 +76,7 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
     return '';
   };
 
-  const getFallbackGradient = (category: string) => {
-    const cat = category.toLowerCase();
-    if (cat.includes('video') || cat.includes('grabaciones')) return 'from-cyan-950 via-cyan-900 to-indigo-950';
-    if (cat.includes('podcast')) return 'from-indigo-950 via-purple-950 to-slate-950';
-    if (cat.includes('checklist') || cat.includes('plantilla')) return 'from-emerald-950 via-teal-900 to-slate-950';
-    return 'from-purple-950 via-blue-950 to-slate-950';
-  };
 
-  const getIcon = (category: string) => {
-    const cat = category.toLowerCase();
-    if (cat.includes('video') || cat.includes('grabaciones')) return <Play className="w-8 h-8 text-cyan-400 fill-cyan-400" />;
-    if (cat.includes('podcast')) return <Volume2 className="w-8 h-8 text-indigo-400" />;
-    if (cat.includes('checklist') || cat.includes('plantilla')) return <BookMarked className="w-8 h-8 text-emerald-400" />;
-    return <FileText className="w-8 h-8 text-purple-400" />;
-  };
 
   const handleCardClick = (post: any) => {
     const embed = getYoutubeEmbedUrl(post.redirectUrl);
@@ -154,7 +137,7 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
             >
               {/* Card Poster Container */}
               <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-slate-900 border border-slate-805 group-hover:border-red-600 group-hover:scale-102 transition-all relative shadow-lg select-none">
-                {/* Cover Image — imageUrl > YouTube auto > gradient */}
+                {/* Cover Image — imageUrl > YouTube auto > default graphic thumbnail */}
                 {post.imageUrl ? (
                   <img 
                     src={post.imageUrl} 
@@ -168,9 +151,11 @@ export const ResourcesAndBlog: React.FC<ResourcesAndBlogProps> = ({ onOpenDemo }
                     className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-all duration-500" 
                   />
                 ) : (
-                  <div className={`w-full h-full bg-gradient-to-tr ${getFallbackGradient(post.type)} flex items-center justify-center p-4`}>
-                    {getIcon(post.type)}
-                  </div>
+                  <img 
+                    src="/default_resource_thumbnail.jpg" 
+                    alt={post.title} 
+                    className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-all duration-500" 
+                  />
                 )}
 
                 {/* Card Hover Play/Download Button Overlay */}
