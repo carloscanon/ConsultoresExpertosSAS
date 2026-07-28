@@ -298,50 +298,14 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setLogoUrlState(url);
     localStorage.setItem('dxp_logo_url', url);
     if (skipDb) return;
-    
-    const savedContact = localStorage.getItem('dxp_contact_info');
-    const contact = savedContact ? JSON.parse(savedContact) : {
-      companyName: 'Consultores Expertos SAS',
-      companyNit: '900452089-9',
-      email: 'info@consultoresexpertos.com',
-      phone: '+57 300 123 4567',
-      whatsapp: '573001234567',
-      address: 'Bogotá, Colombia',
-      metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo reunidos en un único ecosistema.',
-      metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG',
-      initialScrollSection: 'hero',
-      earlyBirdDays: 8,
-      earlyBirdRegularPrice: 150000,
-      earlyBirdDiscount: 99000,
-      masterclassPageSize: 3,
-      coursePageSize: 6
-    };
-    saveSiteConfigurationInDb(contact, url, logoSize, logoHeight, logoWidth).catch(console.warn);
+    saveLogoConfigurationToDb().catch(console.warn);
   };
 
   const setLogoSize = (size: number, skipDb = false) => {
     setLogoSizeState(size);
     localStorage.setItem('dxp_logo_size', String(size));
     if (skipDb) return;
-    
-    const savedContact = localStorage.getItem('dxp_contact_info');
-    const contact = savedContact ? JSON.parse(savedContact) : {
-      companyName: 'Consultores Expertos SAS',
-      companyNit: '900452089-9',
-      email: 'info@consultoresexpertos.com',
-      phone: '+57 300 123 4567',
-      whatsapp: '573001234567',
-      address: 'Bogotá, Colombia',
-      metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo reunidos en un único ecosistema.',
-      metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA, TOGAF, Ley 1581, COBIT, MIPG',
-      initialScrollSection: 'hero',
-      earlyBirdDays: 8,
-      earlyBirdRegularPrice: 150000,
-      earlyBirdDiscount: 99000,
-      masterclassPageSize: 3,
-      coursePageSize: 6
-    };
-    saveSiteConfigurationInDb(contact, logoUrl, size, logoHeight, logoWidth).catch(console.warn);
+    saveLogoConfigurationToDb().catch(console.warn);
   };
 
   const [logoHeight, setLogoHeightState] = useState<number>(() => {
@@ -373,50 +337,55 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setLogoHeightState(height);
     localStorage.setItem('dxp_logo_height', String(height));
     if (skipDb) return;
-    const savedContact = localStorage.getItem('dxp_contact_info');
-    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
-    saveSiteConfigurationInDb(contact, logoUrl, logoSize, height, logoWidth, mobileLogoSize, mobileLogoHeight, mobileLogoWidth).catch(console.warn);
+    saveLogoConfigurationToDb().catch(console.warn);
   };
 
   const setLogoWidth = (width: number, skipDb = false) => {
     setLogoWidthState(width);
     localStorage.setItem('dxp_logo_width', String(width));
     if (skipDb) return;
-    const savedContact = localStorage.getItem('dxp_contact_info');
-    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
-    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, width, mobileLogoSize, mobileLogoHeight, mobileLogoWidth).catch(console.warn);
+    saveLogoConfigurationToDb().catch(console.warn);
   };
 
   const setMobileLogoSize = (size: number, skipDb = false) => {
     setMobileLogoSizeState(size);
     localStorage.setItem('dxp_mobile_logo_size', String(size));
     if (skipDb) return;
-    const savedContact = localStorage.getItem('dxp_contact_info');
-    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
-    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, logoWidth, size, mobileLogoHeight, mobileLogoWidth).catch(console.warn);
+    saveLogoConfigurationToDb().catch(console.warn);
   };
 
   const setMobileLogoHeight = (height: number, skipDb = false) => {
     setMobileLogoHeightState(height);
     localStorage.setItem('dxp_mobile_logo_height', String(height));
     if (skipDb) return;
-    const savedContact = localStorage.getItem('dxp_contact_info');
-    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
-    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, logoWidth, mobileLogoSize, height, mobileLogoWidth).catch(console.warn);
+    saveLogoConfigurationToDb().catch(console.warn);
   };
 
   const setMobileLogoWidth = (width: number, skipDb = false) => {
     setMobileLogoWidthState(width);
     localStorage.setItem('dxp_mobile_logo_width', String(width));
     if (skipDb) return;
-    const savedContact = localStorage.getItem('dxp_contact_info');
-    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
-    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, logoWidth, mobileLogoSize, mobileLogoHeight, width).catch(console.warn);
+    saveLogoConfigurationToDb().catch(console.warn);
   };
 
   const saveLogoConfigurationToDb = async () => {
     const savedContact = localStorage.getItem('dxp_contact_info');
-    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
+    const contact = savedContact ? JSON.parse(savedContact) : {
+      companyName: 'Consultores Expertos SAS',
+      companyNit: '900452089-9',
+      email: 'info@consultoresexpertos.com',
+      phone: '+57 300 123 4567',
+      whatsapp: '573001234567',
+      address: 'Bogotá, Colombia',
+      metaDescription: 'Consultoría, Inteligencia Artificial, Arquitectura Empresarial, Academia y Cumplimiento Normativo.',
+      metaKeywords: 'Gobierno de Datos, Inteligencia Artificial, DAMA',
+      initialScrollSection: 'hero',
+      earlyBirdDays: 8,
+      earlyBirdRegularPrice: 150000,
+      earlyBirdDiscount: 99000,
+      masterclassPageSize: 3,
+      coursePageSize: 6
+    };
     await saveSiteConfigurationInDb(
       contact, 
       logoUrl, 
