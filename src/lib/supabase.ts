@@ -715,14 +715,20 @@ export async function saveSiteConfigurationInDb(
   logoUrl: string, 
   logoSize: number, 
   logoHeight?: number, 
-  logoWidth?: number
+  logoWidth?: number,
+  mobileLogoSize?: number,
+  mobileLogoHeight?: number,
+  mobileLogoWidth?: number
 ) {
   try {
     const serializedLogoMeta = JSON.stringify({
       url: logoUrl || '',
       size: logoSize || 180,
       height: logoHeight || 56,
-      width: logoWidth || 100
+      width: logoWidth || 100,
+      mobileSize: mobileLogoSize || 140,
+      mobileHeight: mobileLogoHeight || 44,
+      mobileWidth: mobileLogoWidth || 100
     });
 
     const { data, error } = await withTimeout(supabase
@@ -731,9 +737,9 @@ export async function saveSiteConfigurationInDb(
         id: 'site_seo_settings',
         title: 'Configuración DXP Centralizada',
         category: 'site_config',
-        read_time: String(logoSize), // Store logoSize as read_time string for backwards compatibility
-        summary: JSON.stringify(contact), // Store contact info object as JSON in summary
-        ai_summary: serializedLogoMeta, // Store complete logo metadata JSON in ai_summary
+        read_time: String(logoSize),
+        summary: JSON.stringify(contact),
+        ai_summary: serializedLogoMeta,
         author: 'Super Admin',
         author_role: 'System settings',
         date: new Date().toLocaleDateString('es-ES'),
@@ -769,6 +775,9 @@ export async function getSiteConfigurationFromDb() {
     let logoSize = Number(data.read_time) || 180;
     let logoHeight = 56;
     let logoWidth = 100;
+    let mobileLogoSize = 140;
+    let mobileLogoHeight = 44;
+    let mobileLogoWidth = 100;
 
     if (data.ai_summary) {
       if (data.ai_summary.trim().startsWith('{')) {
@@ -778,6 +787,9 @@ export async function getSiteConfigurationFromDb() {
           logoSize = parsedLogo.size || logoSize;
           logoHeight = parsedLogo.height || 56;
           logoWidth = parsedLogo.width || 100;
+          mobileLogoSize = parsedLogo.mobileSize || 140;
+          mobileLogoHeight = parsedLogo.mobileHeight || 44;
+          mobileLogoWidth = parsedLogo.mobileWidth || 100;
         } catch (e) {
           logoUrl = data.ai_summary;
         }
@@ -786,7 +798,7 @@ export async function getSiteConfigurationFromDb() {
       }
     }
 
-    return { contact, logoUrl, logoSize, logoHeight, logoWidth };
+    return { contact, logoUrl, logoSize, logoHeight, logoWidth, mobileLogoSize, mobileLogoHeight, mobileLogoWidth };
   } catch (err) {
     console.warn('Supabase exception reading site configurations:', err);
     return null;

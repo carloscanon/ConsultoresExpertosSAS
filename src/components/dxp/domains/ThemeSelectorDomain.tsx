@@ -22,12 +22,19 @@ export const ThemeSelectorDomain: React.FC = () => {
     logoSize,
     logoHeight,
     logoWidth,
+    mobileLogoSize,
+    mobileLogoHeight,
+    mobileLogoWidth,
     setLogoUrl,
     setLogoSize,
     setLogoHeight,
-    setLogoWidth
+    setLogoWidth,
+    setMobileLogoSize,
+    setMobileLogoHeight,
+    setMobileLogoWidth
   } = useTheme();
   const [appliedNotification, setAppliedNotification] = useState<string | null>(null);
+  const [logoTab, setLogoTab] = useState<'desktop' | 'mobile'>('desktop');
 
   const handleApplyTheme = (themeId: ThemeId, themeName: string) => {
     setTheme(themeId);
@@ -284,100 +291,176 @@ export const ThemeSelectorDomain: React.FC = () => {
 
       {/* 📥 CUSTOM BRAND LOGO PARAMETERIZATION PANEL */}
       <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 space-y-6">
-        <div>
-          <h3 className="text-sm font-bold text-white font-heading flex items-center space-x-2">
-            <Upload className="w-5 h-5 text-cyan-400 animate-pulse" />
-            <span>Carga de Logo y Personalización de Marca</span>
-          </h3>
-          <p className="text-xs text-slate-400 mt-1">
-            Reemplace el logotipo por defecto del ecosistema con el de su propia empresa y configure su tamaño de visualización.
-          </p>
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div>
+            <h3 className="text-sm font-bold text-white font-heading uppercase tracking-wider flex items-center space-x-2">
+              <span>Gestión del Logotipo & Dimensiones Responsivas</span>
+            </h3>
+            <p className="text-xs text-slate-400 mt-1">
+              Suba su logotipo corporativo y configure tamaños independientes para pantallas Desktop y Dispositivos Móviles. Guardado en tiempo real en Supabase DB.
+            </p>
+          </div>
+
+          {/* Desktop / Mobile Tab Switcher */}
+          <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-bold font-mono">
+            <button
+              onClick={() => setLogoTab('desktop')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                logoTab === 'desktop' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              💻 ESCRITORIO (DESKTOP)
+            </button>
+            <button
+              onClick={() => setLogoTab('mobile')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                logoTab === 'mobile' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              📱 MÓVIL (MOBILE)
+            </button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-          {/* Controls */}
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          
+          {/* Form Sliders */}
+          <div className="space-y-5">
             <div className="space-y-1.5 text-left">
-              <label className="block text-slate-300 font-bold">URL del Logo de la Empresa (o Base64)</label>
+              <label className="block text-slate-300 font-bold font-sans">URL de la Imagen del Logo (Opcional)</label>
               <input
                 type="text"
+                placeholder="https://ejemplo.com/logo.png"
                 value={logoUrl}
                 onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="Ej: https://miempresa.com/assets/logo.png"
-                className="w-full p-3 rounded-xl bg-slate-950 border border-slate-850 text-white outline-none focus:border-cyan-400 font-mono text-[11px]"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs font-mono"
               />
-              <p className="text-[10px] text-slate-500 font-mono">
+              <p className="text-[10px] text-slate-500">
                 Deje en blanco para usar el logotipo predeterminado de "Consultores Expertos SAS".
               </p>
             </div>
 
-            <div className="space-y-1.5 text-left">
-              <div className="flex justify-between font-bold text-slate-300">
-                <span>Ancho del Contenedor (Container Width)</span>
-                <span className="text-cyan-400 font-mono">{logoSize}px</span>
-              </div>
-              <input
-                type="range"
-                min="60"
-                max="600"
-                step="5"
-                value={logoSize}
-                onChange={(e) => setLogoSize(parseInt(e.target.value, 10))}
-                className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-400"
-              />
-              <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                <span>60px</span>
-                <span>180px (Default)</span>
-                <span>600px</span>
-              </div>
-            </div>
+            {logoTab === 'desktop' ? (
+              <>
+                {/* Desktop Sliders */}
+                <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                  <div className="flex justify-between font-bold text-slate-300">
+                    <span>📐 Ancho Contenedor Desktop</span>
+                    <span className="text-cyan-400 font-mono">{logoSize}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="80"
+                    max="600"
+                    step="5"
+                    value={logoSize}
+                    onChange={(e) => setLogoSize(parseInt(e.target.value, 10))}
+                    className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                  />
+                  <div className="flex justify-between text-[9px] text-slate-500 font-mono">
+                    <span>80px</span>
+                    <span>180px</span>
+                    <span>600px</span>
+                  </div>
+                </div>
 
-            {/* Vertical Image Slider (Height) */}
-            <div className="space-y-1.5 text-left">
-              <div className="flex justify-between font-bold text-slate-300">
-                <span>↕️ Alto de la Imagen (Vertical Size)</span>
-                <span className="text-cyan-400 font-mono">{logoHeight}px</span>
-              </div>
-              <input
-                type="range"
-                min="20"
-                max="160"
-                step="2"
-                value={logoHeight}
-                onChange={(e) => setLogoHeight(parseInt(e.target.value, 10))}
-                className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-400"
-              />
-              <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                <span>20px</span>
-                <span>56px (Default)</span>
-                <span>160px</span>
-              </div>
-            </div>
+                <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                  <div className="flex justify-between font-bold text-slate-300">
+                    <span>↕️ Alto Máximo Imagen (Desktop)</span>
+                    <span className="text-indigo-400 font-mono">{logoHeight}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="180"
+                    step="2"
+                    value={logoHeight}
+                    onChange={(e) => setLogoHeight(parseInt(e.target.value, 10))}
+                    className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-indigo-400"
+                  />
+                  <div className="flex justify-between text-[9px] text-slate-500 font-mono">
+                    <span>20px</span>
+                    <span>56px</span>
+                    <span>180px</span>
+                  </div>
+                </div>
 
-            {/* Horizontal Image Slider (Width %) */}
-            <div className="space-y-1.5 text-left">
-              <div className="flex justify-between font-bold text-slate-300">
-                <span>↔️ Ancho de la Imagen (Horizontal Fill %)</span>
-                <span className="text-cyan-400 font-mono">{logoWidth}%</span>
-              </div>
-              <input
-                type="range"
-                min="20"
-                max="100"
-                step="5"
-                value={logoWidth}
-                onChange={(e) => setLogoWidth(parseInt(e.target.value, 10))}
-                className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-400"
-              />
-              <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                <span>20%</span>
-                <span>100% (Default)</span>
-                <span>100%</span>
-              </div>
-            </div>
+                <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                  <div className="flex justify-between font-bold text-slate-300">
+                    <span>↔️ Llenado Horizontal (Desktop %)</span>
+                    <span className="text-emerald-400 font-mono">{logoWidth}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="100"
+                    step="5"
+                    value={logoWidth}
+                    onChange={(e) => setLogoWidth(parseInt(e.target.value, 10))}
+                    className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Mobile Sliders */}
+                <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                  <div className="flex justify-between font-bold text-slate-300">
+                    <span>📱 Ancho Contenedor Móvil</span>
+                    <span className="text-cyan-400 font-mono">{mobileLogoSize}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="60"
+                    max="350"
+                    step="5"
+                    value={mobileLogoSize}
+                    onChange={(e) => setMobileLogoSize(parseInt(e.target.value, 10))}
+                    className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
+                  />
+                  <div className="flex justify-between text-[9px] text-slate-500 font-mono">
+                    <span>60px</span>
+                    <span>140px</span>
+                    <span>350px</span>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                  <div className="flex justify-between font-bold text-slate-300">
+                    <span>↕️ Alto Máximo Imagen (Móvil)</span>
+                    <span className="text-indigo-400 font-mono">{mobileLogoHeight}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="120"
+                    step="2"
+                    value={mobileLogoHeight}
+                    onChange={(e) => setMobileLogoHeight(parseInt(e.target.value, 10))}
+                    className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-indigo-400"
+                  />
+                </div>
+
+                <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                  <div className="flex justify-between font-bold text-slate-300">
+                    <span>↔️ Llenado Horizontal (Móvil %)</span>
+                    <span className="text-emerald-400 font-mono">{mobileLogoWidth}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="100"
+                    step="5"
+                    value={mobileLogoWidth}
+                    onChange={(e) => setMobileLogoWidth(parseInt(e.target.value, 10))}
+                    className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-emerald-400"
+                  />
+                </div>
+              </>
+            )}
 
             {/* Real File Uploader */}
-            <div className="space-y-1.5 text-left">
+            <div className="space-y-1.5 text-left pt-2">
               <label className="block text-slate-300 font-bold font-sans">Cargar Logotipo Local</label>
               <div className="flex items-center space-x-2">
                 <label className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-[11px] font-bold text-white transition-all cursor-pointer flex items-center space-x-1.5 shadow-lg shadow-cyan-600/10">
@@ -400,26 +483,32 @@ export const ThemeSelectorDomain: React.FC = () => {
           </div>
 
           {/* Real-time Preview Area */}
-          <div className="bg-slate-950/60 p-5 rounded-2xl border border-slate-850 flex flex-col items-center justify-center space-y-4 relative min-h-[160px] overflow-hidden">
-            <span className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest absolute top-3 left-4">
-              VISTA PREVIA DEL LOGO
+          <div className="bg-slate-950/60 p-5 rounded-2xl border border-slate-850 flex flex-col items-center justify-center space-y-4 relative min-h-[220px] overflow-hidden">
+            <span className="text-[9px] font-mono font-bold text-cyan-400 uppercase tracking-widest absolute top-3 left-4">
+              VISTA PREVIA DEL LOGO ({logoTab.toUpperCase()})
             </span>
 
             <div 
-              className="p-3 border border-slate-850 rounded-xl bg-slate-900 flex items-center justify-center transition-all duration-300"
-              style={{ width: `${logoSize}px`, minHeight: '60px' }}
+              className="p-3 border border-slate-850 rounded-xl bg-slate-900 flex items-center justify-start overflow-hidden transition-all duration-300"
+              style={{ 
+                width: `${logoTab === 'desktop' ? logoSize : mobileLogoSize}px`, 
+                minHeight: '60px' 
+              }}
             >
               {logoUrl ? (
                 <img 
                   src={logoUrl} 
                   alt="Vista previa logo" 
                   className="object-contain transition-all" 
-                  style={{ maxHeight: `${logoHeight}px`, width: `${logoWidth}%` }} 
+                  style={{ 
+                    maxHeight: `${logoTab === 'desktop' ? logoHeight : mobileLogoHeight}px`, 
+                    width: `${logoTab === 'desktop' ? logoWidth : mobileLogoWidth}%` 
+                  }} 
                 />
               ) : (
-                <div className="text-center py-2">
-                  <p className="text-[10px] text-slate-500 font-mono font-bold uppercase">LOGO DEFECTO</p>
-                  <p className="text-[9px] text-slate-600 mt-1">Consultores Expertos SAS</p>
+                <div className="text-left py-2 px-1">
+                  <p className="text-[10px] text-cyan-400 font-mono font-bold uppercase">Consultores Expertos SAS</p>
+                  <p className="text-[9px] text-slate-500 font-mono">Gobierno de Datos & IA</p>
                 </div>
               )}
             </div>

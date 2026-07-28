@@ -228,7 +228,11 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { logoUrl, logoSize, logoHeight, logoWidth, setLogoUrl, setLogoSize, setLogoHeight, setLogoWidth } = useTheme();
+  const { 
+    logoUrl, logoSize, logoHeight, logoWidth, 
+    setLogoUrl, setLogoSize, setLogoHeight, setLogoWidth,
+    setMobileLogoSize, setMobileLogoHeight, setMobileLogoWidth 
+  } = useTheme();
 
   const [courses, setCourses] = useState<Course[]>(() => {
     const saved = localStorage.getItem('dxp_courses');
@@ -395,6 +399,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setLogoSize(fetchedConfig.logoSize || 180, true);
         setLogoHeight(fetchedConfig.logoHeight || 56);
         setLogoWidth(fetchedConfig.logoWidth || 100);
+        setMobileLogoSize(fetchedConfig.mobileLogoSize || 140);
+        setMobileLogoHeight(fetchedConfig.mobileLogoHeight || 44);
+        setMobileLogoWidth(fetchedConfig.mobileLogoWidth || 100);
       }
 
       if (fetchedLayout) {

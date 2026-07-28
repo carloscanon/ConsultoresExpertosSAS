@@ -24,10 +24,24 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDemo, 
   onOpenSearch
 }) => {
-  const { isLight, toggleTheme, logoUrl, logoSize, logoHeight, logoWidth } = useTheme();
+  const { 
+    isLight, toggleTheme, logoUrl, 
+    logoSize, logoHeight, logoWidth,
+    mobileLogoSize, mobileLogoHeight, mobileLogoWidth 
+  } = useTheme();
   const { contactInfo, menuItems } = useData();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,6 +64,10 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  const currentSize = isMobile ? mobileLogoSize : logoSize;
+  const currentHeight = isMobile ? mobileLogoHeight : logoHeight;
+  const currentWidth = isMobile ? mobileLogoWidth : logoWidth;
+
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       scrolled ? 'bg-slate-950/90 backdrop-blur-xl py-2.5 border-b border-slate-800 shadow-xl' : 'bg-slate-950 py-3.5 border-b border-slate-800/60'
@@ -60,24 +78,24 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Logo with powered by seal */}
           <div 
             onClick={() => onNavigate('home')}
-            className="cursor-pointer hover:opacity-95 transition-opacity shrink-0 flex items-center"
-            style={{ width: `${logoSize}px` }}
+            className="cursor-pointer hover:opacity-95 transition-opacity shrink-0 flex items-center justify-start overflow-hidden"
+            style={{ width: `${currentSize}px` }}
           >
             {logoUrl ? (
               <img 
                 src={logoUrl} 
-                alt="Logo" 
+                alt="Logo Corporativo" 
                 className="object-contain transition-all" 
                 style={{ 
-                  maxHeight: `${logoHeight}px`, 
-                  width: `${logoWidth}%` 
+                  maxHeight: `${currentHeight}px`, 
+                  width: `${currentWidth}%` 
                 }} 
               />
             ) : (
               <div 
                 className="flex flex-col text-left transition-all"
                 style={{ 
-                  transform: `scale(${Math.min(logoWidth / 100, 1.8)})`,
+                  transform: `scale(${Math.min(currentWidth / 100, 1.8)})`,
                   transformOrigin: 'left center'
                 }}
               >

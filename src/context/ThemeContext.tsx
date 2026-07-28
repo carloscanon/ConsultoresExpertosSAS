@@ -107,10 +107,16 @@ interface ThemeContextType {
   logoSize: number;
   logoHeight: number;
   logoWidth: number;
+  mobileLogoSize: number;
+  mobileLogoHeight: number;
+  mobileLogoWidth: number;
   setLogoUrl: (url: string, skipDb?: boolean) => void;
   setLogoSize: (size: number, skipDb?: boolean) => void;
   setLogoHeight: (height: number) => void;
   setLogoWidth: (width: number) => void;
+  setMobileLogoSize: (size: number) => void;
+  setMobileLogoHeight: (height: number) => void;
+  setMobileLogoWidth: (width: number) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -347,13 +353,28 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return saved ? parseInt(saved, 10) : 100; // pct
   });
 
+  const [mobileLogoSize, setMobileLogoSizeState] = useState<number>(() => {
+    const saved = localStorage.getItem('dxp_mobile_logo_size');
+    return saved ? parseInt(saved, 10) : 140;
+  });
+
+  const [mobileLogoHeight, setMobileLogoHeightState] = useState<number>(() => {
+    const saved = localStorage.getItem('dxp_mobile_logo_height');
+    return saved ? parseInt(saved, 10) : 44;
+  });
+
+  const [mobileLogoWidth, setMobileLogoWidthState] = useState<number>(() => {
+    const saved = localStorage.getItem('dxp_mobile_logo_width');
+    return saved ? parseInt(saved, 10) : 100;
+  });
+
   const setLogoHeight = (height: number, skipDb = false) => {
     setLogoHeightState(height);
     localStorage.setItem('dxp_logo_height', String(height));
     if (skipDb) return;
     const savedContact = localStorage.getItem('dxp_contact_info');
     const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
-    saveSiteConfigurationInDb(contact, logoUrl, logoSize, height, logoWidth).catch(console.warn);
+    saveSiteConfigurationInDb(contact, logoUrl, logoSize, height, logoWidth, mobileLogoSize, mobileLogoHeight, mobileLogoWidth).catch(console.warn);
   };
 
   const setLogoWidth = (width: number, skipDb = false) => {
@@ -362,7 +383,34 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     if (skipDb) return;
     const savedContact = localStorage.getItem('dxp_contact_info');
     const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
-    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, width).catch(console.warn);
+    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, width, mobileLogoSize, mobileLogoHeight, mobileLogoWidth).catch(console.warn);
+  };
+
+  const setMobileLogoSize = (size: number, skipDb = false) => {
+    setMobileLogoSizeState(size);
+    localStorage.setItem('dxp_mobile_logo_size', String(size));
+    if (skipDb) return;
+    const savedContact = localStorage.getItem('dxp_contact_info');
+    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
+    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, logoWidth, size, mobileLogoHeight, mobileLogoWidth).catch(console.warn);
+  };
+
+  const setMobileLogoHeight = (height: number, skipDb = false) => {
+    setMobileLogoHeightState(height);
+    localStorage.setItem('dxp_mobile_logo_height', String(height));
+    if (skipDb) return;
+    const savedContact = localStorage.getItem('dxp_contact_info');
+    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
+    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, logoWidth, mobileLogoSize, height, mobileLogoWidth).catch(console.warn);
+  };
+
+  const setMobileLogoWidth = (width: number, skipDb = false) => {
+    setMobileLogoWidthState(width);
+    localStorage.setItem('dxp_mobile_logo_width', String(width));
+    if (skipDb) return;
+    const savedContact = localStorage.getItem('dxp_contact_info');
+    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
+    saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, logoWidth, mobileLogoSize, mobileLogoHeight, width).catch(console.warn);
   };
 
   return (
@@ -376,10 +424,16 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       logoSize,
       logoHeight,
       logoWidth,
+      mobileLogoSize,
+      mobileLogoHeight,
+      mobileLogoWidth,
       setLogoUrl,
       setLogoSize,
       setLogoHeight,
-      setLogoWidth
+      setLogoWidth,
+      setMobileLogoSize,
+      setMobileLogoHeight,
+      setMobileLogoWidth
     }}>
       {children}
     </ThemeContext.Provider>
