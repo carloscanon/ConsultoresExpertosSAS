@@ -27,6 +27,7 @@ import { ResourcesPortal } from './components/dxp/domains/ResourcesPortal';
 import { SEOGlossaryPortal } from './components/SEOGlossaryPortal';
 import { SpecializedAISuite } from './components/SpecializedAISuite';
 
+import { savePageViewTelemetry } from './lib/supabase';
 import { DataProvider, useData } from './context/DataContext';
 
 const AppContent: React.FC = () => {
@@ -72,6 +73,11 @@ const AppContent: React.FC = () => {
       window.removeEventListener('hashchange', checkRoutes);
     };
   }, []);
+
+  // Telemetry page view tracker
+  useEffect(() => {
+    savePageViewTelemetry(`tab_${currentTab}`);
+  }, [currentTab]);
 
   // Auto-scroll to default focus section configured by admin on load
   useEffect(() => {

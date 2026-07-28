@@ -270,6 +270,26 @@ export async function saveCDOChallengeResponse(data: {
 }
 
 /**
+ * Registrar Telemetría de Visitas en Tiempo Real en la Base de Datos
+ */
+export async function savePageViewTelemetry(pageName: string) {
+  try {
+    await withTimeout(supabase
+      .from('super_admin_audit_logs')
+      .insert([{
+        admin_user: 'Visitor Telemetry',
+        action_type: 'PAGE_VIEW',
+        confirmation_code: pageName,
+        affected_records: 1,
+        status: 'Exitoso',
+        created_at: new Date().toISOString()
+      }]));
+  } catch (e) {
+    // Silent Telemetry capture
+  }
+}
+
+/**
  * Registrar auditoría en el sistema
  */
 export async function saveSuperAdminAuditLog(data: {

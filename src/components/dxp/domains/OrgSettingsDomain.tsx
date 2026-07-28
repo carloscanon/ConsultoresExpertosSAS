@@ -18,6 +18,10 @@ export const OrgSettingsDomain: React.FC = () => {
   const [form, setForm] = useState({ ...contactInfo });
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    setForm({ ...contactInfo });
+  }, [contactInfo]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatusMsg('Guardando configuración corporativa en Supabase...');
