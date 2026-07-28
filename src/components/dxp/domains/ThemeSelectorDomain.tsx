@@ -10,7 +10,8 @@ import {
   Star,
   Zap,
   Eye,
-  Upload
+  Upload,
+  Save
 } from 'lucide-react';
 
 export const ThemeSelectorDomain: React.FC = () => {
@@ -31,10 +32,12 @@ export const ThemeSelectorDomain: React.FC = () => {
     setLogoWidth,
     setMobileLogoSize,
     setMobileLogoHeight,
-    setMobileLogoWidth
+    setMobileLogoWidth,
+    saveLogoConfigurationToDb
   } = useTheme();
   const [appliedNotification, setAppliedNotification] = useState<string | null>(null);
   const [logoTab, setLogoTab] = useState<'desktop' | 'mobile'>('desktop');
+  const [savingLogo, setSavingLogo] = useState(false);
 
   const handleApplyTheme = (themeId: ThemeId, themeName: string) => {
     setTheme(themeId);
@@ -459,26 +462,28 @@ export const ThemeSelectorDomain: React.FC = () => {
               </>
             )}
 
-            {/* Real File Uploader */}
-            <div className="space-y-1.5 text-left pt-2">
-              <label className="block text-slate-300 font-bold font-sans">Cargar Logotipo Local</label>
-              <div className="flex items-center space-x-2">
-                <label className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-[11px] font-bold text-white transition-all cursor-pointer flex items-center space-x-1.5 shadow-lg shadow-cyan-600/10">
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>Seleccionar Imagen local</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    className="hidden"
-                  />
-                </label>
-                {logoUrl.startsWith('data:') && (
-                  <span className="text-[10px] text-emerald-400 font-mono font-bold animate-pulse">
-                    ✓ Imagen Cargada
-                  </span>
-                )}
-              </div>
+            {/* Save Button for Logo Settings */}
+            <div className="pt-4 border-t border-slate-800 flex items-center space-x-3">
+              <button
+                type="button"
+                onClick={async () => {
+                  setSavingLogo(true);
+                  try {
+                    await saveLogoConfigurationToDb();
+                    setAppliedNotification("✓ Dimensiones y Logotipo guardados definitivamente en Supabase DB.");
+                  } catch (e) {
+                    setAppliedNotification("❌ Error al guardar en base de datos.");
+                  } finally {
+                    setSavingLogo(false);
+                    setTimeout(() => setAppliedNotification(null), 4000);
+                  }
+                }}
+                disabled={savingLogo}
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs transition-all shadow-lg flex items-center space-x-2 cursor-pointer disabled:opacity-50"
+              >
+                <Save className={`w-4 h-4 ${savingLogo ? 'animate-spin' : ''}`} />
+                <span>{savingLogo ? 'Guardando en Supabase DB...' : '💾 GUARDAR PARÁMETROS DEL LOGO DE FORMA DEFINITIVA'}</span>
+              </button>
             </div>
           </div>
 

@@ -117,6 +117,7 @@ interface ThemeContextType {
   setMobileLogoSize: (size: number) => void;
   setMobileLogoHeight: (height: number) => void;
   setMobileLogoWidth: (width: number) => void;
+  saveLogoConfigurationToDb: () => Promise<void>;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -413,6 +414,21 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     saveSiteConfigurationInDb(contact, logoUrl, logoSize, logoHeight, logoWidth, mobileLogoSize, mobileLogoHeight, width).catch(console.warn);
   };
 
+  const saveLogoConfigurationToDb = async () => {
+    const savedContact = localStorage.getItem('dxp_contact_info');
+    const contact = savedContact ? JSON.parse(savedContact) : { companyName: 'Consultores Expertos SAS' };
+    await saveSiteConfigurationInDb(
+      contact, 
+      logoUrl, 
+      logoSize, 
+      logoHeight, 
+      logoWidth, 
+      mobileLogoSize, 
+      mobileLogoHeight, 
+      mobileLogoWidth
+    );
+  };
+
   return (
     <ThemeContext.Provider value={{ 
       theme, 
@@ -433,7 +449,8 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setLogoWidth,
       setMobileLogoSize,
       setMobileLogoHeight,
-      setMobileLogoWidth
+      setMobileLogoWidth,
+      saveLogoConfigurationToDb
     }}>
       {children}
     </ThemeContext.Provider>
