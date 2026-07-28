@@ -398,6 +398,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       if (fetchedConfig) {
         setContactInfo(fetchedConfig.contact);
+        localStorage.setItem('dxp_contact_info', JSON.stringify(fetchedConfig.contact));
         setLogoUrl(fetchedConfig.logoUrl || '', true);
         setLogoSize(fetchedConfig.logoSize || 180, true);
         setLogoHeight(fetchedConfig.logoHeight || 56);
@@ -659,6 +660,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Institutional Info action
   const updateContactInfo = async (info: ContactInfo) => {
     setContactInfo(info);
+    localStorage.setItem('dxp_contact_info', JSON.stringify(info));
     const res = await saveSiteConfigurationInDb(
       info, 
       logoUrl, 
