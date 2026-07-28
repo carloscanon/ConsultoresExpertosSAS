@@ -74,7 +74,13 @@ export const Header: React.FC<HeaderProps> = ({
                 }} 
               />
             ) : (
-              <div className="flex flex-col text-left">
+              <div 
+                className="flex flex-col text-left transition-all"
+                style={{ 
+                  transform: `scale(${Math.min(logoWidth / 100, 1.8)})`,
+                  transformOrigin: 'left center'
+                }}
+              >
                 <ConsultoresLogo showNit={false} />
                 <span className="text-[8px] font-mono font-bold tracking-widest text-slate-500 uppercase -mt-1 block">
                   Powered by {contactInfo.companyName}
