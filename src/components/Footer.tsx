@@ -19,10 +19,16 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onOpenDemo, onNavigate }) => {
-  const { logoUrl, logoSize } = useTheme();
+  const { 
+    logoUrl, logoSize, 
+    footerLogoUrl, footerLogoSize, footerLogoHeight, footerLogoWidth 
+  } = useTheme();
   const { contactInfo, menuItems } = useData();
 
   const activeMenuItems = menuItems.filter(item => item.active);
+
+  const activeFooterLogo = footerLogoUrl || logoUrl;
+  const activeFooterSize = footerLogoSize || logoSize;
 
   const handleNavClick = (id: string) => {
     if (onNavigate) {
@@ -75,14 +81,30 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDemo, onNavigate }) => {
           {/* Col 1: Official Corporate Logo & Info (2 cols wide) */}
           <div className="lg:col-span-2 space-y-4">
             <div 
-              className="cursor-pointer flex items-center" 
+              className="cursor-pointer flex items-center justify-start overflow-hidden" 
               onClick={() => handleNavClick('hero')}
-              style={{ width: `${logoSize}px` }}
+              style={{ width: `${activeFooterSize}px` }}
             >
-              {logoUrl ? (
-                <img src={logoUrl} alt="Logo" className="max-h-28 object-contain" style={{ width: '100%' }} />
+              {activeFooterLogo ? (
+                <img 
+                  src={activeFooterLogo} 
+                  alt="Logo Pie de Página" 
+                  className="object-contain transition-all" 
+                  style={{ 
+                    maxHeight: `${footerLogoHeight}px`, 
+                    width: `${footerLogoWidth}%` 
+                  }} 
+                />
               ) : (
-                <ConsultoresLogo variant="light" showNit={true} />
+                <div 
+                  className="flex flex-col text-left transition-all"
+                  style={{ 
+                    transform: `scale(${Math.min(footerLogoWidth / 100, 1.8)})`,
+                    transformOrigin: 'left center'
+                  }}
+                >
+                  <ConsultoresLogo variant="light" showNit={true} />
+                </div>
               )}
             </div>
 

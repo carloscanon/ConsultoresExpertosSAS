@@ -26,6 +26,10 @@ export const ThemeSelectorDomain: React.FC = () => {
     mobileLogoSize,
     mobileLogoHeight,
     mobileLogoWidth,
+    footerLogoUrl,
+    footerLogoSize,
+    footerLogoHeight,
+    footerLogoWidth,
     setLogoUrl,
     setLogoSize,
     setLogoHeight,
@@ -33,10 +37,14 @@ export const ThemeSelectorDomain: React.FC = () => {
     setMobileLogoSize,
     setMobileLogoHeight,
     setMobileLogoWidth,
+    setFooterLogoUrl,
+    setFooterLogoSize,
+    setFooterLogoHeight,
+    setFooterLogoWidth,
     saveLogoConfigurationToDb
   } = useTheme();
   const [appliedNotification, setAppliedNotification] = useState<string | null>(null);
-  const [logoTab, setLogoTab] = useState<'desktop' | 'mobile'>('desktop');
+  const [logoTab, setLogoTab] = useState<'desktop' | 'mobile' | 'footer'>('desktop');
   const [savingLogo, setSavingLogo] = useState(false);
 
   const handleApplyTheme = (themeId: ThemeId, themeName: string) => {
@@ -304,15 +312,15 @@ export const ThemeSelectorDomain: React.FC = () => {
             </p>
           </div>
 
-          {/* Desktop / Mobile Tab Switcher */}
-          <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-bold font-mono">
+          {/* Desktop / Mobile / Footer Tab Switcher */}
+          <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-bold font-mono flex-wrap gap-1">
             <button
               onClick={() => setLogoTab('desktop')}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 logoTab === 'desktop' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
-              💻 ESCRITORIO (DESKTOP)
+              💻 ESCRITORIO
             </button>
             <button
               onClick={() => setLogoTab('mobile')}
@@ -320,7 +328,15 @@ export const ThemeSelectorDomain: React.FC = () => {
                 logoTab === 'mobile' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
-              📱 MÓVIL (MOBILE)
+              📱 MÓVIL
+            </button>
+            <button
+              onClick={() => setLogoTab('footer')}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                logoTab === 'footer' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              🦶 PIE DE PÁGINA (FOOTER)
             </button>
           </div>
         </div>
@@ -330,16 +346,20 @@ export const ThemeSelectorDomain: React.FC = () => {
           {/* Form Sliders */}
           <div className="space-y-5">
             <div className="space-y-1.5 text-left">
-              <label className="block text-slate-300 font-bold font-sans">URL de la Imagen del Logo (Opcional)</label>
+              <label className="block text-slate-300 font-bold font-sans">
+                {logoTab === 'footer' ? 'URL de la Imagen del Logo del Footer (Opcional)' : 'URL de la Imagen del Logo Cabecera (Opcional)'}
+              </label>
               <input
                 type="text"
                 placeholder="https://ejemplo.com/logo.png"
-                value={logoUrl}
-                onChange={(e) => setLogoUrl(e.target.value)}
+                value={logoTab === 'footer' ? footerLogoUrl : logoUrl}
+                onChange={(e) => logoTab === 'footer' ? setFooterLogoUrl(e.target.value) : setLogoUrl(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs font-mono"
               />
               <p className="text-[10px] text-slate-500">
-                Deje en blanco para usar el logotipo predeterminado de "Consultores Expertos SAS".
+                {logoTab === 'footer' 
+                  ? 'Deje en blanco para usar la misma imagen de la cabecera en el pie de página.' 
+                  : 'Deje en blanco para usar el logotipo predeterminado de "Consultores Expertos SAS".'}
               </p>
             </div>
 
@@ -360,11 +380,6 @@ export const ThemeSelectorDomain: React.FC = () => {
                     onChange={(e) => setLogoSize(parseInt(e.target.value, 10))}
                     className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
                   />
-                  <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                    <span>80px</span>
-                    <span>180px</span>
-                    <span>600px</span>
-                  </div>
                 </div>
 
                 <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
@@ -381,11 +396,6 @@ export const ThemeSelectorDomain: React.FC = () => {
                     onChange={(e) => setLogoHeight(parseInt(e.target.value, 10))}
                     className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-indigo-400"
                   />
-                  <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                    <span>20px</span>
-                    <span>56px</span>
-                    <span>180px</span>
-                  </div>
                 </div>
 
                 <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
@@ -404,7 +414,7 @@ export const ThemeSelectorDomain: React.FC = () => {
                   />
                 </div>
               </>
-            ) : (
+            ) : logoTab === 'mobile' ? (
               <>
                 {/* Mobile Sliders */}
                 <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
@@ -421,11 +431,6 @@ export const ThemeSelectorDomain: React.FC = () => {
                     onChange={(e) => setMobileLogoSize(parseInt(e.target.value, 10))}
                     className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-cyan-400"
                   />
-                  <div className="flex justify-between text-[9px] text-slate-500 font-mono">
-                    <span>60px</span>
-                    <span>140px</span>
-                    <span>350px</span>
-                  </div>
                 </div>
 
                 <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
@@ -460,13 +465,66 @@ export const ThemeSelectorDomain: React.FC = () => {
                   />
                 </div>
               </>
+            ) : (
+              <>
+                {/* Footer Logo Sliders */}
+                <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-purple-800/60">
+                  <div className="flex justify-between font-bold text-slate-300">
+                    <span>🦶 Ancho Contenedor Footer</span>
+                    <span className="text-purple-400 font-mono">{footerLogoSize}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="80"
+                    max="600"
+                    step="5"
+                    value={footerLogoSize}
+                    onChange={(e) => setFooterLogoSize(parseInt(e.target.value, 10))}
+                    className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-purple-400"
+                  />
+                </div>
+
+                <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-purple-800/60">
+                  <div className="flex justify-between font-bold text-slate-300">
+                    <span>↕️ Alto Máximo Imagen (Footer)</span>
+                    <span className="text-purple-400 font-mono">{footerLogoHeight}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="180"
+                    step="2"
+                    value={footerLogoHeight}
+                    onChange={(e) => setFooterLogoHeight(parseInt(e.target.value, 10))}
+                    className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-purple-400"
+                  />
+                </div>
+
+                <div className="space-y-1.5 text-left bg-slate-950/60 p-4 rounded-2xl border border-purple-800/60">
+                  <div className="flex justify-between font-bold text-slate-300">
+                    <span>↔️ Llenado Horizontal (Footer %)</span>
+                    <span className="text-purple-400 font-mono">{footerLogoWidth}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="100"
+                    step="5"
+                    value={footerLogoWidth}
+                    onChange={(e) => setFooterLogoWidth(parseInt(e.target.value, 10))}
+                    className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-purple-400"
+                  />
+                </div>
+              </>
             )}
 
             {/* Prominent Image File Uploader */}
             <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-950 via-cyan-950/20 to-slate-950 border border-cyan-500/30 space-y-2 text-left">
               <label className="block text-slate-200 font-bold font-sans text-xs flex items-center space-x-1.5">
                 <Upload className="w-4 h-4 text-cyan-400" />
-                <span>SUBIR IMAGEN DEL LOGOTIPO DESDE TU COMPUTADOR</span>
+                <span>
+                  {logoTab === 'footer' ? 'SUBIR LOGOTIPO INDEPENDIENTE PARA EL FOOTER' : 'SUBIR IMAGEN DEL LOGOTIPO DESDE TU COMPUTADOR'}
+                </span>
               </label>
               <div className="flex flex-wrap items-center gap-3">
                 <label className="px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-extrabold text-white transition-all cursor-pointer flex items-center space-x-2 shadow-lg shadow-cyan-600/20">
@@ -475,20 +533,28 @@ export const ThemeSelectorDomain: React.FC = () => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={handleLogoUpload}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const reader = new FileReader();
+                      reader.onload = (evt) => {
+                        const base64 = evt.target?.result as string;
+                        if (base64) {
+                          if (logoTab === 'footer') {
+                            setFooterLogoUrl(base64);
+                          } else {
+                            setLogoUrl(base64);
+                          }
+                          setAppliedNotification("✓ Logotipo cargado con éxito.");
+                          setTimeout(() => setAppliedNotification(null), 3000);
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    }}
                     className="hidden"
                   />
                 </label>
-                {logoUrl && logoUrl.startsWith('data:') && (
-                  <span className="text-xs text-emerald-400 font-mono font-bold bg-emerald-500/10 px-3 py-1.5 rounded-lg border border-emerald-500/30 flex items-center space-x-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Imagen cargada con éxito</span>
-                  </span>
-                )}
               </div>
-              <p className="text-[10px] text-slate-400 font-mono">
-                Al seleccionar una imagen, se cargará de inmediato en la vista previa. Luego pulsa "GUARDAR PARÁMETROS" abajo para guardarla en Supabase.
-              </p>
             </div>
 
             {/* Save Button for Logo Settings */}
@@ -499,7 +565,7 @@ export const ThemeSelectorDomain: React.FC = () => {
                   setSavingLogo(true);
                   try {
                     await saveLogoConfigurationToDb();
-                    setAppliedNotification("✓ Dimensiones y Logotipo guardados definitivamente en Supabase DB.");
+                    setAppliedNotification("✓ Configuración de Logotipos (Cabecera & Footer) guardada definitivamente en Supabase DB.");
                   } catch (e) {
                     setAppliedNotification("❌ Error al guardar en base de datos.");
                   } finally {
@@ -519,45 +585,55 @@ export const ThemeSelectorDomain: React.FC = () => {
           {/* Real-time Preview Area */}
           <div className="bg-slate-950/60 p-5 rounded-2xl border border-slate-850 flex flex-col items-center justify-center space-y-4 relative min-h-[220px] overflow-hidden">
             <span className="text-[9px] font-mono font-bold text-cyan-400 uppercase tracking-widest absolute top-3 left-4">
-              VISTA PREVIA DEL LOGO ({logoTab.toUpperCase()})
+              VISTA PREVIA DE LOGO ({logoTab.toUpperCase()})
             </span>
 
             <div 
-              className="p-3 border border-slate-850 rounded-xl bg-slate-900 flex items-center justify-start overflow-hidden transition-all duration-300"
+              className={`p-3 border rounded-xl flex items-center justify-start overflow-hidden transition-all duration-300 ${
+                logoTab === 'footer' ? 'bg-white border-slate-200' : 'bg-slate-900 border-slate-850'
+              }`}
               style={{ 
-                width: `${logoTab === 'desktop' ? logoSize : mobileLogoSize}px`, 
+                width: `${logoTab === 'desktop' ? logoSize : logoTab === 'mobile' ? mobileLogoSize : footerLogoSize}px`, 
                 minHeight: '60px' 
               }}
             >
-              {logoUrl ? (
+              {(logoTab === 'footer' ? (footerLogoUrl || logoUrl) : logoUrl) ? (
                 <img 
-                  src={logoUrl} 
+                  src={logoTab === 'footer' ? (footerLogoUrl || logoUrl) : logoUrl} 
                   alt="Vista previa logo" 
                   className="object-contain transition-all" 
                   style={{ 
-                    maxHeight: `${logoTab === 'desktop' ? logoHeight : mobileLogoHeight}px`, 
-                    width: `${logoTab === 'desktop' ? logoWidth : mobileLogoWidth}%` 
+                    maxHeight: `${logoTab === 'desktop' ? logoHeight : logoTab === 'mobile' ? mobileLogoHeight : footerLogoHeight}px`, 
+                    width: `${logoTab === 'desktop' ? logoWidth : logoTab === 'mobile' ? mobileLogoWidth : footerLogoWidth}%` 
                   }} 
                 />
               ) : (
                 <div className="text-left py-2 px-1">
-                  <p className="text-[10px] text-cyan-400 font-mono font-bold uppercase">Consultores Expertos SAS</p>
-                  <p className="text-[9px] text-slate-500 font-mono">Gobierno de Datos & IA</p>
+                  <p className={`text-[10px] font-mono font-bold uppercase ${logoTab === 'footer' ? 'text-slate-900' : 'text-cyan-400'}`}>
+                    Consultores Expertos SAS
+                  </p>
+                  <p className={`text-[9px] font-mono ${logoTab === 'footer' ? 'text-slate-600' : 'text-slate-500'}`}>
+                    {logoTab === 'footer' ? 'Footer Brand Logo' : 'Header Brand Logo'}
+                  </p>
                 </div>
               )}
             </div>
 
-            {logoUrl && (
+            {(logoTab === 'footer' ? (footerLogoUrl || logoUrl) : logoUrl) && (
               <button
                 type="button"
                 onClick={() => {
-                  setLogoUrl("");
-                  setAppliedNotification("Se restableció el logotipo por defecto.");
+                  if (logoTab === 'footer') {
+                    setFooterLogoUrl("");
+                  } else {
+                    setLogoUrl("");
+                  }
+                  setAppliedNotification("Se restableció el logotipo.");
                   setTimeout(() => setAppliedNotification(null), 3000);
                 }}
                 className="text-[10px] font-bold text-red-400 hover:text-red-300 transition-colors"
               >
-                Restablecer a Logotipo Original
+                Restablecer Logotipo {logoTab.toUpperCase()}
               </button>
             )}
           </div>

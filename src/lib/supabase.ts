@@ -718,7 +718,11 @@ export async function saveSiteConfigurationInDb(
   logoWidth?: number,
   mobileLogoSize?: number,
   mobileLogoHeight?: number,
-  mobileLogoWidth?: number
+  mobileLogoWidth?: number,
+  footerLogoUrl?: string,
+  footerLogoSize?: number,
+  footerLogoHeight?: number,
+  footerLogoWidth?: number
 ) {
   try {
     const serializedLogoMeta = JSON.stringify({
@@ -728,7 +732,11 @@ export async function saveSiteConfigurationInDb(
       width: logoWidth || 100,
       mobileSize: mobileLogoSize || 140,
       mobileHeight: mobileLogoHeight || 44,
-      mobileWidth: mobileLogoWidth || 100
+      mobileWidth: mobileLogoWidth || 100,
+      footerUrl: footerLogoUrl || '',
+      footerSize: footerLogoSize || 200,
+      footerHeight: footerLogoHeight || 64,
+      footerWidth: footerLogoWidth || 100
     });
 
     const { data, error } = await withTimeout(supabase
@@ -778,6 +786,10 @@ export async function getSiteConfigurationFromDb() {
     let mobileLogoSize = 140;
     let mobileLogoHeight = 44;
     let mobileLogoWidth = 100;
+    let footerLogoUrl = '';
+    let footerLogoSize = 200;
+    let footerLogoHeight = 64;
+    let footerLogoWidth = 100;
 
     if (data.ai_summary) {
       if (data.ai_summary.trim().startsWith('{')) {
@@ -790,6 +802,10 @@ export async function getSiteConfigurationFromDb() {
           mobileLogoSize = parsedLogo.mobileSize || 140;
           mobileLogoHeight = parsedLogo.mobileHeight || 44;
           mobileLogoWidth = parsedLogo.mobileWidth || 100;
+          footerLogoUrl = parsedLogo.footerUrl || '';
+          footerLogoSize = parsedLogo.footerSize || 200;
+          footerLogoHeight = parsedLogo.footerHeight || 64;
+          footerLogoWidth = parsedLogo.footerWidth || 100;
         } catch (e) {
           logoUrl = data.ai_summary;
         }
@@ -798,7 +814,12 @@ export async function getSiteConfigurationFromDb() {
       }
     }
 
-    return { contact, logoUrl, logoSize, logoHeight, logoWidth, mobileLogoSize, mobileLogoHeight, mobileLogoWidth };
+    return { 
+      contact, 
+      logoUrl, logoSize, logoHeight, logoWidth, 
+      mobileLogoSize, mobileLogoHeight, mobileLogoWidth,
+      footerLogoUrl, footerLogoSize, footerLogoHeight, footerLogoWidth
+    };
   } catch (err) {
     console.warn('Supabase exception reading site configurations:', err);
     return null;

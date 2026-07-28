@@ -231,7 +231,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const { 
     logoUrl, logoSize, logoHeight, logoWidth, 
     setLogoUrl, setLogoSize, setLogoHeight, setLogoWidth,
-    setMobileLogoSize, setMobileLogoHeight, setMobileLogoWidth 
+    setMobileLogoSize, setMobileLogoHeight, setMobileLogoWidth,
+    setFooterLogoUrl, setFooterLogoSize, setFooterLogoHeight, setFooterLogoWidth
   } = useTheme();
 
   const [courses, setCourses] = useState<Course[]>(() => {
@@ -402,6 +403,10 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setMobileLogoSize(fetchedConfig.mobileLogoSize || 140);
         setMobileLogoHeight(fetchedConfig.mobileLogoHeight || 44);
         setMobileLogoWidth(fetchedConfig.mobileLogoWidth || 100);
+        setFooterLogoUrl(fetchedConfig.footerLogoUrl || '', true);
+        setFooterLogoSize(fetchedConfig.footerLogoSize || 200);
+        setFooterLogoHeight(fetchedConfig.footerLogoHeight || 64);
+        setFooterLogoWidth(fetchedConfig.footerLogoWidth || 100);
       }
 
       if (fetchedLayout) {

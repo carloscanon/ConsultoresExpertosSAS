@@ -110,6 +110,10 @@ interface ThemeContextType {
   mobileLogoSize: number;
   mobileLogoHeight: number;
   mobileLogoWidth: number;
+  footerLogoUrl: string;
+  footerLogoSize: number;
+  footerLogoHeight: number;
+  footerLogoWidth: number;
   setLogoUrl: (url: string, skipDb?: boolean) => void;
   setLogoSize: (size: number, skipDb?: boolean) => void;
   setLogoHeight: (height: number) => void;
@@ -117,6 +121,10 @@ interface ThemeContextType {
   setMobileLogoSize: (size: number) => void;
   setMobileLogoHeight: (height: number) => void;
   setMobileLogoWidth: (width: number) => void;
+  setFooterLogoUrl: (url: string, skipDb?: boolean) => void;
+  setFooterLogoSize: (size: number) => void;
+  setFooterLogoHeight: (height: number) => void;
+  setFooterLogoWidth: (width: number) => void;
   saveLogoConfigurationToDb: () => Promise<void>;
 }
 
@@ -368,6 +376,53 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     saveLogoConfigurationToDb().catch(console.warn);
   };
 
+  const [footerLogoUrl, setFooterLogoUrlState] = useState<string>(() => {
+    return localStorage.getItem('dxp_footer_logo_url') || '';
+  });
+
+  const [footerLogoSize, setFooterLogoSizeState] = useState<number>(() => {
+    const saved = localStorage.getItem('dxp_footer_logo_size');
+    return saved ? parseInt(saved, 10) : 200;
+  });
+
+  const [footerLogoHeight, setFooterLogoHeightState] = useState<number>(() => {
+    const saved = localStorage.getItem('dxp_footer_logo_height');
+    return saved ? parseInt(saved, 10) : 64;
+  });
+
+  const [footerLogoWidth, setFooterLogoWidthState] = useState<number>(() => {
+    const saved = localStorage.getItem('dxp_footer_logo_width');
+    return saved ? parseInt(saved, 10) : 100;
+  });
+
+  const setFooterLogoUrl = (url: string, skipDb = false) => {
+    setFooterLogoUrlState(url);
+    localStorage.setItem('dxp_footer_logo_url', url);
+    if (skipDb) return;
+    saveLogoConfigurationToDb().catch(console.warn);
+  };
+
+  const setFooterLogoSize = (size: number, skipDb = false) => {
+    setFooterLogoSizeState(size);
+    localStorage.setItem('dxp_footer_logo_size', String(size));
+    if (skipDb) return;
+    saveLogoConfigurationToDb().catch(console.warn);
+  };
+
+  const setFooterLogoHeight = (height: number, skipDb = false) => {
+    setFooterLogoHeightState(height);
+    localStorage.setItem('dxp_footer_logo_height', String(height));
+    if (skipDb) return;
+    saveLogoConfigurationToDb().catch(console.warn);
+  };
+
+  const setFooterLogoWidth = (width: number, skipDb = false) => {
+    setFooterLogoWidthState(width);
+    localStorage.setItem('dxp_footer_logo_width', String(width));
+    if (skipDb) return;
+    saveLogoConfigurationToDb().catch(console.warn);
+  };
+
   const saveLogoConfigurationToDb = async () => {
     const savedContact = localStorage.getItem('dxp_contact_info');
     const contact = savedContact ? JSON.parse(savedContact) : {
@@ -394,7 +449,11 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       logoWidth, 
       mobileLogoSize, 
       mobileLogoHeight, 
-      mobileLogoWidth
+      mobileLogoWidth,
+      footerLogoUrl,
+      footerLogoSize,
+      footerLogoHeight,
+      footerLogoWidth
     );
   };
 
@@ -412,6 +471,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       mobileLogoSize,
       mobileLogoHeight,
       mobileLogoWidth,
+      footerLogoUrl,
+      footerLogoSize,
+      footerLogoHeight,
+      footerLogoWidth,
       setLogoUrl,
       setLogoSize,
       setLogoHeight,
@@ -419,6 +482,10 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setMobileLogoSize,
       setMobileLogoHeight,
       setMobileLogoWidth,
+      setFooterLogoUrl,
+      setFooterLogoSize,
+      setFooterLogoHeight,
+      setFooterLogoWidth,
       saveLogoConfigurationToDb
     }}>
       {children}
